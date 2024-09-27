@@ -1,0 +1,55 @@
+{
+  "assets": {
+    "STH_Maxzzzie": {
+      "enabled": true,
+      "restartOnChange": true
+    },
+    "assets": {
+      "enabled": true,
+      "restartOnChange": true
+    },
+    "fivem-ipl-master": {
+      "enabled": true,
+      "restartOnChange": true
+    },
+    "vSync": {
+      "enabled": true,
+      "restartOnChange": true
+    },
+    "MaxSTH": {
+      "enabled": true,
+      "restartOnChange": true
+    },
+    "vMenu-master": {
+      "enabled": true,
+      "restartOnChange": true
+    },
+    "vMenu": {
+      "enabled": false,
+      "restartOnChange": false
+    },
+    "STHmap.fxworld": {
+      "enabled": false
+    },
+    "visual assets": {
+      "enabled": true
+    }
+  },
+  "serverUpdateChannel": "latest",
+  "systemResources": [
+    "baseevents",
+    "mapmanager",
+    "sessionmanager",
+    "yarn",
+    "webpack",
+    "chat",
+    "basic-gamemode",
+    "spawnmanager",
+    "chat-theme-gtao",
+    "playernames",
+    "player-data"
+  ],
+  "name": "SurviveTheHunt_Maxzzzie",
+  "createdAt": "2022-04-10T18:54:10.443Z",
+  "variables": {}
+}
