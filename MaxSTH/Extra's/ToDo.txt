@@ -1,0 +1,80 @@
+Display death msg's when someone is killed too
+Display player online list
+Display all commands
+Display time
+Fix playeroverhead display
+
+Implement a menu
+fix stamina
+Fix teleport to teleport with vehicle if personal teleport
+fix vehicle to have a toggle between allowed classes and type of vehicles. (no spawning italy gto (sports) during hunts if sports is allowed etc.)
+Remove weapons from npcs/ fix getting weapons from npcs and gangmembers.
+add toggle weapon sets
+combine weapons to a /gun (all, hunt, run, nonlethal)
+Toggle pvp per person
+Add a good vehiclespawner
+Add Some sort of pri mechanic
+Add playerlist
+Add (compass/callout hud)
+Add toggle'able blips.
+Add vehiclecolorerererrer.
+Increase health?
+Add an option for traffic density
+add karma system kill log of sorts
+Add some autocolor feature
+Make a log. (like shitting on the toilet but a toilet where every player adds on to whenever they write a command.)
+Add a whitelist to the server.
+Make TxAdmin'able.
+Add tpall to host sending the request.
+force 1st person possibility
+fortzencudogates
+fix model glitches
+Player spawns behind car at traffic light.
+Players old car despawns.
+/cveh sets you in closest vehicle.
+fix ferris wheel and coaster
+Add pma voice (proximity chat)
+
+
+
+
+//finished
+
+
+v03-04-2023 Display setting msg's
+added delete weapon options
+temp respawn feature added. Spawns to closest respawnpoint.
+/boss added. Gives a cornelius style fq2.
+/lester is changed to /wanted. And there is features added. (/wanted on/off/wantedlvl as well as /wanted max value. It sets the highest obtainable wantedlvl)
+/fix (added)
+respawn (updated)
+/delveh (added)
+weather and time updating has the correct permissions now.
+Keep weapons after death (added)
+Add tp's to known locations (added)
+Fix world interior glitches (added ipl fix)
+give Weapons (added)
+Set time to sync it. Add Vsync (done)
+Fix personal tp (fixed)
+Added vehicles (/veh vehiclename)(a crude version)
+Add appearance change option (f6 and /ped(name))
+Disable POD (made and made a toggle. /togglepvp)
+fix tp location crash (fixed)
+Enable toggaleble pvp (/togglepvp)
+Disable shooting from vehicle (/togglesfv)
+Fixed /circle commands (fixed, and should auto update upon joining now)
+Fixed changing model to an animal or broken ped while randomizing by using f6(although sometimes invis on client side i think)
+Added custom requesting of model /model (modelname)
+
+
+
+
+
+Tick
+Ray casting
+
+
+
+death
+can teleport player to 0 0 0. Ped was not in vehicle. Player was not nearby. Ped was found and gave a location.
+black screen loading is quite often. Screenshots included
