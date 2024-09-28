@@ -77,8 +77,8 @@ namespace STHMaxzzzie.Client
             }
         }
 
-        //spawns a custom fq2 for cornelius
-        [Command("boss")]
+        //spawns a custom fq2 for cornelius, 
+        [Command("vehboss")]
         async void cor(int source, List<object> args, string raw)
         {
             TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"You spawned a specialized fq2. Enjoy Cornelius!"}});
@@ -102,7 +102,7 @@ namespace STHMaxzzzie.Client
         }
 
         //spawns a custom sanctus for Firewolf
-        [Command("fw")]
+        [Command("vehfw")]
         async void firewolf(int source, List<object> args, string raw)
         {
             TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"You morphed into GhostRider. Enjoy Firewolf!"}});
@@ -131,7 +131,7 @@ namespace STHMaxzzzie.Client
         }
 
         //spawns a custom police cruiser for ed
-        [Command("ed")]
+        [Command("vehed")]
         async void ed(int source, List<object> args, string raw)
         {
             TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"You spawned a custom police cruiser. Enjoy Ed!"}});
@@ -217,10 +217,10 @@ namespace STHMaxzzzie.Client
                 //fix where vehicle repair is set to Los santos customs. "lsc"
                 else if (allowedToFixStatus == "lsc")
                 //number | lsc | it's center's xyz cords | distance from center to count
-                //1 | city | -337.516, -136.666, 39.010 | 19
-                //2 | industrial | 732.430, -1085.277, 22.169 | 11
+                //1 | rockford | -337.516, -136.666, 39.010 | 19
+                //2 | la mesa | 732.430, -1085.277, 22.169 | 11
                 //3 | lsia | -1152.147, -2008.129, 13.180 | 15
-                //4 | sandy | 1178.634, 2638.898, 37.754 | 11
+                //4 | blaine county | 1178.634, 2638.898, 37.754 | 11
                 //5 | paleto | 107.893, 6624.449, 31.787 | 8
                 {
                     Vector3 playerPosition = Game.PlayerPed.Position;
@@ -229,7 +229,7 @@ namespace STHMaxzzzie.Client
                     float d3 = GetDistanceBetweenCoords(-1152, -2008, 13, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
                     float d4 = GetDistanceBetweenCoords(1178, 2638, 37, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
                     float d5 = GetDistanceBetweenCoords(107, 6624, 31, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
-                    Debug.WriteLine($"1: {d1} | 2: {d2} | 3: {d3} | 4: {d4} | 5: {d5}");
+                    Debug.WriteLine($"1: rockford {d1} | 2: la mesa {d2} | 3: lsia {d3} | 4: blaine county {d4} | 5: paleto {d5}");
                     if (d1 < 19 || d2 < 11 || d3 < 15 || d4 < 11 || d5 < 8)
                     {
                         Game.PlayerPed.CurrentVehicle.Repair();

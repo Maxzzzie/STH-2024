@@ -4,10 +4,6 @@
       "enabled": true,
       "restartOnChange": true
     },
-    "assets": {
-      "enabled": true,
-      "restartOnChange": true
-    },
     "fivem-ipl-master": {
       "enabled": true,
       "restartOnChange": true
@@ -33,6 +29,10 @@
     },
     "visual assets": {
       "enabled": true
+    },
+    "assets": {
+      "enabled": true,
+      "restartOnChange": true
     }
   },
   "serverUpdateChannel": "latest",
