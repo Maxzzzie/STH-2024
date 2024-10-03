@@ -30,9 +30,24 @@ namespace STHMaxzzzie.Client
         {
             if (priIsAlive)
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You already have a pri spawned." } });
-                return;
+                APISetEntityAsMissionEntity(prius.Handle, true, true);
+                API.DeleteVehicle(prius.Handle);
+                TriggerEvent("chat:addMessage", new { color = new[] { 180, 100, 180 }, args = new[] { $"You replaced a prius." } });
+                var model = new Model(VehicleNameToHash["dilettante"]);
+                prius = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading - 180);
+                API.SetVehicleColours(prius.Handle, 135, 135);
+                API.SetVehicleNumberPlateText(prius.Handle, $"{Players[source]}");
+                API.SetVehicleNeonLightEnabled(prius.Handle, 0, true);
+                API.SetVehicleNeonLightEnabled(prius.Handle, 1, true);
+                API.SetVehicleNeonLightEnabled(prius.Handle, 2, true);
+                API.SetVehicleNeonLightEnabled(prius.Handle, 3, true);
+                API.SetVehicleNeonLightsColour(prius.Handle, 204, 0, 204);
+                API.SetVehicleXenonLightsColor(prius.Handle, 10);
+                API.SetVehicleLightsMode(prius.Handle, 2);
+                API.SetNetworkIdCanMigrate(prius.Handle, false);
+                //return;
             }
+            
             TriggerEvent("chat:addMessage", new { color = new[] { 180, 100, 180 }, args = new[] { $"You spawned a prius." } });
             var model = new Model(VehicleNameToHash["dilettante"]);
             prius = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading - 180);
@@ -45,6 +60,7 @@ namespace STHMaxzzzie.Client
             API.SetVehicleNeonLightsColour(prius.Handle, 204, 0, 204);
             API.SetVehicleXenonLightsColor(prius.Handle, 10);
             API.SetVehicleLightsMode(prius.Handle, 2);
+            API.SetNetworkIdCanMigrate(prius.Handle, false)
             priIsAlive = true;
            
             

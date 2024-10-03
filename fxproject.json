@@ -25,7 +25,7 @@
       "restartOnChange": false
     },
     "STHmap.fxworld": {
-      "enabled": false
+      "enabled": true
     },
     "visual assets": {
       "enabled": true
