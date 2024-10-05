@@ -104,9 +104,12 @@ namespace STHMaxzzzie.Server
                 cause = "reasons unknown";
             }
             Debug.WriteLine($"Player {player.Name} died because of {cause}. Debug info: {killerType}");
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name} died because of {cause}." } });
+            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name} died maybe because of {cause}." } });
         }
     }
+
+
+    
 }
 
 // public class Test : BaseScript
