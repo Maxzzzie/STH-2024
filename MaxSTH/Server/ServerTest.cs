@@ -23,18 +23,38 @@ namespace STHMaxzzzie.Server
 
 
 
-        public void OnPlayerKilled([FromSource] Player victim, int two, dynamic three)
+        public void OnPlayerKilled([FromSource] Player victim, int deathCause, dynamic killerData)
         {
-            var dictionary = (IDictionary<string, object>)three;
+            var dictionary = (IDictionary<string, object>)killerData;
 
             foreach (KeyValuePair<string, object> property in dictionary)
             {
-                Debug.WriteLine($"Expando --> key: {property.Key} || Value {property.Value}");
+                Debug.WriteLine($"foreach --> {property.Key} - {property.Value}");
             }
-            Debug.WriteLine($"Triggered OnPlayerKilled");
+            if (dictionary.ContainsKey("killerpos"))
+{
+    // Get the 'killerpos' value and cast it to List<object>
+    var killerPosList = dictionary["killerpos"] as List<object>;
 
-            Debug.WriteLine($"died {victim.Name}, pedType?: {two}.");
-            //TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"died {victim.Name}, 2{two} 3{three}." } });
+    if (killerPosList != null && killerPosList.Count >= 3)
+    {
+        // Assuming it represents a position (X, Y, Z)
+        float x = Convert.ToSingle(killerPosList[0]);
+        float y = Convert.ToSingle(killerPosList[1]);
+        float z = Convert.ToSingle(killerPosList[2]);
+
+        Debug.WriteLine($"Killer position: X={x}, Y={y}, Z={z}");
+    }
+    else
+    {
+        Debug.WriteLine("Killer position data is missing or incomplete.");
+    }
+}
+            //the above, shows: killerpos, weaponhash, killertype, killervehseat, killerinveh, killervehname
+            //vehicle type (empty if killer wasn't in a vehicle), vehicleseat, weaponhash "https://gtahash.ru/weapons/?page=3", killertype, and some more. killer maybe?
+
+            Debug.WriteLine($"died {victim.Name}, pedType?: {deathCause}.");
+            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"{victim.Name} died." } });
         }
 
 
@@ -109,7 +129,7 @@ namespace STHMaxzzzie.Server
     }
 
 
-    
+
 }
 
 // public class Test : BaseScript

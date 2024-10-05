@@ -1,9 +1,15 @@
 Display death msg's when someone is killed too
+Add Some sort of pri mechanic
+
+
+Heading indicator
+Location indicator
+Callout indicator
+Speed indicator
+Vehicle name/type warning or speed limiter
 Display player online list
 Display all commands
 Display time
-Fix playeroverhead display
-
 Implement a menu
 fix stamina
 Fix teleport to teleport with vehicle if personal teleport
@@ -13,9 +19,7 @@ add toggle weapon sets
 combine weapons to a /gun (all, hunt, run, nonlethal)
 Toggle pvp per person
 Add a good vehiclespawner
-Add Some sort of pri mechanic
 Add playerlist
-Add (compass/callout hud)
 Add toggle'able blips.
 Add vehiclecolorerererrer.
 Increase health?
