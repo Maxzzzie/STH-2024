@@ -5,11 +5,11 @@
     <TargetName>$(AssemblyName).net</TargetName>
     <DefineConstants>SERVER</DefineConstants>
   </PropertyGroup>
-
+  <PropertyGroup>
+  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CitizenFX.Core.Server" Version="1.0.*" />
-
-    <Compile Include="../Shared/**/*.cs" />
 
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>

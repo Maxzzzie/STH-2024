@@ -71,7 +71,7 @@ namespace STHMaxzzzie.Server
         {
             foreach (Player p in Players)
             {
-                Debug.WriteLine($"Name: {p.Name} | id: {p.Identifiers["discord"]}");
+                CitizenFX.Core.Debug.WriteLine($"Name: {p.Name} | id: {p.Identifiers["discord"]}");
             }
         }
         bool isPlayerHost(Player p)
@@ -91,7 +91,7 @@ namespace STHMaxzzzie.Server
 
     //     void test(int source, List<object> args, string raw)
     //     {
-    //         Debug.WriteLine($"This is the test command.");
+    //         CitizenFX.Core.Debug.WriteLine($"This is the test command.");
     //     }
     // }
 
@@ -140,7 +140,7 @@ namespace STHMaxzzzie.Server
             }
             else
             {
-                Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglepod (on/off)");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglepod (on/off)");
             }
         }
 
@@ -164,12 +164,12 @@ namespace STHMaxzzzie.Server
                 }
                 else if (args[0].ToString() == "help")
                 {
-                    Debug.WriteLine($"/togglefix sets the state of the /fix command. There are 4 options. \n/fix on | allows players to instantly fix their vehicle.\n/fix off | means what it says. It turns the feature off.\n/fix lsc | requires a player to drive to an ls customs and type the command.\n/fix wait (time in seconds) | Makes a player wait stationairy for a fix.");
+                    CitizenFX.Core.Debug.WriteLine($"/togglefix sets the state of the /fix command. There are 4 options. \n/fix on | allows players to instantly fix their vehicle.\n/fix off | means what it says. It turns the feature off.\n/fix lsc | requires a player to drive to an ls customs and type the command.\n/fix wait (time in seconds) | Makes a player wait stationairy for a fix.");
 
                 }
                 else
                 {
-                    Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix on/off//lsc/wait(and a value).");
+                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix on/off//lsc/wait(and a value).");
                 }
             }
             else if (args.Count == 2)
@@ -186,12 +186,12 @@ namespace STHMaxzzzie.Server
                 }
                 else
                 {
-                    Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/wait(and a value)/)");
+                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/wait(and a value)/)");
                 }
             }
             else
             {
-                Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/wait(and a value)/)");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/wait(and a value)/)");
             }
         }
 
@@ -208,7 +208,7 @@ namespace STHMaxzzzie.Server
             }
             else
             {
-                Debug.WriteLine($"This option clears vehicles and entities.\nType \"/clear\" to clear vehicles and \"/clear all\" to clear all entities.");
+                CitizenFX.Core.Debug.WriteLine($"This option clears vehicles and entities.\nType \"/clear\" to clear vehicles and \"/clear all\" to clear all entities.");
             }
         }
     }
@@ -239,7 +239,7 @@ namespace STHMaxzzzie.Server
             }
             else
             {
-                Debug.WriteLine($"This command toggle's shooting from vehicle. It is currently set to: {isShootingFromVehicleAllowed}\nThe right command is: /togglesfv (true/false)");
+                CitizenFX.Core.Debug.WriteLine($"This command toggle's shooting from vehicle. It is currently set to: {isShootingFromVehicleAllowed}\nThe right command is: /togglesfv (true/false)");
             }
         }
 
@@ -261,7 +261,7 @@ namespace STHMaxzzzie.Server
             }
             else
             {
-                Debug.WriteLine("Oh no. Something went wrong!\nYou should do /toggleweapon (true/false)");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /toggleweapon (true/false)");
             }
         }
 
@@ -283,7 +283,7 @@ namespace STHMaxzzzie.Server
             }
             else
             {
-                Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglepvp (true/false)");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglepvp (true/false)");
             }
         }
     }
@@ -301,7 +301,7 @@ namespace STHMaxzzzie.Server
         public MapBounds()
         {
             mapBoundsDict = LoadResources.mapBounds();
-            Debug.WriteLine($"I'm making a MapBounds dictionary.");
+            CitizenFX.Core.Debug.WriteLine($"I'm making a MapBounds dictionary.");
         }
 
         //updates the player's circles.
@@ -324,7 +324,7 @@ namespace STHMaxzzzie.Server
         {
             if (args.Count <= 1 && args.Count >= 4)
             {
-                Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for more info.");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for more info.");
                 return;
             }
 
@@ -337,7 +337,7 @@ namespace STHMaxzzzie.Server
                     argColor = Int32.Parse(args[1].ToString());
                     return;
                 }
-                Debug.WriteLine("2nd Oh no. Something went wrong!\nYou should do \"/circle help\" for more info.");
+                CitizenFX.Core.Debug.WriteLine("2nd Oh no. Something went wrong!\nYou should do \"/circle help\" for more info.");
             }
             if (args.Count == 4)
             {
@@ -350,14 +350,14 @@ namespace STHMaxzzzie.Server
 
                 if (isArgs0Int == false || isArgs1Int == false || isArgs2Int == false || isArgs3Int == false)
                 {
-                    Debug.WriteLine("3rd Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
+                    CitizenFX.Core.Debug.WriteLine("3rd Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
                     return;
                 }
                 float argX = float.Parse(args[0].ToString());
                 float argY = float.Parse(args[1].ToString());
                 float argRadius = float.Parse(args[2].ToString());
                 argColor = int.Parse(args[3].ToString());
-                Debug.WriteLine("The server recieved cords for a circle.");
+                CitizenFX.Core.Debug.WriteLine("The server recieved cords for a circle.");
                 float[] argArray = { argX, argY, argRadius, argColor };
                 argArrayList.Add(argArray);
                 updateCircle();
@@ -372,7 +372,7 @@ namespace STHMaxzzzie.Server
 
                 if (isArgs0Int == false || isArgs1Int == false || isArgs2Int == false)
                 {
-                    Debug.WriteLine("4th Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
+                    CitizenFX.Core.Debug.WriteLine("4th Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
                     return;
                 }
                 float argX = float.Parse(args[0].ToString());
@@ -387,14 +387,14 @@ namespace STHMaxzzzie.Server
             else if (args.Count == 1)
             {
                 string arg0 = args[0].ToString();
-                //Debug.WriteLine($"locationname :{arg0}");
-                //Debug.WriteLine($"dict count {mapBoundsDict.Count}\nThat's how many maps are loaded in dictionairy.");
+                //CitizenFX.Core.Debug.WriteLine($"locationname :{arg0}");
+                //CitizenFX.Core.Debug.WriteLine($"dict count {mapBoundsDict.Count}\nThat's how many maps are loaded in dictionairy.");
 
 
                 if (mapBoundsDict.ContainsKey(arg0))
                 {
-                    //Debug.WriteLine("The server recieved the location for a circle.");
-                    //Debug.WriteLine($"Map is made out of {mapBoundsDict[arg0].Count} circles.");
+                    //CitizenFX.Core.Debug.WriteLine("The server recieved the location for a circle.");
+                    //CitizenFX.Core.Debug.WriteLine($"Map is made out of {mapBoundsDict[arg0].Count} circles.");
                     List<Vector3> mapBoundsLocationList = mapBoundsDict[arg0];
                     foreach (Vector3 location in mapBoundsLocationList)
                     {
@@ -405,26 +405,26 @@ namespace STHMaxzzzie.Server
                         argArrayList.Add(argArray);
                     }
                     updateCircle();
-                    Debug.WriteLine($"Added {arg0} to your circles.");
+                    CitizenFX.Core.Debug.WriteLine($"Added {arg0} to your circles.");
                 }
                 else if (arg0 == "list")
                 {
                     var combined = string.Join("\n", mapBoundsDict.Keys);
-                    Debug.WriteLine("All avalible preset circle locations are:\n" + combined);
+                    CitizenFX.Core.Debug.WriteLine("All avalible preset circle locations are:\n" + combined);
                 }
                 else if (arg0 == "help")
                 {
-                    Debug.WriteLine($"\"/circle\" gives you all options to set mapbounds using (a set of) circles. \nThere is a bunch of preset mapbounds embedded in the server. Type \"/circle list\" to see a list of all avalible presets. \nNote, some names are made shorter for ease of use (vespucci --> ves). \nManual placement of circles uses \"/circle x y radius colorId(0-100)\". \nIf no colorId is defined it will pick the last used one. Change the color manualy using \"/circle color colorIdValue\".");
+                    CitizenFX.Core.Debug.WriteLine($"\"/circle\" gives you all options to set mapbounds using (a set of) circles. \nThere is a bunch of preset mapbounds embedded in the server. Type \"/circle list\" to see a list of all avalible presets. \nNote, some names are made shorter for ease of use (vespucci --> ves). \nManual placement of circles uses \"/circle x y radius colorId(0-100)\". \nIf no colorId is defined it will pick the last used one. Change the color manualy using \"/circle color colorIdValue\".");
                 }
                 else
                 {
-                    Debug.WriteLine($"Oh no. Something went wrong!\n{arg0} isn't in the list of avalible mapbounds. Type \"/circle list\" for all mapbounds.");
+                    CitizenFX.Core.Debug.WriteLine($"Oh no. Something went wrong!\n{arg0} isn't in the list of avalible mapbounds. Type \"/circle list\" for all mapbounds.");
                 }
 
             }
             else
             {
-                Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
             }
         }
 
@@ -437,12 +437,12 @@ namespace STHMaxzzzie.Server
 
             if (argArrayList.Count == 0)
             {
-                Debug.WriteLine("There is no circle to delete.");
+                CitizenFX.Core.Debug.WriteLine("There is no circle to delete.");
                 return;
             }
             if (args.Count == 1 && (args[0].ToString() == "all" || args[0].ToString() == "first" || args[0].ToString() == "last"))
             {
-                Debug.WriteLine($"Delcircle {args[0].ToString()} command got recieved by the server.");
+                CitizenFX.Core.Debug.WriteLine($"Delcircle {args[0].ToString()} command got recieved by the server.");
                 if (args[0].ToString() == "last")
                 {
                     argArrayList.RemoveAt(argArrayList.Count - 1);
@@ -456,13 +456,13 @@ namespace STHMaxzzzie.Server
                 else if (args[0].ToString() == "all")
                 {
                     argArrayList.Clear();
-                    Debug.WriteLine("All circles are deleted.");
+                    CitizenFX.Core.Debug.WriteLine("All circles are deleted.");
                     updateCircle();
                 }
             }
             else
             {
-                Debug.WriteLine("Oh no. Something went wrong!\nYou should do /delcircle (first/ last/ all)");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /delcircle (first/ last/ all)");
             }
         }
     }
@@ -478,7 +478,7 @@ namespace STHMaxzzzie.Server
         public Teleports()
         {
             tpLocationsDict = LoadResources.tpLocations();
-            Debug.WriteLine($"I'm making a tp location dictionary.");
+            CitizenFX.Core.Debug.WriteLine($"I'm making a tp location dictionary.");
         }
 
         [Command("tpall", Restricted = false)] //restriction (default true)
@@ -490,7 +490,7 @@ namespace STHMaxzzzie.Server
                 string tpAllName = args[0].ToString();
                 if (tpLocationsDict.ContainsKey(tpAllName) == false)
                 {
-                    Debug.WriteLine("Oh no. Something went wrong!\nYour location is invalid. Type /tplocations for all avalible locations.");
+                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYour location is invalid. Type /tplocations for all avalible locations.");
 
                 }
 
@@ -519,11 +519,11 @@ namespace STHMaxzzzie.Server
                     TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"All players have been teleported to some very specific coords \nBlame {source.Name}" } });
                     return;
                 }
-                Debug.WriteLine("Oh no. Something went wrong!\nYou should do /tpall \"location\"/ (x y z). \nType /tplocations for all avalible locations.");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /tpall \"location\"/ (x y z). \nType /tplocations for all avalible locations.");
             }
             else
             {
-                Debug.WriteLine("Oh no. Something went wrong!\nYou should do /tpall \"location\"/ (x y z). \nType /tplocations for all avalible locations.");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /tpall \"location\"/ (x y z). \nType /tplocations for all avalible locations.");
             }
         }
 
@@ -536,7 +536,7 @@ namespace STHMaxzzzie.Server
 
             if (args.Count != 1 && args.Count != 3)
             {
-                Debug.WriteLine("Oh no. Something went wrong!\nYou should do /tp \"location\"/ (x y z). \nType /tplocations for all avalible locations.");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /tp \"location\"/ (x y z). \nType /tplocations for all avalible locations.");
                 return;
             }
             if (args.Count == 1)
@@ -544,12 +544,12 @@ namespace STHMaxzzzie.Server
                 string tpLocationName = args[0].ToString();
                 if (tpLocationsDict.ContainsKey(tpLocationName) == false)
                 {
-                    Debug.WriteLine("Oh no. Something went wrong!\nYour location is invalid. Type /tplocations for all avalible locations.");
+                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYour location is invalid. Type /tplocations for all avalible locations.");
                     return;
                 }
                 var tpVector = tpLocationsDict[tpLocationName];
                 source.TriggerEvent("tpPlayer", tpVector.X, tpVector.Y, tpVector.Z);
-                Debug.WriteLine($"You have been teleported to {tpLocationName}.");
+                CitizenFX.Core.Debug.WriteLine($"You have been teleported to {tpLocationName}.");
                 return;
             }
             int temp;
@@ -560,9 +560,9 @@ namespace STHMaxzzzie.Server
             if (args.Count == 3 && isArgs0Int == true && isArgs1Int == true && isArgs2Int == true)
             {
                 source.TriggerEvent("tpPlayer", int.Parse(args[0].ToString()), int.Parse(args[1].ToString()), int.Parse(args[2].ToString()));
-                Debug.WriteLine($"You teleported yourself to specific coords.");
+                CitizenFX.Core.Debug.WriteLine($"You teleported yourself to specific coords.");
             }
-            Debug.WriteLine("Oh no. Something went wrong!\nYou should do /tp \"location\"/ (x y z). \nType /tplocations for all avalible locations.");
+            CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /tp \"location\"/ (x y z). \nType /tplocations for all avalible locations.");
         }
 
         //toggle personal teleport
@@ -586,7 +586,7 @@ namespace STHMaxzzzie.Server
             }
             else
             {
-                Debug.WriteLine("Oh no. Something went wrong!\nYou should do /toggletp (true/false)");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /toggletp (true/false)");
             }
         }
 

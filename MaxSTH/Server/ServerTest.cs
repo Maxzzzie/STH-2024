@@ -12,7 +12,7 @@ namespace STHMaxzzzie.Server
     {
         public DeathMessages()
         {
-            Debug.WriteLine($"DeathMessages has started.");
+            CitizenFX.Core.Debug.WriteLine($"DeathMessages has started.");
             EventHandlers["baseevents:onPlayerDied"] += new Action<Player, int, List<object>>(OnPlayerDied);
             EventHandlers["baseevents:onPlayerKilled"] += new Action<Player, int, dynamic>(OnPlayerKilled);
         }
@@ -29,11 +29,11 @@ namespace STHMaxzzzie.Server
 
             foreach (KeyValuePair<string, object> property in dictionary)
             {
-                Debug.WriteLine($"Expando --> key: {property.Key} || Value {property.Value}");
+                CitizenFX.Core.Debug.WriteLine($"Expando --> key: {property.Key} || Value {property.Value}");
             }
-            Debug.WriteLine($"Triggered OnPlayerKilled");
+            CitizenFX.Core.Debug.WriteLine($"Triggered OnPlayerKilled");
 
-            Debug.WriteLine($"died {victim.Name}, pedType?: {two}.");
+            CitizenFX.Core.Debug.WriteLine($"died {victim.Name}, pedType?: {two}.");
             //TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"died {victim.Name}, 2{two} 3{three}." } });
         }
 
@@ -53,7 +53,7 @@ namespace STHMaxzzzie.Server
             float deathZ = Convert.ToSingle(deathCoords[2]);
             Vector3 deathPosition = new Vector3(deathX, deathY, deathZ);
 
-            Debug.WriteLine($"SERVER DeathMessages: Player: {player.Name}, killerType = {killerType} Coords = {deathPosition}.");
+            CitizenFX.Core.Debug.WriteLine($"SERVER DeathMessages: Player: {player.Name}, killerType = {killerType} Coords = {deathPosition}.");
             //killerType is an and in this case linked to the model.
             //find info here https://docs.fivem.net/docs/resources/baseevents/events/onPlayerDied/
             //the following code makes no sence then.
@@ -103,7 +103,7 @@ namespace STHMaxzzzie.Server
             {
                 cause = "reasons unknown";
             }
-            Debug.WriteLine($"Player {player.Name} died because of {cause}. Debug info: {killerType}");
+            CitizenFX.Core.Debug.WriteLine($"Player {player.Name} died because of {cause}. CitizenFX.Core.Debug info: {killerType}");
             TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name} died because of {cause}." } });
         }
     }
@@ -114,7 +114,7 @@ namespace STHMaxzzzie.Server
 //     [Command("test", Restricted = false)]
 //     void TestCommand(int source, List<object> args, string raw)
 //     {
-//         Debug.WriteLine($"This is the test command.");
+//         CitizenFX.Core.Debug.WriteLine($"This is the test command.");
 
 //         // Display notification to the player
 //         API.SetNotificationTextEntry("STRING");

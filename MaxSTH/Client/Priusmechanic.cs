@@ -25,7 +25,7 @@ namespace STHMaxzzzie.Client
 
         Vehicle prius;
         bool priIsAlive = false;
-        [Command("pri")]
+        [Command("pri2")]
         async void pri(int source, List<object> args, string raw)
         {
             if (priIsAlive)

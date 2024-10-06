@@ -17,7 +17,7 @@ public static class LoadResources
         bool exists = File.Exists(path_to_whitelist_file); // true if file is there
         if (exists == false)
         {
-            Debug.WriteLine($"Whitelist.txt does not exist in :{path_to_whitelist_file}");
+            CitizenFX.Core.Debug.WriteLine($"Whitelist.txt does not exist in :{path_to_whitelist_file}");
             return null;
         }
 
@@ -50,7 +50,7 @@ public static class LoadResources
         bool exists = File.Exists(path_to_teleportLocations_file);
         if (exists == false)
         {
-            Debug.WriteLine($"TeleportLocations.txt does not exist in :{path_to_teleportLocations_file}");
+            CitizenFX.Core.Debug.WriteLine($"TeleportLocations.txt does not exist in :{path_to_teleportLocations_file}");
             return null;
         }
 
@@ -77,7 +77,7 @@ public static class LoadResources
         bool exists = File.Exists(path_to_respawnLocations_file);
         if (exists == false)
         {
-            Debug.WriteLine($"RespawnLocations.txt does not exist in :{path_to_respawnLocations_file}");
+            CitizenFX.Core.Debug.WriteLine($"RespawnLocations.txt does not exist in :{path_to_respawnLocations_file}");
             return null;
         }
 
@@ -94,7 +94,7 @@ public static class LoadResources
             Vector4 spawnXYZH = new Vector4(spawnW, spawnX, spawnY, spawnZ);
             respawnLocationsDict.Add(spawnName, spawnXYZH);
         }
-        Debug.WriteLine($"server.Respawnlocations succesfully loaded the respawnDict.");
+        CitizenFX.Core.Debug.WriteLine($"server.Respawnlocations succesfully loaded the respawnDict.");
         return respawnLocationsDict;
     }
 
@@ -103,11 +103,11 @@ public static class LoadResources
     {
         var path_to_resource = API.GetResourcePath(API.GetCurrentResourceName());
         var path_to_nonAnimalModel_file = $"{path_to_resource}/Resources/PedModelsWithoutAnimals.txt";
-        Debug.WriteLine($"Making a NonAnimalModels playlist.");
+        CitizenFX.Core.Debug.WriteLine($"Making a NonAnimalModels playlist.");
         bool exists = File.Exists(path_to_nonAnimalModel_file); // true if file is there
         if (exists == false)
         {
-            Debug.WriteLine($"PedModelsWithoutAnimals.txt does not exist in :{path_to_nonAnimalModel_file}");
+            CitizenFX.Core.Debug.WriteLine($"PedModelsWithoutAnimals.txt does not exist in :{path_to_nonAnimalModel_file}");
             return null;
         }
 
@@ -118,7 +118,7 @@ public static class LoadResources
         {
             result.Add(model.Trim());
         }
-        Debug.WriteLine($"{result.Count}");
+        CitizenFX.Core.Debug.WriteLine($"{result.Count}");
         return result;
     }
 
@@ -130,7 +130,7 @@ public static class LoadResources
         bool exists = File.Exists(path_to_MapBounds_file);
         if (exists == false)
         {
-            Debug.WriteLine($"MapBounds.txt does not exist in :{path_to_MapBounds_file}");
+            CitizenFX.Core.Debug.WriteLine($"MapBounds.txt does not exist in :{path_to_MapBounds_file}");
             return null;
         }
 
@@ -166,7 +166,7 @@ public static class LoadResources
         bool exists = File.Exists(path_to_AllowedVehicles_file);
         if (exists == false)
         {
-            Debug.WriteLine($"AllowedVehicles.txt does not exist in :{path_to_AllowedVehicles_file}");
+            CitizenFX.Core.Debug.WriteLine($"AllowedVehicles.txt does not exist in :{path_to_AllowedVehicles_file}");
             return null;
         }
 
