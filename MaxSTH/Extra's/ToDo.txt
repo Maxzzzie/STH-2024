@@ -1,7 +1,3 @@
-Display death msg's when someone is killed too
-Add Some sort of pri mechanic
-
-
 Heading indicator
 Location indicator
 Callout indicator
@@ -44,7 +40,8 @@ Add pma voice (proximity chat)
 
 //finished
 
-
+6-10-2024 Display death msg's when someone is killed too
+6-10-2024 Added Some sort of pri mechanic
 v03-04-2023 Display setting msg's
 added delete weapon options
 temp respawn feature added. Spawns to closest respawnpoint.

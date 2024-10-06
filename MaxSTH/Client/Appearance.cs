@@ -53,7 +53,7 @@ namespace STHMaxzzzie.Client
             await Game.Player.ChangeModel(new Model(model));
             SetPedDefaultComponentVariation(PlayerPedId());
             TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"You changed your model to:{model}."}});
-            TriggerEvent("huntweapon"); //this doesnt work (abhi)
+            TriggerEvent("giveweapon"); 
         }
 
         //gets triggered by pressing f6 and /model

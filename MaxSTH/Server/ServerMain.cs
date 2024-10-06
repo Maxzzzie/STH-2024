@@ -191,12 +191,12 @@ namespace STHMaxzzzie.Server
         [Command("togglepod", Restricted = false)]
         void toggleweapon(int source, List<object> args, string raw)
         {
-            if (args.Count == 1 && args[0].ToString() == "on")
+            if (args.Count == 1 && args[0].ToString() == "true")
             {
                 API.StartResource("playernames");
                 TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PlayerOverheadDisplay is now on." } });
             }
-            else if (args.Count == 1 && args[0].ToString() == "off")
+            else if (args.Count == 1 && args[0].ToString() == "false")
             {
                 API.StopResource("playernames");
                 TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PlayerOverheadDisplay is now off." } });
@@ -283,7 +283,7 @@ namespace STHMaxzzzie.Server
         public static bool isPvpAllowed = true;
         public static bool isShootingFromVehicleAllowed = false;
 
-        [Command("togglesfv", Restricted = false)] //restriction (default true)
+        [Command("togglesfv", Restricted = true)] //restriction (default true)
         void toggleShootingFromVehicle(int source, List<object> args, string raw)
         {
 
@@ -306,7 +306,7 @@ namespace STHMaxzzzie.Server
             }
         }
 
-        [Command("toggleweapon", Restricted = false)]
+        [Command("toggleweapon", Restricted = true)]
         void toggleweapon(int source, List<object> args, string raw)
         {
             if (args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "true"))
@@ -328,7 +328,7 @@ namespace STHMaxzzzie.Server
             }
         }
 
-        [Command("togglepvp", Restricted = false)]
+        [Command("togglepvp", Restricted = true)]
         void togglepvp(int source, List<object> args, string raw)
         {
             if (args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "true"))

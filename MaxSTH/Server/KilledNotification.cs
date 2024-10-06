@@ -108,7 +108,7 @@ namespace STHMaxzzzie.Server
             }
             else if (killerType == 1)
             {
-                cause = "a player";//not right
+                cause = "a player";//not right because for player killed its onPlayerKilled event.
             }
             else if (killerType == 2)
             {
