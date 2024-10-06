@@ -1,12 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Library</OutputType> <!-- Ensures it's a library -->
     <DebugType>embedded</DebugType>
     <TargetName>$(AssemblyName).net</TargetName>
     <DefineConstants>SERVER</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
   <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  
 </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CitizenFX.Core.Server" Version="1.0.*" />

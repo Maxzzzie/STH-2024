@@ -5,7 +5,7 @@ using CitizenFX.Core.Native;
 using System.Collections.Generic;
 using Microsoft.CSharp.RuntimeBinder; // chat gpt addition to prevent compile error
 
-
+/*
 namespace STHMaxzzzie.Server
 {
     public class Test : BaseScript
@@ -28,4 +28,4 @@ namespace STHMaxzzzie.Server
             TriggerClientEvent("STH:ShowNotification", source, message, type);
         }
     }
-}
+}*/

@@ -11,7 +11,7 @@ namespace STHMaxzzzie.Server
         public ServerCommands()
         {
             // Register the server-side command "mycommand"
-            API.RegisterCommand("mycommand", new Action<int, List<object>, string>(HandleMyCommand), false);
+            API.RegisterCommand("mycommand3", new Action<int, List<object>, string>(HandleMyCommand), false);
         }
 
         // Function to handle the command
