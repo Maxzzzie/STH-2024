@@ -3,8 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Client\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{51A9B8AC-262E-4C51-A085-D94890FFB1AA}|STH_Maxzzzie.Client.csproj|c:\\users\\kevin\\documents\\fivem\\sth-2024\\maxsth\\client\\togglesfv.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{51A9B8AC-262E-4C51-A085-D94890FFB1AA}|STH_Maxzzzie.Client.csproj|solutionrelative:togglesfv.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{51A9B8AC-262E-4C51-A085-D94890FFB1AA}|STH_Maxzzzie.Client.csproj|c:\\users\\kevin\\documents\\fivem\\sth-2024\\maxsth\\client\\priusmechanic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{51A9B8AC-262E-4C51-A085-D94890FFB1AA}|STH_Maxzzzie.Client.csproj|solutionrelative:priusmechanic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51A9B8AC-262E-4C51-A085-D94890FFB1AA}|STH_Maxzzzie.Client.csproj|c:\\users\\kevin\\documents\\fivem\\sth-2024\\maxsth\\client\\clientmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{51A9B8AC-262E-4C51-A085-D94890FFB1AA}|STH_Maxzzzie.Client.csproj|solutionrelative:clientmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{51A9B8AC-262E-4C51-A085-D94890FFB1AA}|STH_Maxzzzie.Client.csproj|c:\\users\\kevin\\documents\\fivem\\sth-2024\\maxsth\\client\\alphavehicles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{51A9B8AC-262E-4C51-A085-D94890FFB1AA}|STH_Maxzzzie.Client.csproj|solutionrelative:alphavehicles.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,17 +26,56 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ClientMain.cs",
+              "DocumentMoniker": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Client\\ClientMain.cs",
+              "RelativeDocumentMoniker": "ClientMain.cs",
+              "ToolTip": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Client\\ClientMain.cs",
+              "RelativeToolTip": "ClientMain.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAAC8AAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-06T16:49:07.542Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "ToggleSFV.cs",
+              "DocumentMoniker": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Client\\ToggleSFV.cs",
+              "RelativeDocumentMoniker": "ToggleSFV.cs",
+              "ToolTip": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Client\\ToggleSFV.cs",
+              "RelativeToolTip": "ToggleSFV.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-06T16:47:21.678Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "alphaVehicles.cs",
+              "DocumentMoniker": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Client\\alphaVehicles.cs",
+              "RelativeDocumentMoniker": "alphaVehicles.cs",
+              "ToolTip": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Client\\alphaVehicles.cs",
+              "RelativeToolTip": "alphaVehicles.cs",
+              "ViewState": "AQIAABEAAAAAAAAAAAAQwO8AAAAXAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-06T16:16:20.549Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "Priusmechanic.cs",
               "DocumentMoniker": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Client\\Priusmechanic.cs",
               "RelativeDocumentMoniker": "Priusmechanic.cs",
               "ToolTip": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Client\\Priusmechanic.cs",
               "RelativeToolTip": "Priusmechanic.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACIAAAALAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAEAAAAhAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-06T11:40:38.008Z",
               "EditorCaption": ""

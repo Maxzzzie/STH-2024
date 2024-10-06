@@ -40,7 +40,7 @@ namespace STHMaxzzzie.Client
             }
         }
 
-        [EventHandler("disableCanPlayerShootFromVehicles")]
+        //[EventHandler("disableCanPlayerShootFromVehicles")]
         void DisableCanPlayerShootFromVehicles(bool sfv)
         {
             isShootingFromVehicleAllowed = sfv;
