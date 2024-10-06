@@ -1,16 +1,16 @@
-using System;
-using System.Threading.Tasks;
-using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using static CitizenFX.Core.Native.API;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
+// using System;
+// using System.Threading.Tasks;
+// using CitizenFX.Core;
+// using CitizenFX.Core.Native;
+// using static CitizenFX.Core.Native.API;
+// using System.Collections.Generic;
+// using System.Dynamic;
+// using System.Linq;
 
-namespace STHMaxzzzie.Client
-{
-    public class pinkPrius : BaseScript
-    {
+// namespace STHMaxzzzie.Client
+// {
+//     public class pinkPrius : BaseScript
+//     {
 
 
 
@@ -98,5 +98,5 @@ namespace STHMaxzzzie.Client
         //         }
         //     }
         // }
-    }
-}
+//     }
+// }
