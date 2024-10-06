@@ -89,7 +89,7 @@ namespace STHMaxzzzie.Client
             {
                 Spawn.SpawnPlayer(-1610f, -1055f, 13f, 318f);
                 didIAlreadySpawnOnce = true;
-                return;
+                //return; //not needed?
             }
             else
             {
@@ -104,7 +104,7 @@ namespace STHMaxzzzie.Client
                     {
                         distanceToThatPoint = dist;
                         closestRespawnPoint = entry.Key;
-                        //Debug.WriteLine($"new closest respawnpoint! it's {entry.Key} at {dist} meters away.");
+                        
                     }
                 }
                 if (!respawnLocationsDict.ContainsKey(closestRespawnPoint))
@@ -118,7 +118,6 @@ namespace STHMaxzzzie.Client
                     Spawn.SpawnPlayer(spawn.X, spawn.Y, spawn.Z, spawn.W);
                     Debug.WriteLine($"Respawning at closest spawnpoint");
                 }
-                //Debug.WriteLine($"The players last location was {pPos.ToString()} \nSpawning player at closest location called: {closestRespawnPoint}.\nNew locations cords are: {spawn.ToString()}. \nIt is {distanceToThatPoint} meters away.");
             }
 
             //-------------------------------------------------- end of temp respawn code ---------------------------------------------------------
