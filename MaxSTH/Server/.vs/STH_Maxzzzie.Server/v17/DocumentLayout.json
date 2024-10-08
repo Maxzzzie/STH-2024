@@ -5,6 +5,22 @@
     {
       "AbsoluteMoniker": "D:0:0:{FDE7137E-0B79-4DE4-B346-9AA031C8DFB5}|STH_Maxzzzie.Server.csproj|c:\\users\\kevin\\documents\\fivem\\sth-2024\\maxsth\\server\\servermain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FDE7137E-0B79-4DE4-B346-9AA031C8DFB5}|STH_Maxzzzie.Server.csproj|solutionrelative:servermain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDE7137E-0B79-4DE4-B346-9AA031C8DFB5}|STH_Maxzzzie.Server.csproj|c:\\users\\kevin\\documents\\fivem\\sth-2024\\maxsth\\server\\servertest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDE7137E-0B79-4DE4-B346-9AA031C8DFB5}|STH_Maxzzzie.Server.csproj|solutionrelative:servertest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDE7137E-0B79-4DE4-B346-9AA031C8DFB5}|STH_Maxzzzie.Server.csproj|c:\\users\\kevin\\documents\\fivem\\sth-2024\\maxsth\\server\\primechanic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDE7137E-0B79-4DE4-B346-9AA031C8DFB5}|STH_Maxzzzie.Server.csproj|solutionrelative:primechanic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDE7137E-0B79-4DE4-B346-9AA031C8DFB5}|STH_Maxzzzie.Server.csproj|c:\\users\\kevin\\documents\\fivem\\sth-2024\\maxsth\\server\\servercommands.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDE7137E-0B79-4DE4-B346-9AA031C8DFB5}|STH_Maxzzzie.Server.csproj|solutionrelative:servercommands.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDE7137E-0B79-4DE4-B346-9AA031C8DFB5}|STH_Maxzzzie.Server.csproj|c:\\users\\kevin\\documents\\fivem\\sth-2024\\maxsth\\server\\killednotification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDE7137E-0B79-4DE4-B346-9AA031C8DFB5}|STH_Maxzzzie.Server.csproj|solutionrelative:killednotification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,8 +30,60 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ServerTest.cs",
+              "DocumentMoniker": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Server\\ServerTest.cs",
+              "RelativeDocumentMoniker": "ServerTest.cs",
+              "ToolTip": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Server\\ServerTest.cs",
+              "RelativeToolTip": "ServerTest.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-06T15:52:27.696Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PriMechanic.cs",
+              "DocumentMoniker": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Server\\PriMechanic.cs",
+              "RelativeDocumentMoniker": "PriMechanic.cs",
+              "ToolTip": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Server\\PriMechanic.cs",
+              "RelativeToolTip": "PriMechanic.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-06T15:52:25.425Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ServerCommands.cs",
+              "DocumentMoniker": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Server\\ServerCommands.cs",
+              "RelativeDocumentMoniker": "ServerCommands.cs",
+              "ToolTip": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Server\\ServerCommands.cs",
+              "RelativeToolTip": "ServerCommands.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-06T15:52:24.573Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "KilledNotification.cs",
+              "DocumentMoniker": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Server\\KilledNotification.cs",
+              "RelativeDocumentMoniker": "KilledNotification.cs",
+              "ToolTip": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Server\\KilledNotification.cs",
+              "RelativeToolTip": "KilledNotification.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABoAAABqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-06T12:30:04.448Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -24,7 +92,7 @@
               "RelativeDocumentMoniker": "ServerMain.cs",
               "ToolTip": "C:\\Users\\kevin\\Documents\\FiveM\\STH-2024\\MaxSTH\\Server\\ServerMain.cs",
               "RelativeToolTip": "ServerMain.cs",
-              "ViewState": "AQIAACoAAAAAAAAAAAAUwEgAAAAmAAAA",
+              "ViewState": "AQIAAAsBAAAAAAAAAAAAACQBAABFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-10-06T11:41:26.183Z",
               "EditorCaption": ""

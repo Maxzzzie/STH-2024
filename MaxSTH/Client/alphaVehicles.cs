@@ -77,6 +77,15 @@ namespace STHMaxzzzie.Client
             }
         }
 
+//For vehicle colors and customisations look here. The original pastebins aren't functional anymore in the natives list.
+
+//https://wiki.rage.mp/index.php?title=Vehicle_Mods
+//https://wiki.rage.mp/index.php?title=Vehicle_Colors
+
+
+
+
+
         //spawns a custom fq2 for cornelius, 
         [Command("vehboss")]
         async void cor(int source, List<object> args, string raw)
@@ -96,6 +105,28 @@ namespace STHMaxzzzie.Client
             API.SetVehicleNeonLightEnabled(vehicle.Handle, 3, true);
             API.SetVehicleNeonLightsColour(vehicle.Handle, 0, 100, 0);
             API.ToggleVehicleMod(vehicle.Handle, 22, true);
+            Game.PlayerPed.SetIntoVehicle(vehicle, VehicleSeat.Driver);
+            API.SetVehicleEngineOn(vehicle.Handle, true, true, false);
+            API.SetVehicleXenonLightsColor(vehicle.Handle, 3);
+        }
+
+        //spawns a custom f620 for finger 
+        [Command("vehfinger")]
+        async void finger(int source, List<object> args, string raw)
+        {
+            TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"You spawned a specialized f620. Enjoy Finger!"}});
+            int color1 = 57; 
+            int color2 = 57; //57 = Util Green
+            var model = new Model(VehicleNameToHash["f620"]);
+            Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+            API.SetVehicleColours(vehicle.Handle, color1, color2);
+            API.SetVehicleNumberPlateText(vehicle.Handle, "Finger");
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 0, true);
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 1, true);
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 2, true);
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 3, true);
+            API.SetVehicleNeonLightsColour(vehicle.Handle, 0, 100, 0);
+            API.ToggleVehicleMod(vehicle.Handle, 22, true); //turns xenon on
             Game.PlayerPed.SetIntoVehicle(vehicle, VehicleSeat.Driver);
             API.SetVehicleEngineOn(vehicle.Handle, true, true, false);
             API.SetVehicleXenonLightsColor(vehicle.Handle, 3);

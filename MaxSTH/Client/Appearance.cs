@@ -45,16 +45,16 @@ namespace STHMaxzzzie.Client
         void randmodelHandler_() { } //add empty handler for -SelectRandomModel so it doesn't show up in chat. 
 
 
+
         [EventHandler("changingModel")]
         public async void changingModel(string getModel)
         {
-
             model = getModel;
             await Game.Player.ChangeModel(new Model(model));
             SetPedDefaultComponentVariation(PlayerPedId());
             TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"You changed your model to:{model}."}});
-            TriggerEvent("giveweapon"); 
-        }
+            TriggerEvent("lastWeaponClass",true);
+                    }
 
         //gets triggered by pressing f6 and /model
         [EventHandler("changeRandomModel")]
@@ -69,7 +69,7 @@ namespace STHMaxzzzie.Client
 
 
         [Command("model")]
-        void requestModel(int source, List<object> args, string raw)
+        public void requestModel(int source, List<object> args, string raw)
         {
             if (Game.PlayerPed.IsAlive == false)
             {

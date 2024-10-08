@@ -80,7 +80,7 @@ namespace STHMaxzzzie.Server
             //vehicle type (empty if killer wasn't in a vehicle), vehicleseat, weaponhash "https://gtahash.ru/weapons/?page=3", killertype, and some more. killer maybe?
 
             Debug.WriteLine($"died {victim.Name}, pedType?: {deathCause}.");
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"{victim.Name} died." } });
+            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"{victim.Name} was killed." } });
         }
 
         //onplayerdied will trigger when a player isn't killed by another player
@@ -143,7 +143,7 @@ namespace STHMaxzzzie.Server
                 cause = "reasons unknown";
             }
             Debug.WriteLine($"Player {player.Name} died because of {cause}. Debug info: {killerType}");
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name} died maybe because of {cause}." } });
+            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name} died." } });
         }
     }
 }

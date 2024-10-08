@@ -40,7 +40,7 @@ namespace STHMaxzzzie.Client
             }
         }
 
-        [EventHandler("disableCanPlayerShootFromVehicles")]
+        //[EventHandler("disableCanPlayerShootFromVehicles")]
         void DisableCanPlayerShootFromVehicles(bool sfv)
         {
             isShootingFromVehicleAllowed = sfv;
@@ -64,11 +64,11 @@ namespace STHMaxzzzie.Client
             Debug.WriteLine($"name {respawnLocationName} location xyz {respawnLocationsXYZH.ToString()}");
         }
 
-        [EventHandler("baseevents:onPlayerDied")] //do we need this still?
-        void onPlayerDiedHandler()
-        {
-            Debug.WriteLine("I'm dead :(");
-        }
+        // [EventHandler("baseevents:onPlayerDied")] //do we need this still? --i don't think so. Max 2024
+        // void onPlayerDiedHandler()
+        // {
+        //     Debug.WriteLine("I'm dead :(");
+        // }
 
         [Tick]
         public async Task OnTick()
@@ -257,7 +257,7 @@ namespace STHMaxzzzie.Client
         void updateCircle(List<object> argArray)
         {
             blip = AddBlipForRadius(float.Parse(argArray[0].ToString()), float.Parse(argArray[1].ToString()), 0, float.Parse(argArray[2].ToString()));
-            SetBlipAlpha(blip, 75);
+            SetBlipAlpha(blip, 40);//sets opacity of the mapbound circles
             SetBlipColour(blip, int.Parse(argArray[3].ToString()));
             blipList.Add(blip);
         }

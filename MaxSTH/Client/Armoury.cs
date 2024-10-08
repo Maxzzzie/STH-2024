@@ -13,10 +13,60 @@ namespace STHMaxzzzie.Client
     {
         bool isWeaponAllowed = true;
         bool isPvpAllowed = false;
+        string lastWeaponClass = "hunt";
 
-        public Armoury()
+        [Command("weapon")]
+        public void weaponCommand(int source, List<object> args, string raw)
         {
+            if (args.Count == 1)
+            {
+                string input = args[0].ToString();
+                if (input == "hunt")
+                {
+                    giveHuntWeapon(false);
+                }
+                else if (input == "run")
+                {
+                    giveRunWeapon(false);
+                }
+                else if (input == "all")
+                {
+                    giveAllWeapon(false);
+                }
 
+                else
+                {
+                    giveHuntWeapon(true); //i'm giving default weapons anyway. Might as well. Without a msg to it.
+                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Something went wrong. You should type /weapon hunt/run/all." } });
+                }
+            }
+            else if (args.Count == 0)
+            {
+                handleLastWeaponClass(false);
+            }
+            else
+            {
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Something went wrong. You should type /weapon hunt/run/all." } });
+            }
+        }
+
+        [EventHandler("lastWeaponClass")]
+        void handleLastWeaponClass(bool model)
+        //if we get this from the /model command, "model" is true.
+        //This prevents the you now have weapons message.
+        {
+            if (lastWeaponClass == "hunt")
+            {
+                giveHuntWeapon(model);
+            }
+            else if (lastWeaponClass == "all")
+            {
+                giveAllWeapon(model);
+            }
+            else if (lastWeaponClass == "run")
+            {
+                giveRunWeapon(model);
+            }
         }
 
         [EventHandler("updatePvp")]
@@ -39,20 +89,26 @@ namespace STHMaxzzzie.Client
             }
             if (isWeaponAllowed == true)
             {
-                TriggerEvent("giveweapon");
+                TriggerEvent("lastWeaponClass");
                 //Debug.WriteLine($"Weapon's are turned on."); //this msg is now handled by the server.
             }
 
         }
 
+        [EventHandler("giveWeapon")]
+        void setGiveWeapon()
+        {
+            TriggerEvent("lastWeaponClass", false); //true to not show up a message when giving the class again.
+        }
 
-        //Giving a weapon
-        [Command("weapon")]
-        [EventHandler("giveweapon")]
-        public void giveWeapon()
+
+        //Giving a runweapon
+        [EventHandler("runWeapon")]
+        void giveRunWeapon(bool model)
         //Void doesn't return anything. These are datatypes. (var/int/string/bool/double/char/my_own!)
 
         {
+            lastWeaponClass = "run";
             //checks if weapons are enabled
             if (isWeaponAllowed)
             {
@@ -77,30 +133,32 @@ namespace STHMaxzzzie.Client
                 Game.PlayerPed.Weapons.Give(WeaponHash.HomingLauncher, 5, true, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, true, false);
 
-                TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"You have general weapons."}});
+                if (!model)
+                {
+                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You have run weapons." } });
+                }
             }
             //if (isWeaponAllowed) checks for true/false. And continues with the body if it's true.
             else
             {
-             TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"Weapon command is currently off."}});
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Weapon command is currently off." } });
             }
         }
 
         //Giving a weapon
-        [Command("huntweapon")]
-        [EventHandler("huntweapon")]
-        void giveHuntWeapon()
+        [EventHandler("huntWeapon")]
+        void giveHuntWeapon(bool model)
         //Void doesn't return anything. These are datatypes. (var/int/string/bool/double/char/my_own!)
         {
+            lastWeaponClass = "hunt";
             //checks if weapons are enabled
             if (isWeaponAllowed)
             {
                 //actualy does the giving of weapons
 
                 Game.PlayerPed.Weapons.RemoveAll();
-                Game.PlayerPed.Weapons.Give(WeaponHash.Firework, 25, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Firework, 5, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.CombatPistol, 25, false, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.RayPistol, 1, true, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.FlareGun, 25, true, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.PumpShotgun, 500, true, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.SawnOffShotgun, 500, true, false);
@@ -111,17 +169,21 @@ namespace STHMaxzzzie.Client
                 Game.PlayerPed.Weapons.Give(WeaponHash.Pistol, 500, true, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, true, false);
 
-                TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"You now have hunter weapons."}});
+                if (!model)
+                {
+                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You now have hunter weapons." } });
+                }
             }
             else
             {
-               TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"Huntweapon command is currently off."}});
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Huntweapon command is currently off." } });
             }
         }
         //Giving all weapons
-        [Command("allweapon")]
-        void giveAllWeapon()
+        [EventHandler("allWeapon")]
+        void giveAllWeapon(bool model)
         {
+            lastWeaponClass = "all";
             if (isWeaponAllowed)
             {
                 Game.PlayerPed.Weapons.RemoveAll();
@@ -129,11 +191,14 @@ namespace STHMaxzzzie.Client
                 {
                     Game.PlayerPed.Weapons.Give(weapon, 999, false, true);
                 }
-                TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"You now have all weapons."}});
+                if (!model)
+                {
+                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You now have all weapons." } });
+                }
             }
             else
             {
-                TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"Allweapon command is currently off."}});
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Allweapon command is currently off." } });
             }
         }
 

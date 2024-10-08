@@ -117,7 +117,7 @@ function RequestAllIpls()
 	RequestIpl('CanyonRvrShallow')
 
 	-- Zancudo Gates (GTAO like): -1600.301, 2806.731, 18.797
-	RequestIpl('CS3_07_MPGates')
+	--RequestIpl('CS3_07_MPGates')
 
 	-- Pillbox hospital: 356.8, -590.1, 43.3
 	RequestIpl('RC12B_Default')

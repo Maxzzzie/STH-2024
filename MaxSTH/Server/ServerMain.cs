@@ -354,12 +354,12 @@ namespace STHMaxzzzie.Server
 
 
     public class MapBounds : BaseScript
-    // a few blip color id's :1=red 2=green 3=lightblue 4=white 5=yellow 6=lighterRed 7=lila 8=purple/pink 64=orange 69=lime
+    // a few blip color id's :1=red 2=green 3=lightblue 4=white 5=yellow 6=lighterRed 7=lila 8=purple/pink 64=orange 69=lime Find the rest here https://docs.fivem.net/docs/game-references/blips/
     {
         static List<float[]> argArrayList = new List<float[]>();
         //argArrayList stores the input values for the blips so players that join late can sync the map bounds.
         public static Dictionary<string, List<Vector3>> mapBoundsDict;
-        int argColor = 5;
+        int argColor = 4;
 
         public MapBounds()
         {
@@ -680,16 +680,6 @@ namespace STHMaxzzzie.Server
             }
         }
     }
-
-    // public class DeathNotification : BaseScript
-    // {
-    //     public DeathNotification()
-    //     {
-    //         EventHandlers["baseevents:onPlayerDied"] += new Action<Player>(OnPlayerDied);
-    //         EventHandlers["baseevents:onPlayerKilled"] += new Action<Player, string>(OnPlayerKilled);
-    //     }
-
-    // }
 }
 
 

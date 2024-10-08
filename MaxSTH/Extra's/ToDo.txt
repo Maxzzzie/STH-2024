@@ -1,3 +1,4 @@
+Open zancudo gates
 Heading indicator
 Location indicator
 Callout indicator
@@ -12,7 +13,6 @@ Fix teleport to teleport with vehicle if personal teleport
 fix vehicle to have a toggle between allowed classes and type of vehicles. (no spawning italy gto (sports) during hunts if sports is allowed etc.)
 Remove weapons from npcs/ fix getting weapons from npcs and gangmembers.
 add toggle weapon sets
-combine weapons to a /gun (all, hunt, run, nonlethal)
 Toggle pvp per person
 Add a good vehiclespawner
 Add playerlist
@@ -29,16 +29,25 @@ Add tpall to host sending the request.
 force 1st person possibility
 fortzencudogates
 fix model glitches
-Player spawns behind car at traffic light.
 Players old car despawns.
 /cveh sets you in closest vehicle.
-fix ferris wheel and coaster
-Add pma voice (proximity chat)
+Add pma voice (proximity chat) Increase range and add a radio frequency
+
 
 
 
 
 //finished
+8-10-2024
+Ped model change now gives you back your previous weaponclass. Weapon class commands are changed from /huntweapon etc to /weapon hunt.
+/weapon gives last added class again.
+Ped model change doesn't display a message that it gives a weapon class again. (it needs to give fresh weapons as they belong to the model not the player)
+Finger custom vehicle model added.
+Death and killed messages have a distinct difference now.
+Circle blips have different colors.
+Fixed a bug with ls east circles.
+Fixed ferris wheel and some open holes.
+Added some respawn points
 
 6-10-2024 Display death msg's when someone is killed too
 6-10-2024 Added Some sort of pri mechanic
@@ -70,12 +79,5 @@ Added custom requesting of model /model (modelname)
 
 
 
-
-Tick
+Notes of things to research
 Ray casting
-
-
-
-death
-can teleport player to 0 0 0. Ped was not in vehicle. Player was not nearby. Ped was found and gave a location.
-black screen loading is quite often. Screenshots included
