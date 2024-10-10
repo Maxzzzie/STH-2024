@@ -1,4 +1,8 @@
-Open zancudo gates
+Change death msg to notification (SetNotificationTextEntry, AddTextComponentSubstringPlayerName, DrawNotification)
+Fix pri spawner neons etc. (https://docs.fivem.net/natives/?_0x57F24253)
+Fix pri spawner notification ( https://docs.fivem.net/natives/?_0x1E546224 )
+Give player invincibility at spawn (https://docs.fivem.net/natives/?_0xDFB9A2A2)
+Make /nudge or /stuck ( https://docs.fivem.net/natives/?_0xFF5A1988 https://docs.fivem.net/natives/?_0xA345EFE )
 Heading indicator
 Location indicator
 Callout indicator
@@ -6,12 +10,13 @@ Speed indicator
 Vehicle name/type warning or speed limiter
 Display player online list
 Display all commands
-Display time
+Display time ( https://docs.fivem.net/natives/?_0xA4EA0691 )
 Implement a menu
 fix stamina
+add ped that gets in player car https://docs.fivem.net/natives/?_0x374827C2
 Fix teleport to teleport with vehicle if personal teleport
 fix vehicle to have a toggle between allowed classes and type of vehicles. (no spawning italy gto (sports) during hunts if sports is allowed etc.)
-Remove weapons from npcs/ fix getting weapons from npcs and gangmembers.
+Remove weapons from npcs/ fix getting weapons from npcs and gangmembers. https://docs.fivem.net/natives/?_0xA44CE817
 add toggle weapon sets
 Toggle pvp per person
 Add a good vehiclespawner
@@ -38,8 +43,11 @@ Add pma voice (proximity chat) Increase range and add a radio frequency
 
 
 //finished
-8-10-2024
-Ped model change now gives you back your previous weaponclass. Weapon class commands are changed from /huntweapon etc to /weapon hunt.
+9-10-2024 -- Open zancudo gates from fivem ipl master
+Fixed wait timer for /fix (untested)
+Fixed pri mechanic, preventing it from despawning (untested)
+
+8-10-2024 -- Ped model change now gives you back your previous weaponclass. Weapon class commands are changed from /huntweapon etc to /weapon hunt.
 /weapon gives last added class again.
 Ped model change doesn't display a message that it gives a weapon class again. (it needs to give fresh weapons as they belong to the model not the player)
 Finger custom vehicle model added.

@@ -165,10 +165,10 @@ function RequestAllIpls()
 	RequestIpl('hei_yacht_heist_Lounge')
 
 	-- Bahama Mamas: -1388, -618.420, 30.820
-	--RequestIpl('hei_sm_16_interior_v_bahama_milo_')
+	RequestIpl('hei_sm_16_interior_v_bahama_milo_')
 
 	-- Red Carpet: 300.593, 199.759, 104.378
-	--RequestIpl('redCarpet')
+	RequestIpl('redCarpet')
 
 	-- UFO
 	-- Zancudo: -2052, 3237, 1457

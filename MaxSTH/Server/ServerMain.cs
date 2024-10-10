@@ -50,19 +50,19 @@ namespace STHMaxzzzie.Server
                 }
                 playerPris.Remove(player); // Remove the old vehicle from the dictionary
             }
-            
-            int vehicle = API.CreateVehicle(vehicleHash, position.X, position.Y, position.Z, heading, true, false); // Vehicle Hash gotten from VehicleHash on client, for some reason not available on server?
+
+            int vehicle = API.CreateVehicle(vehicleHash, position.X, position.Y, position.Z, heading, true, true); // Vehicle Hash gotten from VehicleHash on client, for some reason not available on server?
 
             TriggerClientEvent("chat:addMessage", new
             {
-                color = new[] { 255, 0, 0 },
+                color = new[] { 204, 0, 204 },
                 multiline = true,
                 args = new[] { "Server", $"{player.Name} is spawning a Prius!" }
             });
 
             API.SetVehicleColours(vehicle, 135, 135);
-            API.SetVehicleNumberPlateText(vehicle, $"{player.Name}");            
-
+            API.SetVehicleNumberPlateText(vehicle, $"{player.Name}");
+            TriggerClientEvent("modPinkPri", vehicle);
             playerPris.Add(player, vehicle);
         }
 
@@ -76,20 +76,33 @@ namespace STHMaxzzzie.Server
         private void CheckPriStatus()
         {
             List<Player> keysToRemove = new List<Player>();
-            foreach(var playerPri in playerPris)
+            foreach (var playerPri in playerPris)
             {
-                float health = API.GetVehicleEngineHealth(playerPri.Value);
-                if (health <= 0)
+                if (API.DoesEntityExist(playerPri.Value))
                 {
-                    Debug.WriteLine($"{playerPri.Key.Name}'s Pri got destroyed!");
-                    keysToRemove.Add(playerPri.Key);
-                    TriggerClientEvent(playerPri.Key, "chat:addMessage", new
+                    float health = API.GetVehicleEngineHealth(playerPri.Value);
+                    if (health <= 0)
                     {
-                        color = new[] { 0, 255, 0 }, // Green color for the message
-                        multiline = false,
-                        args = new[] { "Server", "Your pri got destroyed!" }
-                    });
+                        Debug.WriteLine($"{playerPri.Key.Name}'s Pri got destroyed!");
+                        keysToRemove.Add(playerPri.Key);
+                        TriggerClientEvent(playerPri.Key, "chat:addMessage", new
+                        {
+                            color = new[] { 204, 0, 204 }, //pink color for msg
+                            multiline = false,
+                            args = new[] { "Server", "Your pri got destroyed!" }
+                        });
+                    }
                 }
+                // else
+                // {
+                //     keysToRemove.Add(playerPri.Key);
+                //     TriggerClientEvent(playerPri.Key, "chat:addMessage", new
+                //     {
+                //         color = new[] { 204, 0, 204 }, //pink color for msg
+                //         multiline = false,
+                //         args = new[] { "Server", "Your pri disappeared!" }
+                //     });
+                // }
             }
             foreach (var key in keysToRemove)
                 playerPris.Remove(key);

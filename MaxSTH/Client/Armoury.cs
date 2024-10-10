@@ -158,6 +158,7 @@ namespace STHMaxzzzie.Client
 
                 Game.PlayerPed.Weapons.RemoveAll();
                 Game.PlayerPed.Weapons.Give(WeaponHash.Firework, 5, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.RayPistol, 1, true, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.CombatPistol, 25, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.FlareGun, 25, true, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.PumpShotgun, 500, true, false);

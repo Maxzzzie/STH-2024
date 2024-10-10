@@ -18,7 +18,7 @@ namespace STHMaxzzzie.Server
         //     VehicleNameToHash = new Dictionary<string, VehicleHash>();
         //     foreach (var veh_hash in Enum.GetValues(typeof(VehicleHash)))
         //     {
-        //         VehicleNameToHash.Add(veh_hash.ToString().ToLower(), (VehicleHash)veh_hash);
+        //         VehicleNameToHash.Add((VehicleHash)veh_hash, veh_hash.ToString().ToLower());
         //     }
         // }
         public DeathMessages()
@@ -32,6 +32,7 @@ namespace STHMaxzzzie.Server
         public void OnPlayerKilled([FromSource] Player victim, int deathCause, dynamic killerData)
         {
             var killerDataDictionary = (IDictionary<string, object>)killerData;
+           
 
             foreach (KeyValuePair<string, object> property in killerDataDictionary)
             {
@@ -57,29 +58,8 @@ namespace STHMaxzzzie.Server
                     Debug.WriteLine("Killer position data is missing or incomplete from onPlayerKilled.");
                 }
             }
-
-            // if (dictionary.ContainsKey("vehicletype"))
-            // {
-            //     if (vehicletype.value != null && VehicleNameToHash.ContainsValue(vehicletype.value))
-            //     {
-            //         foreach (var kvp in VehicleNameToHash)
-            //         {
-            //             if (kvp.Value.Equals(vehicletype.value))
-            //             {
-            //                 string killervehicle = kvp.Key;
-            //             }
-            //         }
-            //     }
-
-            //     else
-            //     {
-            //         Debug.WriteLine("Vehicle data is missing or incomplete from onPlayerKilled.");
-            //     }
-            // }
-            //the above, shows: killerpos, weaponhash, killertype, killervehseat, killerinveh, killervehname
-            //vehicle type (empty if killer wasn't in a vehicle), vehicleseat, weaponhash "https://gtahash.ru/weapons/?page=3", killertype, and some more. killer maybe?
-
-            Debug.WriteLine($"died {victim.Name}, pedType?: {deathCause}.");
+            //int culprit = GetPedSourceOfDeath(GetPlayerPed(victim));
+            Debug.WriteLine($"killed {victim.Name}.");
             TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"{victim.Name} was killed." } });
         }
 
@@ -143,7 +123,7 @@ namespace STHMaxzzzie.Server
                 cause = "reasons unknown";
             }
             Debug.WriteLine($"Player {player.Name} died because of {cause}. Debug info: {killerType}");
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name} died." } });
+            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name} died unfortunately." } });
         }
     }
 }

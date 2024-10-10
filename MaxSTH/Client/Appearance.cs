@@ -61,7 +61,7 @@ namespace STHMaxzzzie.Client
         void changeRandomModel()
         {
             var rand = new Random();
-            var index = rand.Next(0, nonAnimalModel.Count);
+            var index = rand.Next(0, nonAnimalModel.Count -1);
             Debug.WriteLine(nonAnimalModel.Count.ToString());
             Debug.WriteLine($"{index}");
             TriggerEvent("changingModel", nonAnimalModel[index]); 
