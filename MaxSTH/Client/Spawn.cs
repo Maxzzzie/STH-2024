@@ -99,6 +99,7 @@ namespace STHMaxzzzie.Client
 			//TriggerEvent("playerSpawned", PlayerId());
 
 			_spawnLock = false;
+			
 		}
 	}
 }

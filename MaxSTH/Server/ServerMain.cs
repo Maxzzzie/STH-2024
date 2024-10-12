@@ -4,6 +4,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Diagnostics;
 
 
 namespace STHMaxzzzie.Server
@@ -62,8 +63,8 @@ namespace STHMaxzzzie.Server
 
             API.SetVehicleColours(vehicle, 135, 135);
             API.SetVehicleNumberPlateText(vehicle, $"{player.Name}");
-            TriggerClientEvent("modPinkPri", vehicle);
             playerPris.Add(player, vehicle);
+            TriggerEvent("addBlip", false, $"pri{player.Name}", "coord", new Vector3(position.X, position.Y, position.Z), vehicle, 119, 48, true, false, true);
         }
 
         [Tick]
@@ -72,6 +73,24 @@ namespace STHMaxzzzie.Server
             CheckPriStatus();
             return Task.CompletedTask;
         }
+
+        // private bool isRunning = false;  // A flag to track if the method is already running
+
+        // [Tick]
+        // private async Task OnTick()
+        // {
+        //     if (isRunning) return;  // Exit if the task is already running
+
+        //     isRunning = true;  // Set the flag to true so no overlap occurs
+
+        //     // Call your method (e.g., CheckPriStatus)
+        //     CheckPriStatus();
+
+        //     // Introduce a delay of 500ms (or any duration you need)
+        //     await Task.Delay(50);
+
+        //     isRunning = false;  // Reset the flag after the delay
+        // }
 
         private void CheckPriStatus()
         {
@@ -83,7 +102,7 @@ namespace STHMaxzzzie.Server
                     float health = API.GetVehicleEngineHealth(playerPri.Value);
                     if (health <= 0)
                     {
-                        Debug.WriteLine($"{playerPri.Key.Name}'s Pri got destroyed!");
+                        //Debug.WriteLine($"{playerPri.Key.Name}'s Pri got destroyed!");
                         keysToRemove.Add(playerPri.Key);
                         TriggerClientEvent(playerPri.Key, "chat:addMessage", new
                         {
@@ -91,9 +110,11 @@ namespace STHMaxzzzie.Server
                             multiline = false,
                             args = new[] { "Server", "Your pri got destroyed!" }
                         });
+                        TriggerEvent("addBlip", true, $"pri{playerPri.Key.Name}", "coord", new Vector3(-2000, 0, 0), 0, 0, 0, true, false, true);//deletes prius blip
+
                     }
                 }
-                // else
+                // if (!API.DoesEntityExist(playerPri.Value))
                 // {
                 //     keysToRemove.Add(playerPri.Key);
                 //     TriggerClientEvent(playerPri.Key, "chat:addMessage", new
@@ -115,13 +136,14 @@ namespace STHMaxzzzie.Server
         {
             ServerMain.sendRespawnLocationsDict(source);
             ServerMain.sendVehicleinfoDict(source);
-            MapBounds.updateCircle();
+            MapBounds.updateCircle(true);
             source.TriggerEvent("isWeaponAllowed", Armoury.isWeaponsAllowed);
             source.TriggerEvent("updatePvp", Armoury.isPvpAllowed);
             source.TriggerEvent("disableCanPlayerShootFromVehicles", Armoury.isShootingFromVehicleAllowed);
             Appearance.sendNonAnimalModel(source);
             source.TriggerEvent("respawnPlayer");
             source.TriggerEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
+            TriggerEvent("updateSharedClientBlips");
         }
 
 
@@ -142,6 +164,8 @@ namespace STHMaxzzzie.Server
             }
         }
 
+
+
         [Command("getdiscordid", Restricted = true)]
         void get_id_handler()
         {
@@ -161,15 +185,7 @@ namespace STHMaxzzzie.Server
 
     }
 
-    // public class Test : BaseScript
-    // {
-    //     [Command("test", Restricted = false)]
 
-    //     void test(int source, List<object> args, string raw)
-    //     {
-    //         CitizenFX.Core.Debug.WriteLine($"This is the test command.");
-    //     }
-    // }
 
     // public class Notifications : BaseScript
     // {
@@ -201,7 +217,7 @@ namespace STHMaxzzzie.Server
         public static int fixWaitTime = 10;
 
 
-        [Command("togglepod", Restricted = false)]
+        [Command("togglepod", Restricted = true)]
         void toggleweapon(int source, List<object> args, string raw)
         {
             if (args.Count == 1 && args[0].ToString() == "true")
@@ -220,8 +236,8 @@ namespace STHMaxzzzie.Server
             }
         }
 
-        [Command("togglefix", Restricted = false)]
-        void toggleFix(int source, List<object> args, string raw)
+        [Command("togglefix", Restricted = true)]
+        async void toggleFix(int source, List<object> args, string raw)
         {
             if (args.Count == 1)
             {
@@ -265,13 +281,36 @@ namespace STHMaxzzzie.Server
                     CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/wait(and a value)/)");
                 }
             }
+            // if (AllowedToFixStatus == "lsc")
+            // {
+            //     TriggerEvent("addBlip", false, $"lsc1", "coord", new Vector3(-337, -136, 39), 0, 402, 0, true, false, true);
+            //     TriggerEvent("addBlip", false, $"lsc2", "coord", new Vector3(732, -1085, 22), 0, 402, 0, true, false, true);
+            //     TriggerEvent("addBlip", false, $"lsc3", "coord", new Vector3(-1152, 2008, 13), 0, 402, 0, true, false, true);
+            //     TriggerEvent("addBlip", false, $"lsc4", "coord", new Vector3(1178, 2638, 37), 0, 402, 0, true, false, true);
+            //     TriggerEvent("addBlip", false, $"lsc5", "coord", new Vector3(107, 6624, 31), 0, 402, 0, true, false, true);
+            //     TriggerEvent("addBlip", false, $"lsc6", "coord", new Vector3(-1538, -577, 25), 0, 402, 0, true, false, true);
+            // }
+            // if (AllowedToFixStatus != "lsc")
+            // {
+            //     TriggerEvent("addBlip", true, $"lsc1", "coord", new Vector3(-337, -136, 39), 0, 402, 1, true, false, true);
+            //     await Delay(500);
+            //     TriggerEvent("addBlip", true, $"lsc2", "coord", new Vector3(732, -1085, 22), 0, 402, 1, true, false, true);
+            //     await Delay(500);
+            //     TriggerEvent("addBlip", true, $"lsc3", "coord", new Vector3(-1152, 2008, 13), 0, 402, 1, true, false, true);
+            //     await Delay(500);
+            //     TriggerEvent("addBlip", true, $"lsc4", "coord", new Vector3(1178, 2638, 37), 0, 402, 1, true, false, true);
+            //     await Delay(500);
+            //     TriggerEvent("addBlip", true, $"lsc5", "coord", new Vector3(107, 6624, 31), 0, 402, 1, true, false, true);
+            //     await Delay(500);
+            //     TriggerEvent("addBlip", true, $"lsc6", "coord", new Vector3(-1538, -577, 25), 0, 402, 1, true, false, true);
+            // }
             else
             {
                 CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/wait(and a value)/)");
             }
         }
 
-        [Command("clear", Restricted = false)] //restriction (default true)
+        [Command("clear", Restricted = true)] //restriction (default true)
         void clear(int source, List<object> args, string raw)
         {
             if (args.Count == 0)
@@ -374,15 +413,17 @@ namespace STHMaxzzzie.Server
         public static Dictionary<string, List<Vector3>> mapBoundsDict;
         int argColor = 4;
 
-        public MapBounds()
+        public MapBounds(bool playerJoining)
         {
             mapBoundsDict = LoadResources.mapBounds();
+
             CitizenFX.Core.Debug.WriteLine($"I'm making a MapBounds dictionary.");
+
         }
 
         //updates the player's circles.
         [EventHandler("updateCircle")]
-        public static void updateCircle()
+        public static void updateCircle(bool isPlayerJoining)
         {
             TriggerClientEvent("delCircle");
 
@@ -390,7 +431,10 @@ namespace STHMaxzzzie.Server
             {
                 TriggerClientEvent("updateCircle", argArray);
             }
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Mapbounds have been updated." } });
+            if (!isPlayerJoining)
+            {
+                TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Mapbounds have been updated." } });
+            }
         }
 
 
@@ -436,7 +480,7 @@ namespace STHMaxzzzie.Server
                 CitizenFX.Core.Debug.WriteLine("The server recieved cords for a circle.");
                 float[] argArray = { argX, argY, argRadius, argColor };
                 argArrayList.Add(argArray);
-                updateCircle();
+                updateCircle(false);
             }
 
             else if (args.Count == 3)
@@ -457,7 +501,7 @@ namespace STHMaxzzzie.Server
                 int argColor = int.Parse(args[3].ToString());
                 float[] argArray = { argX, argY, argRadius, argColor };
                 argArrayList.Add(argArray);
-                updateCircle();
+                updateCircle(false);
             }
 
             else if (args.Count == 1)
@@ -480,7 +524,7 @@ namespace STHMaxzzzie.Server
                         float[] argArray = { mapX, mapY, mapRadius, argColor };
                         argArrayList.Add(argArray);
                     }
-                    updateCircle();
+                    updateCircle(false);
                     CitizenFX.Core.Debug.WriteLine($"Added {arg0} to your circles.");
                 }
                 else if (arg0 == "list")
@@ -522,18 +566,18 @@ namespace STHMaxzzzie.Server
                 if (args[0].ToString() == "last")
                 {
                     argArrayList.RemoveAt(argArrayList.Count - 1);
-                    updateCircle();
+                    updateCircle(false);
                 }
                 else if (args[0].ToString() == "first")
                 {
                     argArrayList.RemoveAt(0);
-                    updateCircle();
+                    updateCircle(false);
                 }
                 else if (args[0].ToString() == "all")
                 {
                     argArrayList.Clear();
                     CitizenFX.Core.Debug.WriteLine("All circles are deleted.");
-                    updateCircle();
+                    updateCircle(false);
                 }
             }
             else
@@ -577,7 +621,8 @@ namespace STHMaxzzzie.Server
                     TriggerClientEvent("chat:addMessage", new
                     {
                         color = new[] { 255, 153, 153 },
-                        args = new[] { $"All players have been teleported to {tpAllName}\nBlame {source.Name}" }
+                        args = new[] { $"All players have been teleported to {tpAllName} by {source.Name}."
+                        }
                     });
                 }
             }
@@ -592,10 +637,13 @@ namespace STHMaxzzzie.Server
                 if (args.Count == 3 && isArgs0Int == true && isArgs1Int == true && isArgs2Int == true)
                 {
                     TriggerClientEvent("tpPlayerRand", int.Parse(args[0].ToString()), int.Parse(args[1].ToString()), int.Parse(args[2].ToString()));
-                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"All players have been teleported to some very specific coords \nBlame {source.Name}" } });
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"All players have been teleported to some very specific coords by {source.Name}." } });
                     return;
                 }
-                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /tpall \"location\"/ (x y z). \nType /tplocations for all avalible locations.");
+                else
+                {
+                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /tpall \"location\"/ (x y z). \nType /tplocations for all avalible locations.");
+                }
             }
             else
             {
@@ -638,7 +686,10 @@ namespace STHMaxzzzie.Server
                 source.TriggerEvent("tpPlayer", int.Parse(args[0].ToString()), int.Parse(args[1].ToString()), int.Parse(args[2].ToString()));
                 CitizenFX.Core.Debug.WriteLine($"You teleported yourself to specific coords.");
             }
-            CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /tp \"location\"/ (x y z). \nType /tplocations for all avalible locations.");
+            else
+            {
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /tp \"location\"/ (x y z). \nType /tplocations for all avalible locations.");
+            }
         }
 
         //toggle personal teleport
@@ -667,10 +718,11 @@ namespace STHMaxzzzie.Server
         }
 
         [Command("tplocations")]
-        void tplocations()
+        void tplocations(int source)
         {
+            Player player = Players[source];
             var combined = string.Join(", ", tpLocationsDict.Keys);
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Locations: {combined}" } });
+            TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Locations: {combined}" } });
         }
     }
 

@@ -1,0 +1,98 @@
+"5 Ways", -629, -369, 33
+"Shopping centre jump", -278, -178, 38
+"Life Invader", -992, -223, 36
+"Golf course", -1326, -55, 47
+"Pier entrance", -1441, -752, 22
+"Rails cross", 275, -1858, 25
+"Docks entrance", 737, -2457, 18
+"Oilfields", 1338, -1614, 52
+"Airport loop exit", -824, -2559, 12
+"Beach", -1155, -1340, 3
+"Casino bridge", 692, 10, 82
+"Franklin's road", -120, -1528, 31
+"Hills crossroads", -528, 664, 139
+"Mirror Park South", 1195, -759, 46
+"Square of Squares", 291, -851, 27
+"West of Red Car Park", -500, -834, 29
+"UFO", 33, 255, 108
+"Airport Spaghetti", -573, -1981, 16
+"Chinese Monument", -853, -836, 17
+"Origin", -43, 34, 70
+"RGB", -456, -1419, 29
+"Noodles", -641, -1289, 10
+"Art gallery", -637, -657, 30
+"Vespucci Binco", -770, -1116, 9
+"Fish restaurant", -1064, -1297, 4
+"Skate park", -863, -644, 26
+"Burgers hot", -1173, -845, 13
+"V-hotel", -1271, -985, 0
+"Bahama Mamas", -1381, -560, 29
+"Multicolored carpark", -1161, -668, 10
+"Graveyard", -1616, -293, 51
+"Jetty", -2050, -400, 10
+"Curvy road", -1912, -195, 34
+"Backslash", -1709, -534, 36
+"kortz", -1781, 77, 68
+"Richmans hotel", -1390, 201, 57
+"Golf course North-east", -1081, 263, 62
+"Eclypse tower", -866, 425, 86
+"Hills west", -1434, 538, 119
+"Grassy field", -711, 962, 236
+"Hills reservoir north", -336, 963, 232
+"Hills reservoir east", 283, 833, 191
+"Reservoir dam", -96, 603, 207
+"Hills enterance east", 258, 341, 104
+"Gantry manor", -112, 422, 112
+"Cockatoos", -395, -3, 45
+"The royale crossroads", -225, 122, 68
+"Michaels house", -861, 80, 51
+"Lower carparks", -703, -43, 36
+"Movie studio's exit", -1095, -394, 35
+"Suburban", 74, -163, 54
+"Vinewood plaza", 279, -83, 69
+"Vinewood Blvd", 359, 136, 102
+"Globe oil", 570, 244, 102
+"Soccerfield", 964, -288, 65
+"Mirror Park North", 1209, -371, 67
+"Videogeddon", 776, -637, 27
+"Mi o ark railya d", 502, -684, 24
+"Dashhound spaghetti", 534, -527, 34
+"Dashhound", 522, -336, 43
+"City hall", 308, -390, 44
+"Rockford plaza", -192, -420, 32
+"Pillbox tunnel", -104, -569, 29
+"Higher lower", 31, -766, 30
+"Dog's leg", -256, 666, 32
+"Banner hotel", -272, -1139, 22
+"Maze bank enterance", -184, -895, 28
+"LS gun club", 50, -1130, 28
+"Sprunk ramp", 398, -1130, 28
+"Racetrack", 1139, 382, 90
+"Lesters factory", 783, -1001, 25
+"Stormdrain y-split", 796, -1437, 26
+"East spaghetti", 1055, -1186, 24
+"Oilfields tip", 1968, -922, 98
+"Lesters house", 1150, -1720, 34
+"White watertower", 1110, -1863, 36
+"Hardwood", 1242, -1428, 34
+"Highway end", 1240, -2053, 43
+"LS car meet", 828, -1748, 20
+"Vent road", 776, -2064, 20
+"Raven", 931, -2081, 29
+"Red bridge", 254, -2667, 17
+"Dock swirl", 474, -2505, 5
+"Maze bank arena", -153, -2090, 24
+"Gas company", 373, -2176, 13
+"Motel", 596, -1727, 20
+"Beacon intersection", 536, -1439, 28
+"Ring of fire", 152, -1397, 28
+"Ghetto church", 62, -1505, 28
+"Bennies", -274, -1428, 30
+"Mega mall", -128, -1739, 29
+"Grove street", 62, -1902, 20
+"Recycle plant", -406, -1761, 19
+"Simeons dock", 1166, -3217, 4
+"Modshop at LSIA", -956, -2151, 7
+"LSIA P&R", -1027, -2715, 12
+"Far south", -1027, -1648, 3
+"Rogers", -709, -1596, 20

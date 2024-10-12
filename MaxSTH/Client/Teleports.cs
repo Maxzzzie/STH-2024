@@ -26,6 +26,7 @@ namespace STHMaxzzzie.Client
             tpYRnd = tpY + deltaY;
 
             Game.PlayerPed.Position = new Vector3(tpXRnd, tpYRnd, tpZ);
+            Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, true, false);
         }
 
         //recieving tp request from server.
@@ -33,6 +34,7 @@ namespace STHMaxzzzie.Client
         void tpAll(int tpX, int tpY, int tpZ)
         {
             Game.PlayerPed.Position = new Vector3(tpX, tpY, tpZ);
+            Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, true, false);
         }
     }
 }

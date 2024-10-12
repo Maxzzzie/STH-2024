@@ -1,11 +1,12 @@
+/heal command with delay for health and armour. Make toggleable. wait instant locationspecific.
 Change death msg to notification (SetNotificationTextEntry, AddTextComponentSubstringPlayerName, DrawNotification)
 Fix pri spawner neons etc. (https://docs.fivem.net/natives/?_0x57F24253)
-Fix pri spawner notification ( https://docs.fivem.net/natives/?_0x1E546224 )
 Give player invincibility at spawn (https://docs.fivem.net/natives/?_0xDFB9A2A2)
 Make /nudge or /stuck ( https://docs.fivem.net/natives/?_0xFF5A1988 https://docs.fivem.net/natives/?_0xA345EFE )
 Heading indicator
 Location indicator
 Callout indicator
+Make expanded map
 Speed indicator
 Vehicle name/type warning or speed limiter
 Display player online list
@@ -32,9 +33,8 @@ Add a whitelist to the server.
 Make TxAdmin'able.
 Add tpall to host sending the request.
 force 1st person possibility
-fortzencudogates
 fix model glitches
-Players old car despawns.
+Players old car despawns i don't want it to
 /cveh sets you in closest vehicle.
 Add pma voice (proximity chat) Increase range and add a radio frequency
 
@@ -43,6 +43,17 @@ Add pma voice (proximity chat) Increase range and add a radio frequency
 
 
 //finished
+
+12-10-2024 +days before
+fixed shots fired mechanic
+removed map bounds updates from onplayerjoined
+added a semi working version of blips
+disabled firespread
+Fix pri spawner notification ( https://docs.fivem.net/natives/?_0x1E546224 )
+fixed pri mechanic
+/pri has a delay to prevent spam.
+/verified function of /fix timer.
+
 9-10-2024 -- Open zancudo gates from fivem ipl master
 Fixed wait timer for /fix (untested)
 Fixed pri mechanic, preventing it from despawning (untested)

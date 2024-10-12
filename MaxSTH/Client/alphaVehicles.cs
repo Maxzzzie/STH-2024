@@ -280,6 +280,7 @@ namespace STHMaxzzzie.Client
                 //3 | lsia | -1152.147, -2008.129, 13.180 | 15
                 //4 | blaine county | 1178.634, 2638.898, 37.754 | 11
                 //5 | paleto | 107.893, 6624.449, 31.787 | 8
+                //6 | lombank | -1538.579, -577.189, 25.313 | 8
                 {
                     Vector3 playerPosition = Game.PlayerPed.Position;
                     float d1 = GetDistanceBetweenCoords(-337, -136, 39, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
@@ -287,8 +288,9 @@ namespace STHMaxzzzie.Client
                     float d3 = GetDistanceBetweenCoords(-1152, -2008, 13, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
                     float d4 = GetDistanceBetweenCoords(1178, 2638, 37, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
                     float d5 = GetDistanceBetweenCoords(107, 6624, 31, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
-                    Debug.WriteLine($"1: rockford {d1} | 2: la mesa {d2} | 3: lsia {d3} | 4: blaine county {d4} | 5: paleto {d5}");
-                    if (d1 < 19 || d2 < 11 || d3 < 15 || d4 < 11 || d5 < 8)
+                    float d6 = GetDistanceBetweenCoords(-1538, -577, 25, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
+                    Debug.WriteLine($"1: rockford {d1} | 2: la mesa {d2} | 3: lsia {d3} | 4: blaine county {d4} | 5: paleto {d5} | lombank {d6}");
+                    if (d1 < 19 || d2 < 11 || d3 < 15 || d4 < 11 || d5 < 8 || d6 < 8)
                     {
                         Game.PlayerPed.CurrentVehicle.Repair();
                         TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"The mechanic repaired your vehicle." } });

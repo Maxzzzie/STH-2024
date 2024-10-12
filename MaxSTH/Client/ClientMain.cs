@@ -2,10 +2,11 @@ using System;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using static CitizenFX.Core.Native.API; //chat gpt thing? does it do anything?
+using static CitizenFX.Core.Native.API;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using Mono.CSharp;
 
 namespace STHMaxzzzie.Client
 {
@@ -14,11 +15,10 @@ namespace STHMaxzzzie.Client
     {
         bool isShootingFromVehicleAllowed = false;
 
-        /// <summary>
-		/// delete props along with vehicles?
-		/// </summary>
-		/// <param name="shouldRemoveProps"></param>
-		/// <returns></returns>
+        private void Stamina()
+        {
+        API.SetPlayerMaxStamina(PlayerId(), 100);
+        }
 
         [EventHandler("clear_vehicles")]
         void RemoveAllVehicles(bool shouldRemoveProps)
@@ -64,23 +64,16 @@ namespace STHMaxzzzie.Client
             Debug.WriteLine($"name {respawnLocationName} location xyz {respawnLocationsXYZH.ToString()}");
         }
 
-        // [EventHandler("baseevents:onPlayerDied")] //do we need this still? --i don't think so. Max 2024
-        // void onPlayerDiedHandler()
-        // {
-        //     Debug.WriteLine("I'm dead :(");
-        // }
-
         [Tick]
         public async Task OnTick()
         {
             if (Spawn.SpawnLock == false && !Game.PlayerPed.IsAlive) respawnPlayerHandler();
-            await Delay(3000);
         }
 
 
         [Command("Respawn")]
         [EventHandler("respawnPlayer")]
-        void respawnPlayerHandler()
+        async void respawnPlayerHandler()
         {
             Debug.WriteLine("running spawn function");
 
@@ -89,7 +82,7 @@ namespace STHMaxzzzie.Client
             {
                 Spawn.SpawnPlayer(-1610f, -1055f, 13f, 318f);
                 didIAlreadySpawnOnce = true;
-                //return; //not needed?
+                
             }
             else
             {
@@ -232,8 +225,6 @@ namespace STHMaxzzzie.Client
             //-------------------------------------------- respawns where player tp's to peds. Currently broken -----------------------------------  above here
         }
     }
-
-
     public class MapBounds : BaseScript
     //all circles get cleared everytime the circlelist updates on the server.
     //circles get a different (blip id) for each client that makes a circle. So they are stored localy in blipList

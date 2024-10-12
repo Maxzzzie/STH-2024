@@ -321,7 +321,6 @@ mp_f_cardesign_01
 mp_f_chbar_01
 mp_f_cocaine_01
 mp_f_counterfeit_01
-mp_f_deadhooker
 mp_f_execpa_01
 mp_f_execpa_02
 mp_f_forgery_01

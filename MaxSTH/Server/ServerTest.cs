@@ -10,7 +10,9 @@ namespace STHMaxzzzie.Server
         void TestCommand(int source, List<object> args, string raw)
         {
             Debug.WriteLine($"This is the test command.");
- //TriggerClientEvent(player, "ShowNotification", "Test notification from server!", colors, true);
+            int X = 0;
+            int Y = 0;
+            TriggerClientEvent("CreateShotBlip", X, Y);
         }
     }
 }

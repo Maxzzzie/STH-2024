@@ -73,7 +73,7 @@ namespace STHMaxzzzie.Server
                     float y = Convert.ToSingle(killerPosList[1]);
                     float z = Convert.ToSingle(killerPosList[2]);
 
-                    Debug.WriteLine($"Killer position: X={x}, Y={y}, Z={z}");
+                    Debug.WriteLine($"Killer ({deathCause}) position: X={x}, Y={y}, Z={z}");
                 }
                 else
                 {
@@ -149,8 +149,8 @@ namespace STHMaxzzzie.Server
             {
                 cause = "reasons unknown";
             }
-            Debug.WriteLine($"Player {player.Name} died because of {cause}. Debug info: {killerType}");
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name} died unfortunately." } });
+            Debug.WriteLine($"Player {player.Name} died. Wrong: {cause}. Debug info: {killerType}");
+            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name} died." } });
         }
     }
 }
