@@ -86,7 +86,7 @@ public static class LoadResources
 
         foreach (string line in spawnLines)
         {
-            string spawnName = (line.Split(' ')[0].Trim());
+            string spawnName = line.Split(' ')[0].Trim();
             float spawnW = float.Parse(line.Split(' ')[1].Trim());
             float spawnX = float.Parse(line.Split(' ')[2].Trim());
             float spawnY = float.Parse(line.Split(' ')[3].Trim());
@@ -96,6 +96,34 @@ public static class LoadResources
         }
         CitizenFX.Core.Debug.WriteLine($"server.Respawnlocations succesfully loaded the respawnDict.");
         return respawnLocationsDict;
+    }
+
+    public static Dictionary<string, Vector3> calloutsList()
+    {
+        var path_to_resource = API.GetResourcePath(API.GetCurrentResourceName());
+        var path_to_maxzzzieCallouts_file = $"{path_to_resource}/Resources/MaxzzzieCallouts.txt";
+
+        bool exists = File.Exists(path_to_maxzzzieCallouts_file);
+        if (exists == false)
+        {
+            CitizenFX.Core.Debug.WriteLine($"MaxzzzieCallouts.txt does not exist in :{path_to_maxzzzieCallouts_file}");
+            return null;
+        }
+
+        string[] calloutsLines = File.ReadAllLines(path_to_maxzzzieCallouts_file);
+        var maxzzzieCalloutsDict = new Dictionary<string, Vector3>();
+
+        foreach (string line in calloutsLines)
+        {
+            string spawnName = line.Split(',')[0].Trim();
+            float spawnX = float.Parse(line.Split(',')[1].Trim());
+            float spawnY = float.Parse(line.Split(',')[2].Trim());
+            float spawnZ = float.Parse(line.Split(',')[3].Trim());
+            Vector3 spawnXYZH = new Vector3(spawnX, spawnY, spawnZ);
+            maxzzzieCalloutsDict.Add(spawnName, spawnXYZH);
+        }
+        CitizenFX.Core.Debug.WriteLine($"server.CalloutList succesfully loaded the Callouts.");
+        return maxzzzieCalloutsDict;
     }
 
 

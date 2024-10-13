@@ -43,6 +43,8 @@ Add pma voice (proximity chat) Increase range and add a radio frequency
 
 
 //finished
+13-10-2024
+added loading in of callouts resource file. And showing them on map to add more where needed.
 
 12-10-2024 +days before
 fixed shots fired mechanic

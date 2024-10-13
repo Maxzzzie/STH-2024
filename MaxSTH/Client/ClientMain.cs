@@ -15,9 +15,11 @@ namespace STHMaxzzzie.Client
     {
         bool isShootingFromVehicleAllowed = false;
 
+[EventHandler("Stamina")]
         private void Stamina()
         {
         API.SetPlayerMaxStamina(PlayerId(), 100);
+        Debug.WriteLine($"added 100 stamina");
         }
 
         [EventHandler("clear_vehicles")]

@@ -15,6 +15,7 @@ namespace STHMaxzzzie.Server
         // its a function that runs when gamemode starts
         static List<string> allowed_discord_ids = new List<string>();
         public static Dictionary<string, Vector4> respawnLocationsDict;
+        public static Dictionary<string, Vector3> maxzzzieCalloutsDict;
         public static Dictionary<string, string> vehicleinfoDict;
 
         private Dictionary<Player, int> playerPris = new Dictionary<Player, int>();
@@ -34,6 +35,7 @@ namespace STHMaxzzzie.Server
             //get spawnlocations
             respawnLocationsDict = LoadResources.respawnLocations();
             vehicleinfoDict = LoadResources.allowedVehicles();
+            maxzzzieCalloutsDict = LoadResources.calloutsList();
 
             Tick += OnTick;
         }
@@ -136,6 +138,7 @@ namespace STHMaxzzzie.Server
         {
             ServerMain.sendRespawnLocationsDict(source);
             ServerMain.sendVehicleinfoDict(source);
+            ServerMain.sendMaxzzzieCalloutsDict(source);
             MapBounds.updateCircle(true);
             source.TriggerEvent("isWeaponAllowed", Armoury.isWeaponsAllowed);
             source.TriggerEvent("updatePvp", Armoury.isPvpAllowed);
@@ -144,6 +147,7 @@ namespace STHMaxzzzie.Server
             source.TriggerEvent("respawnPlayer");
             source.TriggerEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
             TriggerEvent("updateSharedClientBlips");
+            source.TriggerEvent("Stamina");
         }
 
 
@@ -155,6 +159,13 @@ namespace STHMaxzzzie.Server
             }
         }
 
+        public static void sendMaxzzzieCalloutsDict(Player source)
+        {
+            foreach (KeyValuePair<string, Vector3> entry in maxzzzieCalloutsDict)
+            {
+                source.TriggerEvent("getMaxzzzieCalloutsDict", entry.Key, entry.Value);
+            }
+        }
 
         public static void sendVehicleinfoDict(Player source)
         {
