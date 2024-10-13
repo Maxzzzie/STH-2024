@@ -37,9 +37,10 @@ fix model glitches
 Players old car despawns i don't want it to
 /cveh sets you in closest vehicle.
 Add pma voice (proximity chat) Increase range and add a radio frequency
-
-
-
+restrict vehicles for non runners
+restrict spawnable vehicles
+mechanics sound while repairing
+bunch of veh spawn
 
 
 //finished

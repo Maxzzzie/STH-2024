@@ -70,9 +70,9 @@ namespace STHMaxzzzie.Client
             {
                 var model = new Model(VehicleNameToHash[args[0].ToString()]);
                 Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned an {args[0]}." } });
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a {args[0]}." } });
                 Game.PlayerPed.SetIntoVehicle(vehicle, VehicleSeat.Driver);
-                Game.PlayerPed.CurrentVehicle.CreateRandomPedOnSeat(VehicleSeat.Passenger);
+                //Game.PlayerPed.CurrentVehicle.CreateRandomPedOnSeat(VehicleSeat.Passenger);
                 API.SetVehicleEngineOn(vehicle.Handle, true, true, false);
             }
         }

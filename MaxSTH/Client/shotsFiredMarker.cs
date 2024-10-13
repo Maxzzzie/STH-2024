@@ -16,7 +16,7 @@ public class ShotDetection : BaseScript
             {
                 int X = (int)Game.PlayerPed.Position.X;
                 int Y = (int)Game.PlayerPed.Position.Y;
-                Debug.WriteLine($"Ped is SHOOTING at {X},{Y}!");
+                //Debug.WriteLine($"Ped is SHOOTING at {X},{Y}!");
                 TriggerServerEvent("OnShotsFired", X, Y);
             }
         }
@@ -35,7 +35,7 @@ public class ShotDetection : BaseScript
             await Delay(3); //speed of decay
         }
         API.RemoveBlip(ref blip);
-        // radius = 100;
-        Debug.WriteLine($"removing a shots fired blip");
+        // radius = 100; is a nice size.
+        //Debug.WriteLine($"removing a shots fired blip");
     }
 }

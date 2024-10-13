@@ -17,7 +17,7 @@ public class ShotBlipServer : BaseScript
         }
     }
 
-    [Command("togglesf", Restricted = false)]
+    [Command("togglesf", Restricted = true)]
     void togglesf(int source, List<object> args, string raw)
     {
         if (args.Count == 0)

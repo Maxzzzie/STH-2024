@@ -15,11 +15,11 @@ namespace STHMaxzzzie.Client
     {
         bool isShootingFromVehicleAllowed = false;
 
-[EventHandler("Stamina")]
+        [EventHandler("Stamina")]
         private void Stamina()
         {
-        API.SetPlayerMaxStamina(PlayerId(), 100);
-        Debug.WriteLine($"added 100 stamina");
+            API.SetPlayerMaxStamina(PlayerId(), 100);
+            Debug.WriteLine($"added 100 stamina");
         }
 
         [EventHandler("clear_vehicles")]
@@ -84,7 +84,7 @@ namespace STHMaxzzzie.Client
             {
                 Spawn.SpawnPlayer(-1610f, -1055f, 13f, 318f);
                 didIAlreadySpawnOnce = true;
-                
+
             }
             else
             {
@@ -99,7 +99,7 @@ namespace STHMaxzzzie.Client
                     {
                         distanceToThatPoint = dist;
                         closestRespawnPoint = entry.Key;
-                        
+
                     }
                 }
                 if (!respawnLocationsDict.ContainsKey(closestRespawnPoint))

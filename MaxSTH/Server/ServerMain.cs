@@ -420,16 +420,15 @@ namespace STHMaxzzzie.Server
     // a few blip color id's :1=red 2=green 3=lightblue 4=white 5=yellow 6=lighterRed 7=lila 8=purple/pink 64=orange 69=lime Find the rest here https://docs.fivem.net/docs/game-references/blips/
     {
         static List<float[]> argArrayList = new List<float[]>();
-        //argArrayList stores the input values for the blips so players that join late can sync the map bounds.
+        //argArrayList stores the input values for the map blips so players that join late can sync the map bounds.
         public static Dictionary<string, List<Vector3>> mapBoundsDict;
-        int argColor = 4;
+        int argColor = 4; //initial default circle colour
 
-        public MapBounds(bool playerJoining)
+        public MapBounds()
         {
             mapBoundsDict = LoadResources.mapBounds();
 
             CitizenFX.Core.Debug.WriteLine($"I'm making a MapBounds dictionary.");
-
         }
 
         //updates the player's circles.
@@ -442,7 +441,7 @@ namespace STHMaxzzzie.Server
             {
                 TriggerClientEvent("updateCircle", argArray);
             }
-            if (!isPlayerJoining)
+            if (isPlayerJoining)
             {
                 TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Mapbounds have been updated." } });
             }
@@ -450,9 +449,10 @@ namespace STHMaxzzzie.Server
 
 
         //adds circle to host and then updates the client.
-        [Command("circle", Restricted = false)] //restriction (default true)
+        [Command("circle", Restricted = true)] //restriction (default true)
         void circle(int source, List<object> args, string raw)
         {
+            CitizenFX.Core.Debug.WriteLine($"server circle 1");
             if (args.Count <= 1 && args.Count >= 4)
             {
                 CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for more info.");
@@ -562,7 +562,7 @@ namespace STHMaxzzzie.Server
 
 
         //remove circle options
-        [Command("delcircle", Restricted = false)] //restriction (default true)
+        [Command("delcircle", Restricted = true)] //restriction (default true)
         void delCircle(int source, List<object> args, string raw)
         {
 
@@ -596,7 +596,7 @@ namespace STHMaxzzzie.Server
                 CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /delcircle (first/ last/ all)");
             }
         }
-    }
+    } 
 
 
     public class Teleports : BaseScript
@@ -704,7 +704,7 @@ namespace STHMaxzzzie.Server
         }
 
         //toggle personal teleport
-        [Command("toggletp", Restricted = false)] //restriction (default true)
+        [Command("toggletp", Restricted = true)] //restriction (default true)
         void toggletp(int source, List<object> args, string raw)
         {
             // Player source = Players[sourceId];

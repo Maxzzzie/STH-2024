@@ -1,0 +1,163 @@
+Solid
+Single responsibility
+ 
+
+
+
+How to convert player id and other info both server and client side. From ChatGPT.
+ To manage players and access their information (like **player ID**, **ped handle**, and **player name**) in **FiveM**, you often need to navigate between different forms of identifying a player: the **Player class**, **int player ID**, **ped handle**, and **player name**. These identifiers are used differently depending on whether you're working **client-side** or **server-side**.
+
+Here’s a breakdown of the common concepts and how to work with each, along with a detailed explanation of how to go from one to another.
+
+### 1. **Player ID (Server-side)**
+
+On the **server side**, players are referenced by their **source ID** (an integer). This **ID** is assigned by the server when the player connects, and it's commonly referred to as **server player ID** or simply **source**. This ID is used to communicate with clients, retrieve information, and trigger events.
+
+#### Example: Get Player's Server ID
+Server-side, you can get the **player ID** (source) from various events, like when a player sends a command or triggers a server event:
+
+```csharp
+[Command("getid", Restricted = true)]
+public void GetPlayerId(int source, List<object> args, string raw)
+{
+    // `source` is the player ID
+    Debug.WriteLine($"Player ID is: {source}");
+}
+```
+
+### 2. **Player Class (Server-side)**
+
+The `Player` class in **CitizenFX.Core** represents a player object and allows you to interact with the player and get their details in a more object-oriented way. The server version of the `Player` class contains:
+- **Player.Handle**: The player's server ID.
+- **Player.Name**: The player's name.
+- **Player.Ping**: The player's network ping.
+- **Identifiers**: Used to get identifiers like Steam, Rockstar, or IP.
+
+You can get a `Player` object using the `Players` collection on the server:
+
+#### Example: Get Player by Server ID
+```csharp
+[Command("getplayerinfo", Restricted = true)]
+public void GetPlayerInfo(int source, List<object> args, string raw)
+{
+    Player player = Players[source];  // Get the Player object from the source (server ID)
+
+    Debug.WriteLine($"Player name: {player.Name}, Server ID: {player.Handle}");
+}
+```
+
+### 3. **Player Class (Client-side)**
+
+On the **client side**, `Game.Player` represents the local player, and `Game.PlayerPed` is the player's ped (physical model in the game world).
+
+- **Game.Player.Handle**: The client-side player handle.
+- **Game.PlayerPed.Handle**: The client's **ped handle**, used to manipulate the player's model and physical presence.
+- **Game.Player.ServerId**: The server-assigned player ID.
+
+#### Example: Get Player Info (Client-side)
+```csharp
+int clientId = Game.Player.Handle; // Get the client ID (not server ID)
+int pedHandle = Game.PlayerPed.Handle; // Get the ped's handle
+int serverId = Game.Player.ServerId; // Get the server-assigned player ID (source ID)
+
+string playerName = API.GetPlayerName(clientId); // Get player name
+```
+
+### 4. **From Server ID to Player Object**
+
+To go from a **server ID** (int) to a **Player** object:
+1. On the **server side**, use the `Players[source]` collection to get the `Player` object from the **server ID**.
+2. On the **client side**, you’ll use `Game.Player.ServerId` to get the **server ID** of the local player.
+
+#### Example: Server-side Server ID to Player Object
+```csharp
+int sourceId = 1; // Example server ID
+Player player = Players[sourceId];
+Debug.WriteLine($"Player Name: {player.Name}");
+```
+
+### 5. **From Player Object to Server ID**
+
+If you have a `Player` object, you can get their **server ID** (source) via the `Handle` property.
+
+#### Example: Get Player's Server ID from `Player`
+```csharp
+Player player = Players[sourceId];
+int serverId = player.Handle; // Get the player's server ID (source)
+```
+
+### 6. **From Name to Server ID (Client-side and Server-side)**
+
+To go from a **player name** to their **server ID**, you need to loop through the players and compare names. Both **client-side** and **server-side** require this manual lookup:
+
+#### Example: Get Player ID from Name (Server-side)
+```csharp
+string targetName = "SomePlayerName";
+foreach (Player player in Players)
+{
+    if (player.Name == targetName)
+    {
+        int playerId = player.Handle; // This is the server ID
+        Debug.WriteLine($"Found {targetName} with ID: {playerId}");
+        break;
+    }
+}
+```
+
+#### Example: Get Player ID from Name (Client-side)
+```csharp
+string targetName = "SomePlayerName";
+int numPlayers = API.GetNumPlayerIndices();
+for (int i = 0; i < numPlayers; i++)
+{
+    int playerId = API.GetPlayerFromIndex(i);
+    if (API.GetPlayerName(playerId) == targetName)
+    {
+        Debug.WriteLine($"Found {targetName} with Player ID: {playerId}");
+        break;
+    }
+}
+```
+
+### 7. **Ped Handle (Client-side)**
+
+On the **client side**, the **ped handle** is used to manipulate the player model (the in-game character). This is usually obtained through `Game.PlayerPed.Handle`.
+
+#### Example: Get the Ped Handle
+```csharp
+int pedHandle = Game.PlayerPed.Handle;
+Debug.WriteLine($"Player Ped Handle: {pedHandle}");
+```
+
+### 8. **From Ped Handle to Server ID**
+
+To get the **server ID** from the **ped handle** is not straightforward, since the **ped handle** is a client-side reference. However, you can send the ped’s handle to the server and associate it with a **server ID** if needed.
+
+### 9. **Communicating Between Client and Server**
+
+To send information from the client to the server (such as sending a player’s coordinates or other info), you use **events**. On the server side, you can use the **server ID** (source) to identify which player triggered the event.
+
+#### Example: Send Player Coordinates to Server (Client-side)
+```csharp
+Vector3 coords = Game.PlayerPed.Position;
+TriggerServerEvent("sendPlayerCoords", coords);
+```
+
+#### Example: Receive Event and Process on Server (Server-side)
+```csharp
+[EventHandler("sendPlayerCoords")]
+public void OnReceivePlayerCoords([FromSource] Player player, Vector3 coords)
+{
+    Debug.WriteLine($"Player {player.Name} sent coords: {coords}");
+}
+```
+
+---
+
+### Summary of Conversions:
+1. **From Player Object to Server ID**: `player.Handle` (on server) or `Game.Player.ServerId` (on client).
+2. **From Server ID to Player Object**: Use `Players[source]` (on server).
+3. **From Ped Handle to Player Name/ID**: Client-side, `Game.PlayerPed.Handle` for the ped and `API.GetPlayerName(playerId)` for the name.
+4. **From Name to Server ID**: Loop through `Players` on server or loop through indices on the client.
+
+By using the **Player class**, **ped handle**, and **server ID** as explained, you can navigate between the various identifiers for players in FiveM.

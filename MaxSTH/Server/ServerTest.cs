@@ -6,7 +6,7 @@ namespace STHMaxzzzie.Server
 {
     public class Test : BaseScript
     {
-        [Command("test", Restricted = false)]
+        [Command("test", Restricted = true)]
         void TestCommand(int source, List<object> args, string raw)
         {
             Debug.WriteLine($"This is the test command.");

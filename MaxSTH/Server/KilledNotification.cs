@@ -32,7 +32,7 @@ namespace STHMaxzzzie.Server
         [EventHandler("sendKillerIDToServer")]
         public async void sendKillerIDToServer([FromSource] Player source, int killerID, dynamic data)
         {
-            int latestKillerID = -1;
+            int latestKillerID = killerID;
 
             if (latestKillerID == -1)
             {

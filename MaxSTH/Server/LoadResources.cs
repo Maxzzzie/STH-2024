@@ -152,6 +152,7 @@ public static class LoadResources
 
     public static Dictionary<string, List<Vector3>> mapBounds()
     {
+        Debug.WriteLine($"Loading Mapbounds");
         var path_to_resource = API.GetResourcePath(API.GetCurrentResourceName());
         var path_to_MapBounds_file = $"{path_to_resource}/Resources/MapBounds.txt";
 
@@ -171,6 +172,7 @@ public static class LoadResources
             string boundsLocationName = line.Split(' ')[0].Trim(); //get the name
             string boundsLocationCords = line.Split(' ')[1].Trim(); //get whatever's behind the space
             string[] locationsStringArray = boundsLocationCords.Split(';'); //split whatever's behind the space into an array called locationsStringArray
+            Debug.WriteLine($" foreach mapboundsdict name:{boundsLocationName}");
 
             foreach (string xyz in locationsStringArray)
             {
