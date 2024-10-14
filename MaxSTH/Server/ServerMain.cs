@@ -17,6 +17,7 @@ namespace STHMaxzzzie.Server
         public static Dictionary<string, Vector4> respawnLocationsDict;
         public static Dictionary<string, Vector3> maxzzzieCalloutsDict;
         public static Dictionary<string, string> vehicleinfoDict;
+        public static bool isVehAllowed = false;
 
         private Dictionary<Player, int> playerPris = new Dictionary<Player, int>();
 
@@ -148,6 +149,29 @@ namespace STHMaxzzzie.Server
             source.TriggerEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
             TriggerEvent("updateSharedClientBlips");
             source.TriggerEvent("Stamina");
+            source.TriggerEvent("whatIsVehAllowed", isVehAllowed);
+        }
+
+        [Command("toggleveh", Restricted = true)] //restriction default = true
+        void toggleveh(int source, List<object> args, string raw)
+        {
+            if (args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "true"))
+            {
+                isVehAllowed = bool.Parse(args[0].ToString());
+                TriggerClientEvent("whatIsVehAllowed", isVehAllowed);
+                if (isVehAllowed)
+                {
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Vehiclespawns are unrestricted." } });
+                }
+                else
+                {
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Vehiclespawns are restricted." } });
+                }
+            }
+            else
+            {
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /toggleveh (true/false)");
+            }
         }
 
 
@@ -346,6 +370,7 @@ namespace STHMaxzzzie.Server
         public static bool isPvpAllowed = true;
         public static bool isShootingFromVehicleAllowed = false;
 
+
         [Command("togglesfv", Restricted = true)] //restriction (default true)
         void toggleShootingFromVehicle(int source, List<object> args, string raw)
         {
@@ -390,6 +415,7 @@ namespace STHMaxzzzie.Server
                 CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /toggleweapon (true/false)");
             }
         }
+
 
         [Command("togglepvp", Restricted = true)]
         void togglepvp(int source, List<object> args, string raw)
@@ -596,7 +622,7 @@ namespace STHMaxzzzie.Server
                 CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /delcircle (first/ last/ all)");
             }
         }
-    } 
+    }
 
 
     public class Teleports : BaseScript
@@ -753,6 +779,41 @@ namespace STHMaxzzzie.Server
             foreach (string model in nonAnimalModel)
             {
                 source.TriggerEvent("getNonAnimalModelList", model);
+            }
+        }
+    }
+
+    public class Vehicles : BaseScript
+    {
+        [Command("clientveh", Restricted = true)] //restriction default = true
+        void clientveh(int source, List<object> args, string raw)
+        {
+            Player sourceHost = Players[source];
+            if (args.Count == 1)
+            {
+                TriggerClientEvent("clientVeh", args[0].ToString(), false, sourceHost.Name);
+                TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"You tried spawning a {args[0].ToString()} for everyone." } });
+            }
+            else if (args.Count == 2) //this should send a vehicle to a client.
+            {
+                int temp;
+                bool isArgs1Int = Int32.TryParse(args[1].ToString(), out temp);
+                if (isArgs1Int)
+                {
+                    int clientID = int.Parse(args[1].ToString());
+                    Player player = Players[clientID];
+                    TriggerClientEvent(player, "clientVeh", args[0].ToString(), true, sourceHost.Name);
+                    TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"You tried spawning a {args[0].ToString()} for {player.Name}" } });
+                }
+                else
+                {
+                    TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Something went wrong!\nYou should do /clientveh \"VehicleName\" \"clientID/ Empty for all.\"" } });
+
+                }
+            }
+            else
+            {
+                TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Something went wrong!\nYou should do /clientveh \"VehicleName\" \"clientID/ Empty for all.\"" } });
             }
         }
     }

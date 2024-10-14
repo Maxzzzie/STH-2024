@@ -105,7 +105,7 @@ namespace STHMaxzzzie.Client
                 }
                 else if (input == "special")
                 {
-                    string[] specialModel = new string[] { "ig_orleans", "s_m_y_mime", "s_m_y_clown_01", "s_m_m_strperf_01", "cs_bradcadaver", "cs_hunter", "s_m_m_mariachi_01", "mp_m_bogdangoon", "cs_priest", "s_m_m_movalien_01", "s_m_m_movspace_0", "hc_driver", "hc_gunman", "u_m_o_filmnoir", "u_m_m_streetart_01", "u_m_y_zombie_01", "u_m_y_rsranger_01", "u_m_y_imporage", "u_m_y_pogo_01", "u_m_y_mani", "u_m_y_juggernaut_01", };
+                    string[] specialModel = new string[] { "s_m_y_mime", "s_m_y_clown_01", "s_m_m_strperf_01", "cs_bradcadaver", "cs_hunter", "s_m_m_mariachi_01", "mp_m_bogdangoon", "cs_priest", "s_m_m_movalien_01", "s_m_m_movspace_0", "hc_driver", "hc_gunman", "u_m_o_filmnoir", "u_m_m_streetart_01", "u_m_y_zombie_01", "u_m_y_rsranger_01", "u_m_y_imporage", "u_m_y_pogo_01", "u_m_y_mani", "u_m_y_juggernaut_01", };
                     var rand = new Random();
                     int modelIndex = rand.Next(0, specialModel.Length);
                     TriggerEvent("changingModel", specialModel[modelIndex]);
@@ -133,7 +133,7 @@ namespace STHMaxzzzie.Client
                 }
                 else if (input == "max")
                 {
-                    string[] maxModel = new string[] { "csb_cop", "s_f_y_ranger_01", "s_m_m_gaffer_01", "mp_m_fibsec_01", "s_m_y_fireman_01", "s_m_m_paramedic_01", "s_m_m_highsec_01", "s_m_m_highsec_01", };
+                    string[] maxModel = new string[] { "s_m_y_marine_02" };
                     var rand = new Random();
                     int modelIndex = rand.Next(0, maxModel.Length);
                     TriggerEvent("changingModel", maxModel[modelIndex]);
@@ -155,6 +155,7 @@ namespace STHMaxzzzie.Client
                 TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"Oh no. Something went wrong!\nYou should do /model (\"modelname\"/ ems/ story/ special/ or keep it empty for a random model)"}});
             }
             API.SetPlayerMaxStamina(PlayerId(), 100);
+            Debug.WriteLine("model change updated stamina.");
         }
     }
 }

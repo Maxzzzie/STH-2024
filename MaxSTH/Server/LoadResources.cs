@@ -190,6 +190,7 @@ public static class LoadResources
 
     public static Dictionary<string, string> allowedVehicles()
     {
+        Debug.WriteLine($"Loading allowedVehicles");
         var path_to_resource = API.GetResourcePath(API.GetCurrentResourceName());
         var path_to_AllowedVehicles_file = $"{path_to_resource}/Resources/AllowedVehicles.txt";
 
@@ -208,6 +209,7 @@ public static class LoadResources
             string allowedVehicleName = line.Split(' ')[0].Trim().ToLower();
             string vehicleDataString = line.Split(' ')[1].Trim().ToLower();
             AllowedVehiclesDict.Add(allowedVehicleName, vehicleDataString);
+            //Debug.WriteLine($"{allowedVehicleName}, {vehicleDataString}");
         }
         return AllowedVehiclesDict;
     }

@@ -63,8 +63,8 @@ namespace STHMaxzzzie.Client
         void getRespawnLocationsDict(string respawnLocationName, Vector4 respawnLocationsXYZH)
         {
             respawnLocationsDict.Add(respawnLocationName, respawnLocationsXYZH);
-            Debug.WriteLine($"name {respawnLocationName} location xyz {respawnLocationsXYZH.ToString()}");
-        }
+            //Debug.WriteLine($"name {respawnLocationName} location xyz {respawnLocationsXYZH.ToString()}");
+                  }
 
         [Tick]
         public async Task OnTick()

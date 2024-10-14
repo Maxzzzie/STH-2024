@@ -13,6 +13,7 @@ namespace STHMaxzzzie.Client
     {
         string allowedToFixStatus = "wait"; //can be on/off/wait/lsc.
         int timeStationairBeforeFix = 10;
+        bool isVehAllowed = false;
         static Dictionary<string, string> vehicleinfoDict = new Dictionary<string, string>();
         Dictionary<string, VehicleHash> VehicleNameToHash = null;
         public max_Vehicle()
@@ -23,17 +24,29 @@ namespace STHMaxzzzie.Client
             foreach (var veh_hash in Enum.GetValues(typeof(VehicleHash)))
             {
                 VehicleNameToHash.Add(veh_hash.ToString().ToLower(), (VehicleHash)veh_hash);
+                //Debug.WriteLine($"{veh_hash.ToString().ToLower()} , {(VehicleHash)veh_hash}");
             }
             TriggerServerEvent("sendVehicleinfoDict");
         }
-
 
         [EventHandler("getVehicleinfoDict")]
         void getVehicleinfoDict(string vehicleName, string vehicleInfo)
         {
             vehicleinfoDict.Add(vehicleName, vehicleInfo);
+
+            //vehicle dict formatting --> Key= Tug || value= -2100640717,Boats,true || Value is vehiclehash, vehicle class, allowed to spawn or not bool.
+            //use these formats to access the vehicleInfo components.
+            // long vehicleHash = long.Parse(vehicleInfo.Split(',')[0]);           
+            // string vehicleClass = vehicleInfo.Split(',')[1];
+            // bool allowedVehicle = bool.Parse(vehicleInfo.Split(',')[2]);
+            // Debug.WriteLine($"clientVehicleInfoDict = {vehicleName} {vehicleInfo} -- {vehicleHash} {vehicleClass} allowed ?{allowedVehicle}");
         }
 
+        [EventHandler("whatIsVehAllowed")]
+        void whatIsVehicleAllowed(bool vehicleAllowed)
+        {
+            isVehAllowed = vehicleAllowed;
+        }
 
         [EventHandler("VehicleFixStatus")]
         void whatIsVehicleFixStatus(string vehicleFixStatus, int fixWaitTime)
@@ -42,7 +55,7 @@ namespace STHMaxzzzie.Client
             timeStationairBeforeFix = fixWaitTime;
         }
 
-        //spawning a vehicle in front of the player.
+        //spawning a vehicle in front of the player. 
         [Command("veh")]
         async void vehicle(int source, List<object> args, string raw)
         {
@@ -50,15 +63,25 @@ namespace STHMaxzzzie.Client
             {
                 TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"What vehicle do you want to spawn?" } });
             }
-            else if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()))
+
+            else if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()) && vehicleinfoDict.ContainsKey(args[0].ToString()))
             {
-                var model = new Model(VehicleNameToHash[args[0].ToString()]);
-                Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, multiline = true, args = new[] { $"You spawned an {args[0]}." } });
+                string vehicleInfo = vehicleinfoDict[args[0].ToString()];
+                if (bool.Parse(vehicleInfo.Split(',')[2]) || isVehAllowed)
+                {
+                    var model = new Model(VehicleNameToHash[args[0].ToString()]);
+                    Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
+                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, multiline = true, args = new[] { $"You spawned an {args[0]}." } });
+                }
+                else { TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"This vehicle isn't allowed to be spawned." } }); }
+            }
+            else if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()) && !vehicleinfoDict.ContainsKey(args[0].ToString()))
+            {
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Ask Max to add this to the list of secrets, he might do it." } });
             }
             else
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Oh no. Something went wrong!\nYou should do /veh \"vehiclename\"." } });
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Something went wrong!\nYou should do /veh \"vehiclename\"." } });
             }
         }
 
@@ -66,16 +89,52 @@ namespace STHMaxzzzie.Client
         [Command("inveh")]
         async void inVehicle(int source, List<object> args, string raw)
         {
-            if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()))
+            if (args.Count == 0)
             {
-                var model = new Model(VehicleNameToHash[args[0].ToString()]);
-                Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a {args[0]}." } });
-                Game.PlayerPed.SetIntoVehicle(vehicle, VehicleSeat.Driver);
-                //Game.PlayerPed.CurrentVehicle.CreateRandomPedOnSeat(VehicleSeat.Passenger);
-                API.SetVehicleEngineOn(vehicle.Handle, true, true, false);
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"What vehicle do you want to spawn in?" } });
+            }
+            else if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()) && vehicleinfoDict.ContainsKey(args[0].ToString()))
+            {
+                string vehicleInfo = vehicleinfoDict[args[0].ToString()];
+                if (bool.Parse(vehicleInfo.Split(',')[2]) || isVehAllowed) //checks if vehicle is true OR if vehicles aren't restricted.
+                {
+                    var model = new Model(VehicleNameToHash[args[0].ToString()]);
+                    Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a {args[0]}." } });
+                    Game.PlayerPed.SetIntoVehicle(vehicle, VehicleSeat.Driver);
+                    //Game.PlayerPed.CurrentVehicle.CreateRandomPedOnSeat(VehicleSeat.Passenger);
+                    API.SetVehicleEngineOn(vehicle.Handle, true, true, false);
+                }
+
+                else { TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"This vehicle isn't allowed to be spawned." } }); }
+            }
+            else if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()) && !vehicleinfoDict.ContainsKey(args[0].ToString()))
+            {
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Ask Max to add this to the list of secrets, he might do it." } });
+            }
+            else
+            {
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Something went wrong!\nYou should do /inveh \"vehiclename\"." } });
             }
         }
+
+        [EventHandler("clientVeh")]
+        void clientVeh(string vehicleName, bool isPrivate, string sourceName)
+        {
+            bool exists = VehicleNameToHash.ContainsKey(vehicleName);
+            Debug.WriteLine($"client veh is triggered ?{exists}");
+            if (exists)
+            {
+                var model = new Model(VehicleNameToHash[vehicleName]);
+                World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+                if (isPrivate)
+                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You got a vehicle called \"{vehicleName}\" from {sourceName}." } });
+                if (!isPrivate)
+                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Everyone got a \"{vehicleName}\" from {sourceName}." } });
+            }
+            else { TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"A host messed up LOL." } }); }
+        }
+
 
         //For vehicle colors and customisations look here. The original pastebins aren't functional anymore in the natives list.
 
@@ -305,7 +364,7 @@ namespace STHMaxzzzie.Client
 
         private async Task WaitForSeconds(int seconds)
         {
-            int targetTime = Environment.TickCount + (seconds * 1000); 
+            int targetTime = Environment.TickCount + (seconds * 1000);
             while (Environment.TickCount < targetTime)
             {
                 await Delay(1);
