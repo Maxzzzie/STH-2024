@@ -49,25 +49,28 @@ namespace STHMaxzzzie.Client
         [EventHandler("changingModel")]
         public async void changingModel(string getModel)
         {
+            int playerHandle = Game.Player.ServerId;
             model = getModel;
             await Game.Player.ChangeModel(new Model(model));
             SetPedDefaultComponentVariation(PlayerPedId());
-            TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"You changed your model to:{model}."}});
-            TriggerEvent("lastWeaponClass",true);
+            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You changed your model to:{model}." } });
+            TriggerEvent("lastWeaponClass", true);
             API.SetPlayerMaxStamina(PlayerId(), 100);
-                    }
+            TriggerServerEvent("updateServerModel", playerHandle, model);
+        }
 
         //gets triggered by pressing f6 and /model
         [EventHandler("changeRandomModel")]
         void changeRandomModel()
         {
-            var rand = new Random();
-            var index = rand.Next(0, nonAnimalModel.Count);
-            Debug.WriteLine(nonAnimalModel.Count.ToString());
-            Debug.WriteLine($"{index}");
-            TriggerEvent("changingModel", nonAnimalModel[index]); 
+            if (nonAnimalModel.Count != 0)
+            {
+                var rand = new Random();
+                var index = rand.Next(0, nonAnimalModel.Count);
+                TriggerEvent("changingModel", nonAnimalModel[index]);
+            }
+            else Debug.WriteLine($"nonAnimalModel list is empty");
         }
-
 
         [Command("model")]
         public void requestModel(int source, List<object> args, string raw)
@@ -140,19 +143,19 @@ namespace STHMaxzzzie.Client
                 }
                 else if (input == "fw")
                 {
-                    string[] fwModel = new string[] { "u_m_m_streetart_01", "ig_johnnyklebitz"};
+                    string[] fwModel = new string[] { "u_m_m_streetart_01", "ig_johnnyklebitz" };
                     var rand = new Random();
                     int modelIndex = rand.Next(0, fwModel.Length);
                     TriggerEvent("changingModel", fwModel[modelIndex]);
                 }
                 else
                 {
-                    TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"Oh no. Something went wrong!\nYou should do /model (\"modelname\"/ ems/ story/ special/ or keep it empty for a random model)"}});
+                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Oh no. Something went wrong!\nYou should do /model (\"modelname\"/ ems/ story/ special/ or keep it empty for a random model)" } });
                 }
             }
             else
             {
-                TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"Oh no. Something went wrong!\nYou should do /model (\"modelname\"/ ems/ story/ special/ or keep it empty for a random model)"}});
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Oh no. Something went wrong!\nYou should do /model (\"modelname\"/ ems/ story/ special/ or keep it empty for a random model)" } });
             }
             API.SetPlayerMaxStamina(PlayerId(), 100);
             Debug.WriteLine("model change updated stamina.");

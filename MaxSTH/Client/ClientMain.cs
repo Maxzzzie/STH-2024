@@ -78,6 +78,7 @@ namespace STHMaxzzzie.Client
         async void respawnPlayerHandler()
         {
             Debug.WriteLine("running spawn function");
+            TriggerEvent("updateBlipLocationOnMapForDelayMode", new Vector3(0,0,0), false);//turns of delaymode if this player is the runner.
 
             //-------------------------------------------------- temp respawn code. Can use the bits for later on in the main code -------------------------------- below here including didIAlreadySpawnOnce bool up top of this funciton
             if (!didIAlreadySpawnOnce)

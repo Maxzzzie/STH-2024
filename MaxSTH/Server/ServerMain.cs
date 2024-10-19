@@ -467,7 +467,7 @@ namespace STHMaxzzzie.Server
             {
                 TriggerClientEvent("updateCircle", argArray);
             }
-            if (isPlayerJoining)
+            if (!isPlayerJoining)
             {
                 TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Mapbounds have been updated." } });
             }
@@ -478,7 +478,7 @@ namespace STHMaxzzzie.Server
         [Command("circle", Restricted = true)] //restriction (default true)
         void circle(int source, List<object> args, string raw)
         {
-            CitizenFX.Core.Debug.WriteLine($"server circle 1");
+            //CitizenFX.Core.Debug.WriteLine($"server circle 1");
             if (args.Count <= 1 && args.Count >= 4)
             {
                 CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for more info.");
@@ -494,7 +494,7 @@ namespace STHMaxzzzie.Server
                     argColor = Int32.Parse(args[1].ToString());
                     return;
                 }
-                CitizenFX.Core.Debug.WriteLine("2nd Oh no. Something went wrong!\nYou should do \"/circle help\" for more info.");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for more info.");
             }
             if (args.Count == 4)
             {
@@ -507,7 +507,7 @@ namespace STHMaxzzzie.Server
 
                 if (isArgs0Int == false || isArgs1Int == false || isArgs2Int == false || isArgs3Int == false)
                 {
-                    CitizenFX.Core.Debug.WriteLine("3rd Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
+                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
                     return;
                 }
                 float argX = float.Parse(args[0].ToString());
@@ -529,7 +529,7 @@ namespace STHMaxzzzie.Server
 
                 if (isArgs0Int == false || isArgs1Int == false || isArgs2Int == false)
                 {
-                    CitizenFX.Core.Debug.WriteLine("4th Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
+                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
                     return;
                 }
                 float argX = float.Parse(args[0].ToString());
@@ -789,12 +789,12 @@ namespace STHMaxzzzie.Server
         void clientveh(int source, List<object> args, string raw)
         {
             Player sourceHost = Players[source];
-            if (args.Count == 1)
+            if (args.Count == 1) //this sends a vehicle to all clients
             {
                 TriggerClientEvent("clientVeh", args[0].ToString(), false, sourceHost.Name);
                 TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"You tried spawning a {args[0].ToString()} for everyone." } });
             }
-            else if (args.Count == 2) //this should send a vehicle to a client.
+            else if (args.Count == 2) //this sends a vehicle to a specific client
             {
                 int temp;
                 bool isArgs1Int = Int32.TryParse(args[1].ToString(), out temp);

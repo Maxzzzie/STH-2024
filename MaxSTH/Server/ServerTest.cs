@@ -9,10 +9,7 @@ namespace STHMaxzzzie.Server
         [Command("test", Restricted = true)]
         void TestCommand(int source, List<object> args, string raw)
         {
-            Debug.WriteLine($"This is the test command.");
-            int X = 0;
-            int Y = 0;
-            TriggerClientEvent("CreateShotBlip", X, Y);
+            TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Prrrrt. Who farted?" } });
         }
     }
 }

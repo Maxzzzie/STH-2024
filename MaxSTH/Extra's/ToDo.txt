@@ -1,3 +1,4 @@
+fix mapbounds message for player joined
 /heal command with delay for health and armour. Make toggleable. wait instant locationspecific.
 Change death msg to notification (SetNotificationTextEntry, AddTextComponentSubstringPlayerName, DrawNotification)
 Fix pri spawner neons etc. (https://docs.fivem.net/natives/?_0x57F24253)
@@ -38,12 +39,13 @@ Players old car despawns i don't want it to
 /cveh sets you in closest vehicle.
 Add pma voice (proximity chat) Increase range and add a radio frequency
 restrict vehicles for non runners
-restrict spawnable vehicles
 mechanics sound while repairing
-bunch of veh spawn
 
 
 //finished
+14-10-2024
+restrict spawnable vehicles and added a toggle
+multiple player veh spawner and remote vehicle spawner
 13-10-2024
 added loading in of callouts resource file. And showing them on map to add more where needed.
 
