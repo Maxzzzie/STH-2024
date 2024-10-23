@@ -38,8 +38,7 @@ namespace STHMaxzzzie.Client
                 runPlayer = Players[int.Parse(args[0].ToString())];
                 delayModeOn = true;
                 runnerSeesDelayBlip = false;
-                TriggerClientEvent(runPlayer, "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"New secret mode. You are a runner." } });
-                TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"You're starting a round of delay at a distance of {distanceToBlip}m with {runPlayer.Name} as the runner." } });
+                TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"{sourceHost.Name} started a round of delay mode with {distanceToBlip}m distance. {runPlayer.Name} is the runner." } });
                 TriggerClientEvent(runPlayer, "getBlipLocationForDelayMode", delayModeOn, distanceToBlip);
             }
             else if (args.Count == 2)
@@ -48,8 +47,7 @@ namespace STHMaxzzzie.Client
                 distanceToBlip = int.Parse(args[1].ToString());
                 runnerSeesDelayBlip = false;
                 delayModeOn = true;
-                TriggerClientEvent(runPlayer, "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"New secret mode. You are a runner." } });
-                TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"You're starting a round of delay at a distance of {distanceToBlip}m with {runPlayer.Name} as the runner." } });
+                TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"{sourceHost.Name} started a round of delay mode with {distanceToBlip}m distance. {runPlayer.Name} is the runner." } });
                 TriggerClientEvent(runPlayer, "getBlipLocationForDelayMode", delayModeOn, distanceToBlip);
             }
             else if (args.Count == 3)
@@ -61,12 +59,11 @@ namespace STHMaxzzzie.Client
                     runPlayer = Players[int.Parse(args[0].ToString())];
                     distanceToBlip = int.Parse(args[1].ToString());
                     delayModeOn = true;
-                    TriggerClientEvent(runPlayer, "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"New secret mode. You are a runner." } });
                     TriggerClientEvent(runPlayer, "getBlipLocationForDelayMode", delayModeOn, distanceToBlip);
                     if (runnerSeesDelayBlip)
-                        TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"You're starting a round of delay at a distance of {distanceToBlip}m with {runPlayer.Name} as the runner and the runner does see his blip." } });
+                        TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"{sourceHost.Name} started a round of delay mode with {distanceToBlip}m distance. {runPlayer.Name} is the runner and does see their blip." } });
                     else
-                        TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"You're starting a round of delay at a distance of {distanceToBlip}m with {runPlayer.Name} as the runner and the runner does not see his blip." } });
+                        TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"{sourceHost.Name} started a round of delay mode with {distanceToBlip}m distance. {runPlayer.Name} is the runner." } });
 
                 }
                 else
@@ -103,6 +100,7 @@ namespace STHMaxzzzie.Client
             {
                 delayModeOn = false;
                 TriggerClientEvent("updateBlipLocationOnMapForDelayMode", newBlipPos, delayModeOn);
+                TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Delay mode is now concluded." } });
             }
         }
     }

@@ -170,6 +170,9 @@ function RequestAllIpls()
 	-- Red Carpet: 300.593, 199.759, 104.378
 	RequestIpl('redCarpet')
 
+	--MissionRowPD Mugshot Room
+	RequestIpl('mp_m_freemode_01_mugshot')
+	
 	-- UFO
 	-- Zancudo: -2052, 3237, 1457
 	-- Hippie base: 2490.5, 3774.8, 2414

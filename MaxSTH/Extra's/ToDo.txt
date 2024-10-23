@@ -1,4 +1,3 @@
-fix mapbounds message for player joined
 /heal command with delay for health and armour. Make toggleable. wait instant locationspecific.
 Change death msg to notification (SetNotificationTextEntry, AddTextComponentSubstringPlayerName, DrawNotification)
 Fix pri spawner neons etc. (https://docs.fivem.net/natives/?_0x57F24253)
@@ -10,19 +9,16 @@ Callout indicator
 Make expanded map
 Speed indicator
 Vehicle name/type warning or speed limiter
-Display player online list
 Display all commands
 Display time ( https://docs.fivem.net/natives/?_0xA4EA0691 )
 Implement a menu
-fix stamina
 add ped that gets in player car https://docs.fivem.net/natives/?_0x374827C2
 Fix teleport to teleport with vehicle if personal teleport
-fix vehicle to have a toggle between allowed classes and type of vehicles. (no spawning italy gto (sports) during hunts if sports is allowed etc.)
+make legal vehicles more versatile. class/runner/hunter playerbased etc.
 Remove weapons from npcs/ fix getting weapons from npcs and gangmembers. https://docs.fivem.net/natives/?_0xA44CE817
 add toggle weapon sets
 Toggle pvp per person
 Add a good vehiclespawner
-Add playerlist
 Add toggle'able blips.
 Add vehiclecolorerererrer.
 Increase health?
@@ -38,11 +34,19 @@ fix model glitches
 Players old car despawns i don't want it to
 /cveh sets you in closest vehicle.
 Add pma voice (proximity chat) Increase range and add a radio frequency
-restrict vehicles for non runners
 mechanics sound while repairing
+make display player online list visual instead of in chat
 
 
 //finished
+19-10-2024
+delay mode added
+playerlist added
+outfit command added
+fix mapbounds message for player joined
+Display player online list
+fixed stamina in one of the earlier versions
+
 14-10-2024
 restrict spawnable vehicles and added a toggle
 multiple player veh spawner and remote vehicle spawner

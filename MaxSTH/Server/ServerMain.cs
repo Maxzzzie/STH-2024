@@ -19,6 +19,7 @@ namespace STHMaxzzzie.Server
         public static Dictionary<string, string> vehicleinfoDict;
         public static bool isVehAllowed = false;
 
+
         private Dictionary<Player, int> playerPris = new Dictionary<Player, int>();
 
         public ServerMain()
@@ -250,24 +251,42 @@ namespace STHMaxzzzie.Server
     {
         public static string AllowedToFixStatus = "on";
         public static int fixWaitTime = 10;
-
+        public static bool isPodOn = true;
 
         [Command("togglepod", Restricted = true)]
         void toggleweapon(int source, List<object> args, string raw)
         {
+            if (args.Count == 0)
+            {
+                if (!isPodOn)
+                {
+                    isPodOn = true;
+                    API.StartResource("playernames");
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PlayerOverheadDisplay is now on." } });
+
+                }
+                else
+                {
+                    isPodOn = false;
+                    API.StopResource("playernames");
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PlayerOverheadDisplay is now off." } });
+                }
+            }
             if (args.Count == 1 && args[0].ToString() == "true")
             {
+                isPodOn = true;
                 API.StartResource("playernames");
                 TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PlayerOverheadDisplay is now on." } });
             }
             else if (args.Count == 1 && args[0].ToString() == "false")
             {
+                isPodOn = false;
                 API.StopResource("playernames");
                 TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PlayerOverheadDisplay is now off." } });
             }
             else
             {
-                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglepod (on/off)");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglepod (true/false)");
             }
         }
 
@@ -755,7 +774,7 @@ namespace STHMaxzzzie.Server
         }
 
         [Command("tplocations")]
-        void tplocations(int source)
+        void tplocations(int source, List<object> args, string raw)
         {
             Player player = Players[source];
             var combined = string.Join(", ", tpLocationsDict.Keys);

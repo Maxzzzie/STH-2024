@@ -6,7 +6,7 @@ namespace STHMaxzzzie.Server
 {
     public class Playerlist : BaseScript
     {
-        Dictionary<int, string> playerModels = new Dictionary<int, string>();
+        public Dictionary<int, string> playerModels = new Dictionary<int, string>();
 
         [EventHandler("updateServerModel")]
         void UpdateServerModel(int source, string model)
@@ -14,7 +14,6 @@ namespace STHMaxzzzie.Server
             //TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"updated player model serverside. {source} {model} {playerModels.Count}" } });
             playerModels[source] = model;
             Debug.WriteLine($"dict with {source} and {model}");
-
         }
 
         [Command("players", Restricted = false)]
@@ -49,6 +48,29 @@ namespace STHMaxzzzie.Server
             {
                 TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Model: default" } });
             }
+        }
+
+        [EventHandler("sendClientModelNameForOutfit")]
+        void sendClientModelNameForOutfit(int source, int clientId)
+        {
+            Debug.WriteLine($"Running sendCLientModelNameForOutfit.");
+            string name = "unknown";
+            if (playerModels.ContainsKey(clientId))
+            {
+                foreach (Player player in Players)
+                {
+
+                    if (int.Parse(player.Handle) == clientId)
+                    {
+                        name = player.Name;
+                        break;
+                    }
+                }
+                TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 50, 50, 255 }, args = new[] { $"This is what {name} looks like now." } });
+                TriggerClientEvent(Players[source], "MugShotEvent", playerModels[clientId]);
+            }
+            else TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"issues :(" } });
+
         }
     }
 }
