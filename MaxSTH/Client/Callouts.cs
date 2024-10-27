@@ -17,11 +17,7 @@ namespace STHMaxzzzie.Client
         void getMaxzzzieCalloutsDict(string calloutsName, Vector3 calloutsLocation)
         {
             maxzzzieCalloutsDict.Add(calloutsName, calloutsLocation);
-            Debug.WriteLine($"name: {calloutsName} location: {calloutsLocation.ToString()}");
-            // int calloutblip = AddBlipForCoord(calloutsLocation.X,calloutsLocation.Y,calloutsLocation.Z);
-            // SetBlipSprite(calloutblip,128);
-            // SetBlipColour(calloutblip, 1);
-            // SetBlipAsShortRange(calloutblip, true);
+            Debug.WriteLine($"getMaxzzzieCalloutsDict in client -> callout name: {calloutsName} location: {calloutsLocation.ToString()}");
         }
     }
 

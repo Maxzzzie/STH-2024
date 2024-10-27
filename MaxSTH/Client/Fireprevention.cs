@@ -23,7 +23,7 @@ public class FireControl : BaseScript
             API.StopFireInRange(position.X, position.Y, position.Z, fireRange);
 
             // Optionally remove fire particle effects
-            API.RemoveParticleFxInRange(position.X, position.Y, position.Z, fireRange);
+            //API.RemoveParticleFxInRange(position.X, position.Y, position.Z, fireRange);
         }
 
         await Task.FromResult(0); // Ensure the task completes

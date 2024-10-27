@@ -18,7 +18,7 @@ namespace STHMaxzzzie.Client
         [EventHandler("Stamina")]
         private void Stamina()
         {
-            API.SetPlayerMaxStamina(PlayerId(), 100);
+            API.SetPlayerMaxStamina(Game.Player.Handle, 100);
             Debug.WriteLine($"added 100 stamina");
         }
 
@@ -62,9 +62,13 @@ namespace STHMaxzzzie.Client
         [EventHandler("getRespawnLocationsDict")]
         void getRespawnLocationsDict(string respawnLocationName, Vector4 respawnLocationsXYZH)
         {
-            respawnLocationsDict.Add(respawnLocationName, respawnLocationsXYZH);
-            //Debug.WriteLine($"name {respawnLocationName} location xyz {respawnLocationsXYZH.ToString()}");
-                  }
+
+            if (respawnLocationsDict != null && !respawnLocationsDict.ContainsKey(respawnLocationName))
+            {
+                respawnLocationsDict.Add(respawnLocationName, respawnLocationsXYZH);
+                //Debug.WriteLine($"name {respawnLocationName} location xyz {respawnLocationsXYZH.ToString()}");
+            }
+        }
 
         [Tick]
         public async Task OnTick()
@@ -78,7 +82,7 @@ namespace STHMaxzzzie.Client
         async void respawnPlayerHandler()
         {
             Debug.WriteLine("running spawn function");
-            TriggerEvent("updateBlipLocationOnMapForDelayMode", new Vector3(0,0,0), false);//turns of delaymode if this player is the runner.
+            TriggerEvent("updateBlipLocationOnMapForDelayMode", new Vector3(0, 0, 0), false);//turns of delaymode if this player is the runner.
 
             //-------------------------------------------------- temp respawn code. Can use the bits for later on in the main code -------------------------------- below here including didIAlreadySpawnOnce bool up top of this funciton
             if (!didIAlreadySpawnOnce)
@@ -107,13 +111,17 @@ namespace STHMaxzzzie.Client
                 {
                     Debug.WriteLine($"Key: {closestRespawnPoint} not found. Aborting respawn.");
                     Spawn.SpawnPlayer(-1610f, -1055f, 13f, 318f);
+                    //SetPlayerInvincible(Game.PlayerPed.Handle, true);
                 }
                 else
                 {
                     Vector4 spawn = respawnLocationsDict[closestRespawnPoint];
                     Spawn.SpawnPlayer(spawn.X, spawn.Y, spawn.Z, spawn.W);
-                    Debug.WriteLine($"Respawning at closest spawnpoint");
+                    Debug.WriteLine($"Respawning at closest spawnpoint. \"{closestRespawnPoint}\"");
+                    //SetPlayerInvincible(Game.PlayerPed.Handle, true);
                 }
+                // await Delay(5000);
+                // SetPlayerInvincible(Game.PlayerPed.Handle, false);
             }
 
             //-------------------------------------------------- end of temp respawn code ---------------------------------------------------------

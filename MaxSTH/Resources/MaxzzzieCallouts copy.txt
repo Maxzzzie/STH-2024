@@ -1,0 +1,37 @@
+5 Ways, -629, -369, 33
+6 Ways, -529, -369, 33
+Shopping centre jump, -278, -178, 38
+Pier enterance, -1456.449, -772.9354, 23.17758
+Top of backslash, -1744.908, -557.6848, 37.44308
+Middle of backslash, -1905.04, -454.3938, 22.03168
+Bottom of backslash, -2010.58, -387.5992, 10.80423
+Xero gasstation, -2111.746, -320.6764, 12.69385
+Curvy road, -2038.459, -176.0632, 25.96786
+Jetty, -1936.177, -330.9111, 45.99904
+Curvy at graveyard, -1803.014, -316.4394, 43.06359
+Graveyard, -1650.325, -241.7027, 54.55624
+mighy bush alleyway, -1561.502, -255.4389, 47.93999
+Rons gasstation, -1443.686, -283.9986, 45.73196
+Ammunation, -1327.8, -386.7443, 36.27899
+Maze Bank Office, -1376.676, -502.4027, 32.81857
+Movie studio, -1128.808, -518.6096, 33.43983
+Richards majestic, -924.1899, -354.1303, 38.62968
+Life Invader, -1065.292, -240.9474, 39.73314
+Low carparks, -932.1575, -166.9659, 41.87978
+rockford church, -767.0086, -23.18074, 41.08138
+rockford sign, -852.8739, -62.28775, 37.55703
+mainPD, -557.7357, -148.5691, 37.62638
+rockford LS customs, -360.3566, -123.0564, 38.2217
+Rockford plaza, -188.5361, -189.777, 43.40707
+Red carpark, -330.457, -760.9752, 33.53185
+Main banner hotel, -287.5471, -1089.143, 23.53601
+Mors mutulals, -190.7982, -1179.807, 22.6422
+Mile high construction, -139.5661, -1000.832, 26.83933
+Overpass, 30.60654, -768.8931, 43.80021
+Maze bank, -79.37727, -836.9302, 40.55812
+FIB office, 118.7249, -750.3245, 45.75161
+Square of squares, 198.6176, -924.3083, 30.25593
+Mirror park railyard, 515.5547, -600.192, 24.48646
+Dashhound bus depot, 416.7971, -633.8034, 28.06391
+Pillbox hill hospital, 299.0893, -585.0489, 43.26086
+Town hall, 236.9798, -412.7879, 48.11194

@@ -68,7 +68,7 @@ namespace STHMaxzzzie.Client
                     TriggerServerEvent("updateDelayBlip", blipPosition, true);
                     //Debug.WriteLine($"Setting a blip at {blipPosition.X}, {blipPosition.Y}, {blipPosition.Z}");
                 }
-                await WaitFor50Miliseconds(1);
+                await WaitFor50Miliseconds(6);
             }
             TriggerServerEvent("updateDelayBlip", blipPosition, false);
             delayModeOn = false;
@@ -78,7 +78,7 @@ namespace STHMaxzzzie.Client
 
         private async Task WaitFor50Miliseconds(int seconds)
         {
-            int targetTime = Environment.TickCount + (seconds * 300);
+            int targetTime = Environment.TickCount + (seconds * 50);
             while (Environment.TickCount < targetTime)
             {
                 await Delay(1);

@@ -32,14 +32,26 @@ namespace STHMaxzzzie.Server
             foreach (string id in allowed_discord_ids)
             {
                 API.ExecuteCommand($"add_ace identifier.discord:{id} \"command\" allow");
+                CitizenFX.Core.Debug.WriteLine($"load whitelist id : {id}");
             }
 
-            //get spawnlocations
             respawnLocationsDict = LoadResources.respawnLocations();
-            vehicleinfoDict = LoadResources.allowedVehicles();
             maxzzzieCalloutsDict = LoadResources.calloutsList();
+            vehicleinfoDict = LoadResources.allowedVehicles();
 
             Tick += OnTick;
+        }
+
+        [EventHandler("reloadResources")]
+        void reloadResources()
+        {
+            //CitizenFX.Core.Debug.WriteLine($"reloadResources triggered");
+            respawnLocationsDict?.Clear(); //the ? checks if the dictionairy isn't null. It gave an error without it.
+            maxzzzieCalloutsDict?.Clear();
+            vehicleinfoDict?.Clear();
+            respawnLocationsDict = LoadResources.respawnLocations();
+            maxzzzieCalloutsDict = LoadResources.calloutsList();
+            vehicleinfoDict = LoadResources.allowedVehicles();
         }
 
         [EventHandler("pri-spawn-requested")]
@@ -153,28 +165,27 @@ namespace STHMaxzzzie.Server
             source.TriggerEvent("whatIsVehAllowed", isVehAllowed);
         }
 
-        [Command("toggleveh", Restricted = true)] //restriction default = true
+        [Command("togglevehres", Restricted = true)] //restriction default = true
         void toggleveh(int source, List<object> args, string raw)
         {
-            if (args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "true"))
             {
-                isVehAllowed = bool.Parse(args[0].ToString());
-                TriggerClientEvent("whatIsVehAllowed", isVehAllowed);
-                if (isVehAllowed)
+                if (args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "true"))
                 {
-                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Vehiclespawns are unrestricted." } });
+                    isVehAllowed = bool.Parse(args[0].ToString());
+                    TriggerClientEvent("whatIsVehAllowed", isVehAllowed);
+                }
+                if (args.Count == 0)
+                {
+                    isVehAllowed = !isVehAllowed;
                 }
                 else
                 {
-                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Vehiclespawns are restricted." } });
+                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /toggleveh (true/false)");
                 }
             }
-            else
-            {
-                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /toggleveh (true/false)");
-            }
+            if (isVehAllowed) TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Vehiclespawns are unrestricted." } });
+            else TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Vehiclespawns are restricted." } });
         }
-
 
         public static void sendRespawnLocationsDict(Player source)
         {

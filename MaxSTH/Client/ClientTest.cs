@@ -7,6 +7,7 @@ namespace STHMaxzzzie.Client
 {
     public class MugShot : BaseScript
     {
+        //fix ped component variation
         //         //location mugshotroom player =     position: 402.848, -996.826, -99.000 rotation: 0.000, -0.000, 178.805 heading: 178.805
         //         //location camera =                 Position: 402.629, -1002.263, -99.004 rotation: 0.000, -0.000, 0.230 heading: 0.230
 
