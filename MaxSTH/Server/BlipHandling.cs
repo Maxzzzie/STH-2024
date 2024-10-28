@@ -71,7 +71,7 @@ namespace STHMaxzzzie.Server
         {
             //Debug.WriteLine($"updateSharedClientBlips 1");
             TriggerClientEvent("ClearBlips");
-            await Delay(10);
+            await Delay(1000);
             foreach (var kvp in sharedBlipDict)
             {
 

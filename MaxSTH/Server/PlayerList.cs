@@ -36,24 +36,24 @@ namespace STHMaxzzzie.Server
             }
         }
 
-        [Command("outfit", Restricted = false)]
-        void requestOutfit(int source, List<object> args, string raw)
-        {
-            int playerId = int.Parse(args[0].ToString());
-            if (playerModels.ContainsKey(playerId))
-            {
-                TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Model:\"{playerModels[playerId]}" } });
-            }
-            else
-            {
-                TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Model: default" } });
-            }
-        }
+        // [Command("outfit", Restricted = false)]
+        // void requestOutfit(int source, List<object> args, string raw)
+        // {
+        //     int playerId = int.Parse(args[0].ToString());
+        //     if (playerModels.ContainsKey(playerId))
+        //     {
+        //         TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Model:\"{playerModels[playerId]}" } });
+        //     }
+        //     else
+        //     {
+        //         TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Model: default" } });
+        //     }
+        // }
 
         [EventHandler("sendClientModelNameForOutfit")]
         void sendClientModelNameForOutfit(int source, int clientId)
         {
-            Debug.WriteLine($"Running sendCLientModelNameForOutfit.");
+            //Debug.WriteLine($"Running sendCLientModelNameForOutfit.");
             string name = "unknown";
             if (playerModels.ContainsKey(clientId))
             {

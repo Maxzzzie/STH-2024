@@ -8,8 +8,8 @@ namespace STHMaxzzzie.Server
 {
     public class DevelopTools : BaseScript
     {
-        static List<int> respawnBlips = new List<int>();
-        static List<int> calloutBlips = new List<int>();
+        static List<string> respawnBlips = new List<string>();
+        static List<string> calloutBlips = new List<string>();
         bool displayRespawnBlips = false;
         bool displayCalloutBlips = false;
 
@@ -18,118 +18,116 @@ namespace STHMaxzzzie.Server
             TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"This is the develop build. Develop tools are on!" } });
         }
 
-        [EventHandler("clearRespawnBlips")]
-        void clearRespawnBlips()
-        {
-            foreach (int blipId in respawnBlips)
-            {
-                int blip = blipId; //for some reason i have to specify again it's an int. It doesn't like the one in the foreach loop.
-                API.RemoveBlip(ref blip);
-                //TriggerClientEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"foreach respawn {blip}"}});
-                CitizenFX.Core.Debug.WriteLine($"Clearing respawn blip ID: {blipId}.");
-            }
-            CitizenFX.Core.Debug.WriteLine($"Respawn blips cleared.");
-            respawnBlips.Clear();
-        }
+        //         [EventHandler("clearRespawnBlips")]
+        //         void clearRespawnBlips()
+        //         {
+        //             foreach (string respawnName in respawnBlips)
+        //             {
+        //                 //TriggerEvent("addBlip", true, respawnName, "coord", new Vector3(-2000, 0, 0), 0, 0, 0, true, false, true);
+        //             }
+        //             CitizenFX.Core.Debug.WriteLine($"Respawn blips cleared.");
+        //             //respawnBlips.Clear();
+        //         }
 
         [EventHandler("placeRespawnBlips")]
         void placeRespawnBlips()
         {
-            foreach (var entry in ServerMain.respawnLocationsDict)
+            foreach (var kvp in ServerMain.respawnLocationsDict)
             {
-                int blipId = API.AddBlipForCoord(entry.Value.X, entry.Value.Y, entry.Value.Z);
+                //CitizenFX.Core.Debug.WriteLine($"AddBlip in Place Respawn blips. {kvp.Key}.");
+                //TriggerEvent("addBlip", false, kvp.Key, "coord", new Vector3(kvp.Value.X, kvp.Value.Y, kvp.Value.Z), 0, 84, 56, true, false, true);
+                //respawnBlips.Add(kvp.Key);
+                int blipId = API.AddBlipForCoord(kvp.Value.X, kvp.Value.Y, kvp.Value.Z);
                 API.SetBlipSprite(blipId, 84);
-                respawnBlips.Add(blipId);
-                CitizenFX.Core.Debug.WriteLine($"Respawn blip placed ID: {blipId}.");
             }
             CitizenFX.Core.Debug.WriteLine($"Respawn blips placed.");
         }
 
-        [EventHandler("clearCalloutBlips")]
-        void clearCalloutBlips()
-        {
-            foreach (int blipId in calloutBlips)
-            {
-                int blip = blipId; //for some reason i have to specify again it's an int. It doesn't like the one in the foreach loop.
-                API.RemoveBlip(ref blip);
-                CitizenFX.Core.Debug.WriteLine($"Clearing callout blip ID: {blipId}.");
-            }
-            CitizenFX.Core.Debug.WriteLine($"Callout blips cleared.");
-            calloutBlips.Clear();
-        }
+        //         [EventHandler("clearCalloutBlips")]
+        //         void clearCalloutBlips()
+        //         {
+        //             foreach (string calloutName in calloutBlips)
+        //             {
+        //                 //TriggerEvent("addBlip", true, calloutName, "coord", new Vector3(0, 0, 0), 0, 133, 47, true, false, true);
+        //             }
+        //             CitizenFX.Core.Debug.WriteLine($"Callout blips cleared.");
+        //             //calloutBlips.Clear();
+        //         }
 
         [EventHandler("placeCalloutBlips")]
         void placeCalloutBlips()
         {
-            foreach (var entry in ServerMain.maxzzzieCalloutsDict)
+            Debug.WriteLine($"placeCallutblips with {ServerMain.maxzzzieCalloutsDict.Count}");
+            foreach (var kvp in ServerMain.maxzzzieCalloutsDict)
             {
-                int blipId = API.AddBlipForCoord(entry.Value.X, entry.Value.Y, entry.Value.Z);
-                API.SetBlipSprite(blipId, 205);
-                calloutBlips.Add(blipId);
-                CitizenFX.Core.Debug.WriteLine($"Callout blip placed ID: {blipId}.");
+                //TriggerEvent("addBlip", false, kvp.Key, "coord", new Vector3(kvp.Value.X, kvp.Value.Y, kvp.Value.Z), 0, 133, 47, true, false, true);
+                int blipId = API.AddBlipForCoord(kvp.Value.X, kvp.Value.Y, kvp.Value.Z);
+                API.SetBlipSprite(blipId, 133);
+                //calloutBlips.Add(kvp.Key);
             }
             CitizenFX.Core.Debug.WriteLine($"Callout blips placed.");
         }
 
-        //[Command("reloadblips", Restricted = false)] //restriction default = true
-        [EventHandler("reloadBlips")]
-        void reloadBlips(int source, List<object> args, string raw)
+        [Command("reloadresource", Restricted = false)] //restriction default = true
+        [EventHandler("reloadresource")]
+        void reloadresource(int source, List<object> args, string raw)
         {
+            //             CitizenFX.Core.Debug.WriteLine($"reloadresource triggered from developtools. Respawns: {displayRespawnBlips} Callouts: {displayCalloutBlips}");
+            //             //TriggerEvent("clearRespawnBlips");
+            //             //TriggerEvent("clearCalloutBlips");
+            TriggerEvent("reloadResources", source);
+            TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Reloaded resources." } });
 
-            CitizenFX.Core.Debug.WriteLine($"reloadBlips triggered from developtools. Respawns: {displayRespawnBlips} Callouts: {displayCalloutBlips}");
-            TriggerEvent("clearRespawnBlips");
-            TriggerEvent("clearCalloutBlips");
-            TriggerEvent("reloadResources");
-            //TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Reloaded resources." } });
-            //await Delay(500)
-            if (displayRespawnBlips) TriggerEvent("placeRespawnBlips");
-            if (displayCalloutBlips) TriggerEvent("placeCalloutBlips");
+            //             //if (displayRespawnBlips) TriggerEvent("placeRespawnBlips");
+            //             //if (displayCalloutBlips) TriggerEvent("placeCalloutBlips");
         }
 
         [Command("devblip", Restricted = false)] //restriction default = true
         void devBlip(int source, List<object> args, string raw)
         {
-            if (args.Count == 0)
-            {
-                {
-                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Reloaded blips and resources." } });
-                }
-                TriggerEvent("reloadBlips");
-            }
-            else if (args[0].ToString() == "callout" || args[0].ToString() == "respawn" || args[0].ToString() == "all" || args.Count == 0 || args[0].ToString() == "none")
-            {
-                if ((args.Count == 0 && (displayCalloutBlips || displayRespawnBlips)) || args[0].ToString() == "none")
-                {
-                    displayCalloutBlips = false;
-                    displayRespawnBlips = false;
-                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Turned off all dev blips" } });
-                }
-                else if ((args.Count == 0 && (!displayCalloutBlips || !displayRespawnBlips)) || args[0].ToString() == "all")
-                {
-                    displayCalloutBlips = true;
-                    displayRespawnBlips = true;
-                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Turned on all dev blips" } });
-                }
-                else if (args[0].ToString() == "callout")
-                {
-                    displayCalloutBlips = !displayCalloutBlips;
-                    if (!displayCalloutBlips) TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Turned off callout dev blips" } });
-                    else TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Turned on callout dev blips" } });
-                }
-                else if (args[0].ToString() == "respawn")
-                {
-                    displayRespawnBlips = !displayRespawnBlips;
-                    if (!displayRespawnBlips) TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Turned off respawn dev blips" } });
-                    else TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Turned on respawn dev blips" } });
-                }
+            TriggerEvent("placeRespawnBlips");
+            TriggerEvent("placeCalloutBlips");
+            //             // if (args.Count == 0)
+            //             // {
+            //             //     {
+            //             //         TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Reloaded blips and resources." } });
+            //             //     }
+            //             //     TriggerEvent("reloadresource");
+            //             // }
+            //             // else if (args[0].ToString() == "callout" || args[0].ToString() == "respawn" || args[0].ToString() == "all" || args.Count == 0 || args[0].ToString() == "none")
+            //             // {
+            //             //     if ((args.Count == 0 && (displayCalloutBlips || displayRespawnBlips)) || args[0].ToString() == "none")
+            //             //     {
+            //             //         displayCalloutBlips = false;
+            //             //         displayRespawnBlips = false;
+            //             //         TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Turned off all dev blips" } });
+            //             //     }
+            //             //     else if ((args.Count == 0 && (!displayCalloutBlips || !displayRespawnBlips)) || args[0].ToString() == "all")
+            //             //     {
+            //             //         displayCalloutBlips = true;
+            //             //         displayRespawnBlips = true;
+            //             //         TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Turned on all dev blips" } });
+            //             //     }
+            //             //     else if (args[0].ToString() == "callout")
+            //             //     {
+            //             //         displayCalloutBlips = !displayCalloutBlips;
+            //             //         if (!displayCalloutBlips) TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Turned off callout dev blips" } });
+            //             //         else TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Turned on callout dev blips" } });
+            //             //     }
+            //             //     else if (args[0].ToString() == "respawn")
+            //             //     {
+            //             //         displayRespawnBlips = !displayRespawnBlips;
+            //             //         if (!displayRespawnBlips) TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Turned off respawn dev blips" } });
+            //             //         else TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Turned on respawn dev blips" } });
+            //             //     }
 
-                TriggerEvent("reloadBlips");
-            }
-            else
-            {
-                CitizenFX.Core.Debug.WriteLine($"There was an issue with the command. Do /devblip (empty to toggle or all/none/callout/respawn/reload) It will toggle them.");
-
-            }
+            //             //     TriggerEvent("reloadresource");
+            //             // }
+            //             // else
+            //             {
+            //                 //CitizenFX.Core.Debug.WriteLine($"There was an issue with the command. Do /devblip (empty to toggle or all/none/callout/respawn/reload) It will toggle them.");
+            //                 CitizenFX.Core.Debug.WriteLine($"This isn't working for now unfortunately.");
+            //             }
         }
     }
 
@@ -159,7 +157,6 @@ namespace STHMaxzzzie.Server
         private void RespawnCommand(int source, List<object> args, string raw)
         {
             string calloutName = string.Join(" ", args);
-            TriggerEvent("reloadBlips");
             if (ServerMain.respawnLocationsDict.ContainsKey(calloutName))
             {
                 TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"The name {calloutName} already exists in the respawn resource." } });
@@ -188,7 +185,7 @@ namespace STHMaxzzzie.Server
             {
                 File.AppendAllText(calloutFilePath, line + Environment.NewLine);
                 TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Callout \"{locationName}\" saved successfully. ({locationData.X},{locationData.Y},{locationData.Z})" } });
-                TriggerEvent("reloadBlips");
+                TriggerEvent("reloadresource");
             }
             catch (Exception ex)
             {
@@ -211,7 +208,7 @@ namespace STHMaxzzzie.Server
             {
                 File.AppendAllText(respawnFilePath, line + Environment.NewLine);
                 TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Respawn location \"{locationName}\" saved successfully. ({locationData.X},{locationData.Y},{locationData.Z}, {locationData.W})" } });
-                TriggerEvent("reloadBlips");
+                TriggerEvent("reloadresource");
             }
             catch (Exception ex)
             {

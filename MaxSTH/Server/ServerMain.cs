@@ -17,7 +17,7 @@ namespace STHMaxzzzie.Server
         public static Dictionary<string, Vector4> respawnLocationsDict;
         public static Dictionary<string, Vector3> maxzzzieCalloutsDict;
         public static Dictionary<string, string> vehicleinfoDict;
-        public static bool isVehAllowed = false;
+        public static bool isVehRestricted = false;
 
 
         private Dictionary<Player, int> playerPris = new Dictionary<Player, int>();
@@ -43,7 +43,7 @@ namespace STHMaxzzzie.Server
         }
 
         [EventHandler("reloadResources")]
-        void reloadResources()
+        void reloadResources(int source)
         {
             //CitizenFX.Core.Debug.WriteLine($"reloadResources triggered");
             respawnLocationsDict?.Clear(); //the ? checks if the dictionairy isn't null. It gave an error without it.
@@ -52,6 +52,9 @@ namespace STHMaxzzzie.Server
             respawnLocationsDict = LoadResources.respawnLocations();
             maxzzzieCalloutsDict = LoadResources.calloutsList();
             vehicleinfoDict = LoadResources.allowedVehicles();
+            ServerMain.sendRespawnLocationsDict(Players[source]);
+            ServerMain.sendVehicleinfoDict(Players[source]);
+            ServerMain.sendMaxzzzieCalloutsDict(Players[source]);
         }
 
         [EventHandler("pri-spawn-requested")]
@@ -145,6 +148,13 @@ namespace STHMaxzzzie.Server
                 playerPris.Remove(key);
         }
 
+        [Command("rejoin", Restricted = false)] //restriction default = true
+        void runPlayerJoining(int source, List<object> args, string raw)
+        {   
+            reloadResources(source);
+            Player player = Players[source];
+            playerJoiningHandler(player, "0");
+        }
 
         //https://docs.fivem.net/docs/scripting-reference/events/server-events/#playerjoining
         [EventHandler("playerJoining")]
@@ -162,7 +172,7 @@ namespace STHMaxzzzie.Server
             source.TriggerEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
             TriggerEvent("updateSharedClientBlips");
             source.TriggerEvent("Stamina");
-            source.TriggerEvent("whatIsVehAllowed", isVehAllowed);
+            source.TriggerEvent("whatIsVehAllowed", isVehRestricted);
         }
 
         [Command("togglevehres", Restricted = true)] //restriction default = true
@@ -171,20 +181,21 @@ namespace STHMaxzzzie.Server
             {
                 if (args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "true"))
                 {
-                    isVehAllowed = bool.Parse(args[0].ToString());
-                    TriggerClientEvent("whatIsVehAllowed", isVehAllowed);
+                    isVehRestricted = bool.Parse(args[0].ToString());
+                    TriggerClientEvent("whatIsVehAllowed", isVehRestricted);
                 }
-                if (args.Count == 0)
+                else if (args.Count == 0)
                 {
-                    isVehAllowed = !isVehAllowed;
+                    isVehRestricted = !isVehRestricted;
                 }
                 else
                 {
-                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /toggleveh (true/false)");
+                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglevehres (true/false)");
                 }
             }
-            if (isVehAllowed) TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Vehiclespawns are unrestricted." } });
-            else TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Vehiclespawns are restricted." } });
+            TriggerClientEvent("whatIsVehAllowed", isVehRestricted);
+            if (isVehRestricted) TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Vehiclespawns are restricted." } });
+            else TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Vehiclespawns are unrestricted." } });
         }
 
         public static void sendRespawnLocationsDict(Player source)

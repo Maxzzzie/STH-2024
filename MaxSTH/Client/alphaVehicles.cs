@@ -340,6 +340,11 @@ namespace STHMaxzzzie.Client
                 //4 | blaine county | 1178.634, 2638.898, 37.754 | 11
                 //5 | paleto | 107.893, 6624.449, 31.787 | 8
                 //6 | lombank | -1538.579, -577.189, 25.313 | 8
+                //7 | LSIA auto repair | -415.7665, -2179.21, 10.31806 | 15
+                //8 | Strawberry auto repairs | -69.342, -1336.880, 29.256 | 10
+                //9 | Simeon dock garage | 1204.147, -3115.262, 5.540327 || 8 
+                //10 | Benny's | -213.6762, -1327.373, 30.24028 || 8
+
                 {
                     Vector3 playerPosition = Game.PlayerPed.Position;
                     float d1 = GetDistanceBetweenCoords(-337, -136, 39, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
@@ -348,8 +353,13 @@ namespace STHMaxzzzie.Client
                     float d4 = GetDistanceBetweenCoords(1178, 2638, 37, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
                     float d5 = GetDistanceBetweenCoords(107, 6624, 31, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
                     float d6 = GetDistanceBetweenCoords(-1538, -577, 25, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
-                    Debug.WriteLine($"1: rockford {d1} | 2: la mesa {d2} | 3: lsia {d3} | 4: blaine county {d4} | 5: paleto {d5} | lombank {d6}");
-                    if (d1 < 19 || d2 < 11 || d3 < 15 || d4 < 11 || d5 < 8 || d6 < 8)
+                    float d7 = GetDistanceBetweenCoords(-415, -2179, 10, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
+                    float d8 = GetDistanceBetweenCoords(-69, -1336, 29, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
+                    float d9 = GetDistanceBetweenCoords(1204, -3115, 5, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
+                    float d10 = GetDistanceBetweenCoords(-213, -1327, 30, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
+                    
+                    Debug.WriteLine($"1: rockford {d1} | 2: la mesa {d2} | 3: lsia {d3} | 4: blaine county {d4} | 5: paleto {d5} | lombank {d6} | LSIA auto repair {d7} | Strawberry auto repairs {d8} | Simeon dock garage {d9}");
+                    if (d1 < 19 || d2 < 11 || d3 < 15 || d4 < 11 || d5 < 8 || d6 < 8 || d7 < 15 || d8 < 10 || d9 < 8  || d10 < 8)
                     {
                         Game.PlayerPed.CurrentVehicle.Repair();
                         TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"The mechanic repaired your vehicle." } });

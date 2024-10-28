@@ -136,13 +136,13 @@ public static class LoadResources
                 float spawnZ = float.Parse(parts[4].Trim(), CultureInfo.InvariantCulture);
                 Vector4 spawnXYZH = new Vector4(spawnW, spawnX, spawnY, spawnZ);
                 respawnLocationsDict.Add(spawnName, spawnXYZH);
+                //CitizenFX.Core.Debug.WriteLine($"Respawn locations successfully loaded {spawnName}.");
             }
             catch (FormatException ex)
             {
                 CitizenFX.Core.Debug.WriteLine($"Error processing line '{line}': {ex.Message}");
             }
         }
-        //CitizenFX.Core.Debug.WriteLine("Respawn locations successfully loaded.");
         return respawnLocationsDict;
     }
 
@@ -171,13 +171,13 @@ public static class LoadResources
 
             try
             {
-                string spawnName = parts[0].Trim();
-                float spawnX = float.Parse(parts[1].Trim(), CultureInfo.InvariantCulture);
-                float spawnY = float.Parse(parts[2].Trim(), CultureInfo.InvariantCulture);
-                float spawnZ = float.Parse(parts[3].Trim(), CultureInfo.InvariantCulture);
-                Vector3 spawnXYZ = new Vector3(spawnX, spawnY, spawnZ);
-                maxzzzieCalloutsDict.Add(spawnName, spawnXYZ);
-                //CitizenFX.Core.Debug.WriteLine($"MaxzzzieCalloutsDict : {spawnName} vector4: {spawnXYZ.X},{spawnXYZ.Y},{spawnXYZ.Z}");
+                string calloutName = parts[0].Trim();
+                float calloutX = float.Parse(parts[1].Trim(), CultureInfo.InvariantCulture);
+                float calloutY = float.Parse(parts[2].Trim(), CultureInfo.InvariantCulture);
+                float calloutZ = float.Parse(parts[3].Trim(), CultureInfo.InvariantCulture);
+                Vector3 calloutXYZ = new Vector3(calloutX, calloutY, calloutZ);
+                maxzzzieCalloutsDict.Add(calloutName, calloutXYZ);
+                //CitizenFX.Core.Debug.WriteLine($"MaxzzzieCalloutsDict : {calloutName} vector3: {calloutXYZ.X} {calloutXYZ.Y} {calloutXYZ.Z}");
             }
             catch (FormatException ex)
             {

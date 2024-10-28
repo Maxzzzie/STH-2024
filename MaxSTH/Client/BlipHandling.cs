@@ -49,7 +49,7 @@ public class BlipManager : BaseScript
 
         if (type == "coord")
         {
-            Debug.WriteLine($"HandleBlip 2 coord");
+            Debug.WriteLine($"HandleBlip 2 coord{blipName}");
             blipHandle = API.AddBlipForCoord(coords.X, coords.Y, coords.Z);
         }
         if (type == "entity")
@@ -69,12 +69,13 @@ public class BlipManager : BaseScript
         API.SetBlipAsFriendly(blipHandle, blipFriendly);
         API.SetBlipFlashes(blipHandle, isFlashing);
         blips.Add(blipName, blipHandle);
-        Debug.WriteLine($"HandleBlip add blip to dict blipName:{blipName} blipHandle:{blipHandle} Contains key:{blips.ContainsKey(blipName)}");
+        //Debug.WriteLine($"HandleBlip add blip to dict blipName:{blipName} blipHandle:{blipHandle} Contains key:{blips.ContainsKey(blipName)}");
     }
 
     [EventHandler("removeBlipWithName")]
         public async void removeBlipWithName(string blipName)
-    {Debug.WriteLine($"removeBlipWithName {blipName}");
+    {
+        //Debug.WriteLine($"removeBlipWithName {blipName}");
         if (blips.ContainsKey(blipName))
         {
             int existingBlip = blips[blipName];

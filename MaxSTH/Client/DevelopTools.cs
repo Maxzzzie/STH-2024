@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using CitizenFX;
 using CitizenFX.Core;
-using CitizenFX.Core.Native;
 
 public class SavePositions : BaseScript
 {
@@ -27,6 +23,5 @@ public class SavePositions : BaseScript
         {
             TriggerServerEvent("saveRespawn", source, locationName, playerLocation);
         }
-
     }
 }

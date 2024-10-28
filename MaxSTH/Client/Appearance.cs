@@ -129,7 +129,7 @@ namespace STHMaxzzzie.Client
                 }
                 else if (input == "boss")
                 {
-                    string[] bossModel = new string[] { "u_m_y_babyd" };
+                    string[] bossModel = new string[] { "u_m_y_babyd", "g_m_m_chicold_01", "ig_hunter", "csb_cop", "g_m_y_ballasout_01", "g_m_y_famca_01" };
                     var rand = new Random();
                     int modelIndex = rand.Next(0, bossModel.Length);
                     TriggerEvent("changingModel", bossModel[modelIndex]);
@@ -141,9 +141,16 @@ namespace STHMaxzzzie.Client
                     int modelIndex = rand.Next(0, maxModel.Length);
                     TriggerEvent("changingModel", maxModel[modelIndex]);
                 }
+                else if (input == "gilly")
+                {
+                    string[] maxModel = new string[] { "g_m_y_mexigoon" };
+                    var rand = new Random();
+                    int modelIndex = rand.Next(0, maxModel.Length);
+                    TriggerEvent("changingModel", maxModel[modelIndex]);
+                }
                 else if (input == "fw")
                 {
-                    string[] fwModel = new string[] { "u_m_m_streetart_01", "ig_johnnyklebitz" };
+                    string[] fwModel = new string[] { "ig_johnnyklebitz" };
                     var rand = new Random();
                     int modelIndex = rand.Next(0, fwModel.Length);
                     TriggerEvent("changingModel", fwModel[modelIndex]);

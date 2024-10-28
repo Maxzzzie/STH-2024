@@ -11,12 +11,10 @@ namespace STHMaxzzzie.Client
         //         //location mugshotroom player =     position: 402.848, -996.826, -99.000 rotation: 0.000, -0.000, 178.805 heading: 178.805
         //         //location camera =                 Position: 402.629, -1002.263, -99.004 rotation: 0.000, -0.000, 0.230 heading: 0.230
 
-        private Vector3 mugshotRoomPosition = new Vector3(-2493.5f, -1500, 50.1f); //-2493, -1500, 51.1
-        //private Vector3 mugshotRoomPosition = new Vector3(402.848f, -996.826f, -99.9f);
-        //private Vector3 cameraPosition = new Vector3(402.85f, -999f, -98.4f);
-        private Vector3 cameraPosition = new Vector3(-2495.6f, -1501.3f, 51.8f); //-2495.6f, -1501.3f, 51.8f
-        private Vector3 cameraRotation = new Vector3(180f, 180f, 123f); //tilt, roll, pan (tilt 180 is level, 170 is up slightly) 180f, 180f, 123f
-        private float cameraFov = 10f;
+        private Vector3 mugshotModelPosition = new Vector3(-2148.798f, 223.015f, 183.702f);
+        private Vector3 cameraRotation = new Vector3(180f, 180f, 65f); //tilt, roll, pan (tilt 180 is level, 170 is up slightly) 180f, 180f, 123f
+        int pedHeadBoneIndex = 0;
+        private float cameraFov = 10;
         private int customCamera;
         private int pedHandle;
         private bool isRunning = false;
@@ -25,7 +23,7 @@ namespace STHMaxzzzie.Client
         [EventHandler("MugShotEvent")]
         private async void MugShotEvent(string modelName)
         {
-            Debug.WriteLine($"Mugshot process with {modelName}");
+            //Debug.WriteLine($"Mugshot process with {modelName}");
             if (isRunning)
             {
                 // Prevent command spamming
@@ -35,35 +33,36 @@ namespace STHMaxzzzie.Client
 
             isRunning = true;
 
-            await SpawnPresetNPC(modelName); // Pass the model name dynamically
-            await ForceLoadMugshotArea();
-            await SetCamera();
-
+            await SpawnNPC(modelName); // Pass the model name dynamically
+            // await ForceLoadMugshotArea();
+            // await SetCamera();
+            await Delay(4000);
             DespawnNPC();
 
             isRunning = false;
         }
 
         // Force loading the mugshot area
-        private async Task ForceLoadMugshotArea()
-        {
-            Debug.WriteLine("Mugshot 4");
-            while (pedHandle == 0)
-            {
-                Debug.WriteLine("Mugshot 3");
-                await Delay(10);
-            }
-            API.RequestCollisionForModel((uint)pedHandle);
-            while (!API.HasCollisionLoadedAroundEntity(pedHandle))
-            {
-                Debug.WriteLine("Mugshot 5");
-                await Delay(10); 
-            }
-        }
+        // private async Task ForceLoadMugshotArea()
+        // {
+        //     Debug.WriteLine("running ForceLoadMugshotArea");
+        //     while (pedHandle == 0)
+        //     {
+        //         Debug.WriteLine("No ped to load collision for. Retrying in 10ms.");
+        //         await Delay(10);
+        //     }
+        //     API.RequestCollisionForModel((uint)pedHandle);
+        //     while (!API.HasCollisionLoadedAroundEntity(pedHandle))
+        //     {
+        //         Debug.WriteLine("Collision hasn't loaded around ped. Retrying in 10ms.");
+        //         await Delay(10);
+        //     }
+        // }
 
         // Spawn an NPC with the given model name
-        public async Task SpawnPresetNPC(string modelName)
+        public async Task SpawnNPC(string modelName)
         {
+            Vector3 playerPosition = Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0));
             uint modelHash = (uint)API.GetHashKey(modelName);
 
             // Request the model
@@ -76,51 +75,57 @@ namespace STHMaxzzzie.Client
             }
 
             // Create the NPC (ped)
-            pedHandle = API.CreatePed(4, modelHash, mugshotRoomPosition.X, mugshotRoomPosition.Y, mugshotRoomPosition.Z, 120f, true, false);
+            pedHandle = API.CreatePed(4, modelHash, playerPosition.X, playerPosition.Y, playerPosition.Z, 70, true, false);
+            //pedHandle = API.CreatePed(4, modelHash, mugshotModelPosition.X, mugshotModelPosition.Y, mugshotModelPosition.Z, 70, true, false);
 
+            //sets all components default.
+            for (int componentId = 0; componentId < 12; componentId++) // 0-11 covers all drawable components
+            {
+                API.SetPedComponentVariation(pedHandle, componentId, 0, 0, 0);
+            }
             // Release the model from memory
             API.SetModelAsNoLongerNeeded(modelHash);
         }
 
         // Set the custom camera to view the NPC
-        public async Task SetCamera()
-        {
-            // Ensure the NPC is present before setting the camera
-            if (pedHandle == 0)
-            {
-                Debug.WriteLine("NPC not found, aborting camera setup.");
-                return;
-            }
+        // public async Task SetCamera()
+        // {
+        //     // Ensure the NPC is present before setting the camera
+        //     if (pedHandle == 0)
+        //     {
+        //         Debug.WriteLine("NPC not found, aborting camera setup.");
+        //         return;
+        //     }
 
-            if (API.HasCollisionLoadedAroundEntity(pedHandle))
-            { Debug.WriteLine("Mugshot 6"); }
+        //     if (API.HasCollisionLoadedAroundEntity(pedHandle))
+        //     { Debug.WriteLine("Mugshot 6"); }
 
 
-            // Create the custom camera
-            customCamera = API.CreateCam("DEFAULT_SCRIPTED_CAMERA", true);
-            API.SetCamCoord(customCamera, cameraPosition.X, cameraPosition.Y, cameraPosition.Z);
-            API.SetCamRot(customCamera, cameraRotation.X, cameraRotation.Y, cameraRotation.Z, 2);
-            API.SetCamFov(customCamera, cameraFov);
-            API.RenderScriptCams(true, true, 1, true, false);
+        //     // Create the custom camera
+        //     customCamera = API.CreateCam("DEFAULT_SCRIPTED_CAMERA", true);
+        //     API.AttachCamToPedBone(customCamera, pedHandle, 31086, 0.3f, 2.6f, 0.0f, true);
+        //     API.SetCamRot(customCamera, cameraRotation.X, cameraRotation.Y, cameraRotation.Z, 2);
+        //     API.SetCamFov(customCamera, cameraFov);
+        //     API.RenderScriptCams(true, true, 1, true, false);
+        //     TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"camera's pedHeadBoneIndex{pedHeadBoneIndex}" } });
+        //     // Wait for a short duration before resetting
+        //     await Delay(4000);
 
-            // Wait for a short duration before resetting
-            await Delay(4000);
-
-            // Reset the camera after the delay
-            ResetCamera();
-        }
+        //     // Reset the camera after the delay
+        //     ResetCamera();
+        // }
 
         // Reset the camera back to normal
-        public void ResetCamera()
-        {
-            API.RenderScriptCams(false, false, 0, true, false);
+        // public void ResetCamera()
+        // {
+        //     API.RenderScriptCams(false, false, 0, true, false);
 
-            if (customCamera != 0)
-            {
-                API.DestroyCam(customCamera, false);
-                customCamera = 0;
-            }
-        }
+        //     if (customCamera != 0)
+        //     {
+        //         API.DestroyCam(customCamera, false);
+        //         customCamera = 0;
+        //     }
+        // }
 
         // Despawn the NPC after the sequence is done
         private void DespawnNPC()

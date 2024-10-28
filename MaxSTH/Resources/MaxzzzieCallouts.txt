@@ -1,5 +1,264 @@
+5 Ways, -629, -369, 33
 Pier enterance, -1456.449, -772.9354, 23.17758
 Top of backslash, -1744.908, -557.6848, 37.44308
 Middle of backslash, -1905.04, -454.3938, 22.03168
 Bottom of backslash, -2010.58, -387.5992, 10.80423
-
+Xero gasstation, -2111.746, -320.6764, 12.69385
+Curvy road, -2038.459, -176.0632, 25.96786
+Jetty, -1936.177, -330.9111, 45.99904
+Curvy at graveyard, -1803.014, -316.4394, 43.06359
+Graveyard, -1650.325, -241.7027, 54.55624
+mighy bush alleyway, -1561.502, -255.4389, 47.93999
+Rons gasstation, -1443.686, -283.9986, 45.73196
+Ammunation Vespucci, -1327.8, -386.7443, 36.27899
+Maze Bank Office, -1376.676, -502.4027, 32.81857
+Movie studio, -1128.808, -518.6096, 33.43983
+Richards majestic, -924.1899, -354.1303, 38.62968
+Life Invader, -1065.292, -240.9474, 39.73314
+Low carparks, -932.1575, -166.9659, 41.87978
+rockford church, -767.0086, -23.18074, 41.08138
+rockford sign, -852.8739, -62.28775, 37.55703
+mainPD, -557.7357, -148.5691, 37.62638
+rockford LS customs, -360.3566, -123.0564, 38.2217
+Rockford plaza, -188.5361, -189.777, 43.40707
+Red carpark, -330.457, -760.9752, 33.53185
+Main banner hotel, -287.5471, -1089.143, 23.53601
+Mors mutulals, -190.7982, -1179.807, 22.6422
+Mile high construction, -139.5661, -1000.832, 26.83933
+Overpass, 30.60654, -768.8931, 43.80021
+Maze bank, -79.37727, -836.9302, 40.55812
+FIB office, 118.7249, -750.3245, 45.75161
+Square of squares, 198.6176, -924.3083, 30.25593
+Mirror park railyard, 515.5547, -600.192, 24.48646
+Dashhound bus depot, 416.7971, -633.8034, 28.06391
+Pillbox hill hospital, 299.0893, -585.0489, 43.26086
+Town hall, 236.9798, -412.7879, 48.11194
+Piramid, -1450.56, -866.8911, 12.73786
+V-hotel, -1319.842, -1031.485, 7.68584
+Vespucci hairdresser, -1282.359, -1131.056, 6.793107
+Container carpark, -1230.348, -1417.834, 3.67306
+Wades cousin house, -1151.394, -1527.568, 3.606839
+Fish restaurant, -1050.224, -1388.699, 5.558093
+South-West canals pedestrian bridge, -1094.643, -1170.35, 2.834405
+Monument canals exit, -914.8668, -1067.418, 3.029327
+Dead mans alley, -978.5504, -980.2361, 1.569863
+North-West canals pedestrian bridge, -1149.793, -1081.266, 2.770371
+Below V-hotel bridge, -1222.564, -983.6544, 4.817577
+North bumpy roads, -1116.187, -936.9754, 1.984292
+Middle bumpy roads, -1033.169, -1073.235, 3.396679
+South bumpy roads, -966.4299, -1189.609, 3.556327
+Vespucci binco, -811.6337, -1096.52, 10.09275
+Noodles, -639.5592, -1232.113, 10.8317
+Marina carpark, -800.0236, -1307.056, 4.350928
+pegasus helicopter spawn, -722.1886, -1440.774, 4.351003
+Rogers salvage yard, -625.3577, -1639.57, 25.17614
+LSIA Los santos customs, -1144.318, -1991.855, 13.16293
+LSIA crastenburg hotel, -865.1851, -2139.597, 8.280535
+LSIA Bilgeco shipping, -1016.468, -2191.283, 8.330681
+LSIA Spaghetti junction, -585.6416, -1995.97, 9.540169
+LSIA Sightseeing bar, -915.7426, -2526.408, 23.32149
+LSIA Multistory carparks, -984.1516, -2640.834, 13.32785
+LSIA Main terminal, -1038.29, -2736.051, 13.10775
+LSIA flight school enterance, -1147.662, -2723.813, 13.30117
+LSIA Devin weston hangar, -949.8621, -3003.583, 13.29184
+LSIA Southeast Runway, -983.2768, -3249.436, 13.29143
+LSIA Main Runway, -1268.101, -3082.517, 13.292
+LSIA Main Runway North-West, -1557.872, -2916.69, 13.2999
+LSIA Side Runway South-West, -1537.586, -2634.296, 13.29183
+LSIA Side Runway Middle, -1431.002, -2440.596, 14.14518
+LSIA Side Runway North-East, -1322.539, -2259.906, 14.1313
+LSIA Rescue practice plane, -1154.599, -2327.164, 13.32854
+LSIA Fire department enterance, -1014.021, -2411.647, 13.94454
+LSIA Passenger gate, -1220.822, -2569.425, 13.2921
+LSIA Cargo plane gate, -1280.763, -2761.828, 13.29165
+LSIA Main enterance, -982.1938, -2832.026, 13.31245
+LSIA Pegasus hangar, -1662.496, -3163.132, 13.99219
+LSIA Dinesoar warehouse, -1345.731, -3323.363, 13.94016
+LSIA South terminal, -1569.152, -3221.1, 13.29544
+LSIA closed pegasus hangar, -1395.448, -3268.787, 13.29514
+LSIA Unnamed hangar, -1279.189, -3383.732, 13.29147
+LSIA Hangar No1, -1153.024, -3412.096, 13.29625
+LSIA behind main enterance hangars, -766.5626, -2839.535, 13.29627
+LSIA groundfloor parking, -788.3724, -2389.368, 13.91728
+LSIA subway parking, -911.1109, -2308.832, 6.058584
+LSIA autoparts, -423.0512, -2167.99, 11.33856
+Behind arena, -246.5666, -2082.834, 26.9719
+Arena parking, -167.8397, -2007.641, 23.06595
+Arena, -284.3447, -1919.898, 29.29424
+Ron silos dock, -258.1694, -2232.856, 8.529574
+Arena dirt ramp, -305.7111, -2140.55, 13.59746
+Oil docks, -28.7509, -2188.397, 7.159571
+Train track ghetto enterance, 144.1377, -2045.141, 17.67436
+Train track at Grove street, 222.4568, -1924.636, 22.99789
+Train track and subway cross, 275.7934, -1860.296, 26.2132
+Impound, 400.938, -1607.416, 28.63565
+Dept of water and power, 557.9116, -1607.231, 27.26199
+Beacon theatre, 460.7275, -1457.423, 28.65173
+Strawberry hospital, 319.8416, -1446.841, 29.15477
+Morgue, 240.5866, -1379.772, 33.74172
+Ring of fire, 164.3897, -1430.915, 28.59094
+Dollar pills, 60.88061, -1576.065, 28.9484
+Megamall, 42.25015, -1738.528, 28.99127
+Ghetto church, -2.900434, -1501.393, 29.61649
+Franklins house, -14.46577, -1443.042, 30.34446
+Strawberry skatepark, -257.1039, -1569.676, 31.26065
+Carwash, 23.60713, -1392.154, 28.93425
+Strip club, 132.8612, -1305.835, 28.76435
+Xero gasstation strawberry, 262.6833, -1262.255, 28.49107
+Hospital parking strawberry, 420.7164, -1330.778, 30.40278
+Bincident, 503.3503, -1333.557, 28.66981
+Stormdrain Y junction, 692.2703, -1577.595, 9.060208
+LS customs La Mesa, 731.3504, -1084.42, 21.51647
+Rons La Mesa, 814.3707, -1027.556, 25.59949
+Lesters Factory, 740.0157, -967.267, 23.80454
+Arcade La Mesa, 760.5007, -818.588, 25.63375
+Factory road below Mirror park, 777.056, -554.6273, 32.24336
+Caseys diner, 792.7535, -737.9333, 27.44756
+La Mesa PD, 826.1252, -1282.846, 26.42424
+Tractor parts, 895.9397, -1560.934, 30.02716
+LS car meet, 784.0051, -1828.683, 28.64099
+Pisswasser factory alley North, 893.9138, -1865.602, 29.96637
+Pisswasser factory alley South, 878.6073, -1994.358, 29.75521
+Vent road middle, 774.1989, -2066.25, 28.72281
+Vent road North, 805.1898, -1889.953, 29.73484
+Vent road South, 759.8179, -2238.369, 29.67799
+Docks enterance, 743.8413, -2475.994, 19.67062
+Jetsam terminal, 766.2062, -2981.738, 5.149413
+Simeon docks containerstacks, 1034.581, -3030.6, 5.251989
+Simeon docks garage, 1196.974, -3102.874, 5.376878
+Simeon docks Customs, 807.6014, -3165.252, 5.239315
+Simeon docks Trainyard, 1043.664, -3259.338, 5.895869
+Bristols fuel storage, 515.001, -2782.215, 6.349606
+Mud pit, 640.2555, -2842.08, 2.880586
+Merryweather docks, 596.2322, -2959.116, 5.393597
+Merryweather hangar, 522.6941, -3157.295, -2.555671
+Ammunation Cypress flats, 808.3824, -2132.731, 29.3103
+Cypress building, 945.4183, -2497.321, 27.79993
+Raven, 1006.855, -2155.384, 29.9295
+Cypress flats water tower, 1020.695, -2293.69, 29.86029
+Steel mill, 1082.022, -1995.254, 30.9877
+Fridgit, 971.3017, -1643.463, 29.46101
+Gas company, 523.5319, -2186.42, 5.338773
+Green bridge, 354.383, -2316.387, 9.549892
+Elysian island enterance, 271.5515, -2539.348, 5.182368
+Bugstars, 192.1593, -3126.171, 5.141586
+Boobs, 270.2307, -2764.266, 5.371672
+Drydocks, -39.18206, -2698.303, 5.536139
+Pier 400, -152.7467, -2569.478, 5.347761
+Los santos marine, -346.8181, -2644.486, 5.34746
+Post op warehouse, -441.5696, -2793.726, 5.351751
+devblip, -341.3071, -2738.694, 5.423203
+Train bridge to elysian island, 219.4622, -2329.272, 7.74966
+Mission row PD, 424.4972, -994.3895, 30.71209
+Ammunation Downtown, 28.04496, -1106.673, 28.6855
+Simeons, -45.00658, -1098.457, 25.77379
+Pier parking, -1570.905, -1018.054, 12.6249
+Expensive carpark, -1646.977, -887.3517, 8.480943
+Blue fences, -1688.132, -763.0219, 9.796116
+North beach, -1825.091, -744.4629, 8.089711
+Psychiatrist, -1912.571, -587.4902, 11.39461
+Burger shot Vespucci, -1201.929, -884.7905, 12.84412
+Police Department Vespucci, -1093.655, -797.8485, 18.53023
+Movie studio enterance, -1211.415, -583.2281, 26.86994
+Multicolored carpark, -1215.123, -651.9624, 25.50793
+Astro, -1363.012, -694.3612, 24.6721
+Maxzzzies alleyway, -1312.453, -772.5516, 19.47047
+Pedestrianised South, -1234.268, -765.5684, 18.6803
+Pedestrianised North, -1350.211, -615.0685, 28.05476
+Bahama mamas, -1402.079, -580.5068, 29.9728
+Lombank, -1565.781, -591.898, 33.56355
+Maxzzzies alleyway North, -1408.937, -649.3342, 28.27905
+Behind banner hotel, -1612.606, -486.8369, 36.29591
+Up-n-atom vespucci, -1523.922, -431.0262, 35.04782
+Crastenburg Vespucci, -1239.25, -182.7505, 38.95837
+Pier, -1579.945, -923.2043, 15.792
+End of pier, -1802.954, -1183.244, 12.62478
+Korean monument, -917.4196, -880.4235, 15.27338
+Far south, -1051.321, -1683.308, 4.007296
+Beach shark statue, -1354.419, -1551.3, 4.01474
+South beach skatepark, -1382.11, -1405.301, 2.286687
+Ceasars carpark, -472.9805, -770.3894, 30.08711
+Boss's pond, -1507.843, -1159.285, 0.3138408
+Neon tunnel, 205.9099, -726.1553, 33.94771
+Binco Downtown, 423.6047, -807.9539, 29.49114
+South beach, -1427.362, -1260.931, 2.893379
+Courthouse plaza, 288.5257, -1601.194, 31.26585
+Art gallery, -555.7103, -632.5684, 33.83447
+Pink carpark, -694.0988, -748.4656, 28.88274
+LTD Little Seoul, -711.4817, -913.7537, 19.21559
+Movie studio rear enterance, -1051.521, -481.1925, 36.38023
+Skate park Vespucci, -924.8218, -768.8349, 17.14129
+Arcadius, -165.8233, -625.2057, 31.94554
+City hall, -1286.463, -565.9487, 31.7124
+Cockatoos, -431.2379, -24.55613, 46.2286
+Tinsel towers, -592.7775, 33.72133, 43.24958
+Michaels house, -819.1953, 174.2303, 71.61846
+Eclipse tower, -770.1005, 319.6466, 85.66267
+Tequi-la-la, -554.5064, 272.522, 82.34109
+Train cafe, -377.9135, 257.5591, 83.19633
+Gantry manor, -57.73635, 337.2337, 110.9858
+UFO, 37.2062, 227.4427, 108.8972
+Up-n-atom Vinewood, 95.43975, 282.2235, 109.3078
+Main cinema, 295.5013, 187.3898, 104.3042
+Pacific standard bank, 236.7455, 217.757, 106.2868
+Singletons, 219.7628, 305.3556, 105.5855
+Reservoir dam, 18.65696, 635.3966, 207.2381
+Reservoir, -163.1014, 780.099, 222.1866
+Reservoir North, 86.18057, 848.1249, 214.947
+Reservoir estate, -111.9162, 909.502, 235.5618
+Daily globe, -306.6828, -608.0078, 33.27416
+Union depository, -7.373758, -641.928, 35.44081
+Rockford construction, 62.81872, -405.6052, 39.63663
+Rockford plaza East, -119.1196, -232.9719, 44.52453
+Rockford plaza North, -145.2557, -100.753, 54.83163
+Rockford plaza West, -267.8049, -200.9356, 38.31504
+Rockford plaza South, -206.021, -385.4615, 31.44776
+Highway T-junction, -414.6747, -529.0374, 41.81925
+Top of pillbox hill hospital, 277.3883, -569.323, 42.88626
+Bottom of pillbox hill hospital, 368.6819, -612.7417, 28.52249
+Benny's, -213.6762, -1327.373, 30.24028
+LTD strawberry, -74.6952, -1759.875, 28.89026
+Grovestreet West, 10.74103, -1860.653, 23.2392
+Grovestreet Middle, 95.30058, -1932.49, 20.15376
+Grovestreet East, 134.5837, -1814.789, 26.83851
+Courthouse multistory parking, 363.2167, -1686.272, 31.31112
+Stormdrain railbridge, 601.2508, -1342.325, 21.04887
+Arches stormdrain bridge, 589.6031, -851.2698, 41.03487
+Tower stormdrain bridge, 591.6758, -1025.856, 36.77096
+Cock 'n balls, 760.5748, -1197.858, 44.7901
+Cock 'n balls stormdrain bridge, 585.0615, -1202.016, 41.34603
+Sprunk ramp, 373.6897, -1157.96, 29.98379
+Factory road stormdrain bridge, 728.1536, -458.2612, 37.70811
+Casino stormdrain bridge, 1081.84, -230.9641, 69.23955
+North lobe, 1341.765, -568.6625, 73.87974
+South lobe, 1360.082, -736.0575, 66.58205
+Mirror park, 1110.346, -643.2052, 56.81819
+Mirror park repair shop, 1143.128, -775.8314, 57.59867
+Jack howitzer bridge, 980.3275, -841.3796, 45.60244
+Water torture bridge, 1033.196, -979.6498, 42.76667
+Hardwood, 1200.257, -1334.049, 34.57589
+LTD mirror park, 1181.63, -329.2962, 68.59565
+Cool beans, 1178.474, -415.385, 66.77463
+Xero Little Seoul, -524.2457, -1209.748, 17.53356
+Red construction, -474.2849, -970.1575, 22.89749
+Weazel news, -599.6244, -926.5592, 23.21441
+Korean market, -577.3926, -1011.369, 21.67276
+Golfcourse North, -1198.692, 219.9641, 67.33578
+The richman hotel, -1325.766, 295.044, 63.99763
+Golfcourse West, -1383.47, 57.04741, 53.35096
+Golfcourse enterance, -1328.058, -36.4796, 49.19369
+Golfcourse South, -991.6324, -131.8864, 38.57607
+Golfcourse East, -1013.054, 62.68627, 51.44398
+Cottage park, -965.7539, 319.0818, 70.27113
+University, -1623.325, 211.3873, 59.91927
+University running track, -1748.774, 162.2671, 63.97785
+Kortz museum enterance, -2297.761, 379.4651, 174.1826
+Kortz mueum checkpoint, -1870.449, 81.54761, 81.17962
+Kortz Museum maze, -2288.887, 190.0249, 170.1964
+Kortz museum courtyard, -2250.34, 274.5217, 174.0916
+Kortz museum West, -2368.941, 257.1709, 165.1557
+Kortz museum parking, -2325.304, 294.7277, 169.1816
+Kortz museum North, -2348.652, 490.4518, 191.8096
+Kortz museum East, -2131.154, 277.1585, 167.9339
+Kortz museum South, -2150.185, 81.81556, 163.7988
+Playboy mansion, -1547.959, 115.0715, 56.48724
