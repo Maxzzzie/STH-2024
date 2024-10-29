@@ -4,8 +4,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using static CitizenFX.Core.Native.API;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
+
 
 namespace STHMaxzzzie.Client
 {
@@ -357,9 +356,9 @@ namespace STHMaxzzzie.Client
                     float d8 = GetDistanceBetweenCoords(-69, -1336, 29, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
                     float d9 = GetDistanceBetweenCoords(1204, -3115, 5, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
                     float d10 = GetDistanceBetweenCoords(-213, -1327, 30, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
-                    
+
                     Debug.WriteLine($"1: rockford {d1} | 2: la mesa {d2} | 3: lsia {d3} | 4: blaine county {d4} | 5: paleto {d5} | lombank {d6} | LSIA auto repair {d7} | Strawberry auto repairs {d8} | Simeon dock garage {d9}");
-                    if (d1 < 19 || d2 < 11 || d3 < 15 || d4 < 11 || d5 < 8 || d6 < 8 || d7 < 15 || d8 < 10 || d9 < 8  || d10 < 8)
+                    if (d1 < 19 || d2 < 11 || d3 < 15 || d4 < 11 || d5 < 8 || d6 < 8 || d7 < 15 || d8 < 10 || d9 < 8 || d10 < 8)
                     {
                         Game.PlayerPed.CurrentVehicle.Repair();
                         TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"The mechanic repaired your vehicle." } });
@@ -397,6 +396,97 @@ namespace STHMaxzzzie.Client
             else
             {
                 TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"There is no (last) vehicle found or it's alredy deleted." } });
+            }
+        }
+    }
+
+
+public class VehiclePersistenceClient : BaseScript
+    {
+        private int? primaryColor = null;
+        private int? secondaryColor = null;
+        private Vehicle lastVehicle = null;
+
+        public VehiclePersistenceClient()
+        {
+            Tick += CheckVehicleEntry;  
+        }
+
+        // Tick loop to check if the player has entered a new vehicle
+        private async Task CheckVehicleEntry()
+        {
+            // Check if the player is in a vehicle
+            if (Game.PlayerPed.IsInVehicle())
+            {
+                Vehicle currentVehicle = Game.PlayerPed.CurrentVehicle;
+
+                // Check if this is a new vehicle (not the last one the player entered)
+                if (currentVehicle != lastVehicle)
+                {
+                    // Set the new vehicle as the current vehicle
+                    lastVehicle = currentVehicle;
+                    Debug.WriteLine("Player entered a new vehicle.");
+
+                    // Check if the player is in the driver seat
+                    if (Game.PlayerPed.SeatIndex == VehicleSeat.Driver)
+                    {
+                        // Check if the vehicle is already a mission entity
+                        if (!API.IsEntityAMissionEntity(currentVehicle.Handle))
+                        {
+                            Debug.WriteLine("Vehicle is not a mission entity; setting it now.");
+
+                            // Set as mission entity to prevent despawn
+                            API.SetEntityAsMissionEntity(currentVehicle.Handle, true, false);
+
+                            // Only request color from server if it's not already set
+                            if (!primaryColor.HasValue || !secondaryColor.HasValue)
+                            {
+                                Debug.WriteLine("Requesting vehicle color from the server.");
+                                TriggerServerEvent("requestVehicleColor");
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Applying stored vehicle color.");
+                                // Apply color directly if we already have it
+                                ApplyVehicleColor(currentVehicle.Handle);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Reset lastVehicle if the player is not in any vehicle
+                lastVehicle = null;
+            }
+
+            await Task.FromResult(0); // Required for Tick function
+        }
+
+        // Called when the client receives color data from the server
+        [EventHandler("receiveVehicleColor")]
+        private void receiveVehicleColor(int primary, int secondary)
+        {
+            Debug.WriteLine("Received vehicle color from server."); // Debug message for receiving data
+
+            // Store color values locally (only needs to happen once)
+            primaryColor = primary;
+            secondaryColor = secondary;
+
+            // Apply color to the vehicle if the player is currently in one and in the driver seat
+            if (Game.PlayerPed.IsInVehicle() && Game.PlayerPed.SeatIndex == VehicleSeat.Driver)
+            {
+                ApplyVehicleColor(Game.PlayerPed.CurrentVehicle.Handle);
+            }
+        }
+
+        // Applies the stored colors to a vehicle
+        private void ApplyVehicleColor(int vehicleHandle)
+        {
+            if (primaryColor.HasValue && secondaryColor.HasValue)
+            {
+                Debug.WriteLine($"Setting vehicle colors to Primary: {primaryColor.Value}, Secondary: {secondaryColor.Value}");
+                API.SetVehicleColours(vehicleHandle, primaryColor.Value, secondaryColor.Value);
             }
         }
     }

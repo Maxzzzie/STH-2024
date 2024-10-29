@@ -11,78 +11,79 @@ namespace STHMaxzzzie.Client
     public class Callouts : BaseScript
     {
         private Dictionary<string, Vector3> maxzzzieCalloutsDict = new Dictionary<string, Vector3>();
+        private Dictionary<string, Vector3> nearbyCallouts = new Dictionary<string, Vector3>();
+        private Vector3 lastPlayerPosition = Vector3.Zero;
+        private string closestCalloutName = string.Empty;
+        private bool isProcessing = false; // Flag to check if OnTick is already running
+        private int calloutRange = 750; // Distance to store callouts in a temp dict.
+        private int reloadRange = 500;  // Distance to move before the temp callouts dict gets remade.
 
         public Callouts()
         {
-            Tick += OnTick; // Register the OnTick method to run every frame
+            Tick += OnTick;
+            Tick += DisplayCalloutOnTick;
         }
 
         [EventHandler("getMaxzzzieCalloutsDict")]
         void getMaxzzzieCalloutsDict(string calloutsName, Vector3 calloutsLocation)
         {
             maxzzzieCalloutsDict[calloutsName] = calloutsLocation;
-            Debug.WriteLine($"getMaxzzzieCalloutsDict in client -> callout name: {calloutsName} location: {calloutsLocation}");
+            // Debug.WriteLine($"Added callout: {calloutsName} at location: {calloutsLocation}");
         }
 
         private async Task OnTick()
         {
-            if (maxzzzieCalloutsDict.Count == 0)
-                return;
+            if (isProcessing) return;
+            
+            isProcessing = true;
 
             Vector3 playerPosition = Game.PlayerPed.Position;
-            var closestCallout = maxzzzieCalloutsDict
-                .OrderBy(callout => Vector3.Distance(playerPosition, callout.Value))
-                .FirstOrDefault();
 
-            string closestCalloutName = closestCallout.Key;
-            Vector3 closestCalloutLocation = closestCallout.Value;
+            // Check if the player has moved more than the reloadRange or if nearbyCallouts is empty
+            if (Vector3.Distance(lastPlayerPosition, playerPosition) > reloadRange || nearbyCallouts.Count == 0)
+            {
+                // Update nearby callouts within calloutRange
+                nearbyCallouts = maxzzzieCalloutsDict
+                    .Where(callout => Vector3.Distance(playerPosition, callout.Value) <= calloutRange)
+                    .ToDictionary(callout => callout.Key, callout => callout.Value);
 
-            // Display the closest callout on the screen
-            DisplayCallout(closestCalloutName);
+                lastPlayerPosition = playerPosition; // Update last known position
+                Debug.WriteLine($"Updated nearby callouts. Found {nearbyCallouts.Count} callouts within {calloutRange} meters.");
+            }
 
-            await Task.FromResult(0); // Required to yield control in async method
+            // Find the closest callout from the nearby ones
+            if (nearbyCallouts.Count > 0)
+            {
+                var closestCallout = nearbyCallouts
+                    .OrderBy(callout => Vector3.Distance(playerPosition, callout.Value))
+                    .FirstOrDefault();
+
+                closestCalloutName = closestCallout.Key;
+            }
+
+            await Delay(500);
+            isProcessing = false;
+
         }
 
-        private void DisplayCallout(string calloutText)
+        private async Task DisplayCalloutOnTick()
         {
-            if (string.IsNullOrEmpty(calloutText))
-                return;
+            if (!string.IsNullOrEmpty(closestCalloutName))
+            {
+                SetTextFont(4); // Set font type
+                SetTextProportional(false);
+                SetTextScale(0.55f, 0.55f); // Adjust text size
+                SetTextColour(255, 255, 255, 255); // Set text color to white
+                SetTextJustification(0); // Center justify text
+                SetTextWrap(0.0f, 1.0f); // Ensure text wraps within the screen boundaries
+                SetTextOutline(); // Add outline for better readability
+                SetTextEntry("STRING");
+                AddTextComponentString($"{closestCalloutName}");
+                DrawText(0.5f, 0.05f); // Centered near the top
 
-            SetTextFont(4); // Set font type
-            SetTextProportional(false);
-            SetTextScale(0.5f, 0.5f); // Adjust text size
-            SetTextColour(255, 255, 255, 255); // Set text color to white
-            SetTextJustification(0); // Right justify text
-            SetTextWrap(0.0f, 1.0f); // Ensure text wraps within the screen boundaries
-            SetTextOutline(); // Add outline for better readability
-            SetTextEntry("STRING");
-            AddTextComponentString($"{calloutText}");
-            DrawText(0.5f, 0.05f);
+               
+                await Task.FromResult(0);
+            }
         }
     }
 }
-
-// using System;
-// using System.Threading.Tasks;
-// using CitizenFX.Core;
-// using CitizenFX.Core.Native;
-// using static CitizenFX.Core.Native.API;
-// using System.Collections.Generic;
-// using System.Dynamic;
-// using System.Linq;
-
-// namespace STHMaxzzzie.Client
-// {
-//     public class Callouts : BaseScript
-//     {
-//          private Dictionary<string, Vector3> maxzzzieCalloutsDict = new Dictionary<string, Vector3>();
-
-//         [EventHandler("getMaxzzzieCalloutsDict")]
-//         void getMaxzzzieCalloutsDict(string calloutsName, Vector3 calloutsLocation)
-//         {
-//             maxzzzieCalloutsDict.Add(calloutsName, calloutsLocation);
-//             Debug.WriteLine($"getMaxzzzieCalloutsDict in client -> callout name: {calloutsName} location: {calloutsLocation.ToString()}");
-//         }
-//     }
-// }
-

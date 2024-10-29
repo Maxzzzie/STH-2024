@@ -17,7 +17,7 @@ namespace STHMaxzzzie.Client
             {
             canSpawnNextPri = false;
             TriggerServerEvent("pri-spawn-requested", VehicleHash.Dilettante, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading - 180);
-            await WaitForSeconds(30);//time between pri spawning to prevent spam in seconds.
+            await WaitForSeconds(30);//time between pri spawning to prevent spam, in seconds.
             canSpawnNextPri = true;
             }
             else

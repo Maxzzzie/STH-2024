@@ -520,7 +520,6 @@ ig_dreyfuss
 ig_drfriedlander
 ig_englishdave
 ig_fbisuit_01
-ig_floyd
 ig_g
 ig_groom
 ig_hao

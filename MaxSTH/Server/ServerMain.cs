@@ -19,7 +19,6 @@ namespace STHMaxzzzie.Server
         public static Dictionary<string, string> vehicleinfoDict;
         public static bool isVehRestricted = false;
 
-
         private Dictionary<Player, int> playerPris = new Dictionary<Player, int>();
 
         public ServerMain()
@@ -34,6 +33,7 @@ namespace STHMaxzzzie.Server
                 API.ExecuteCommand($"add_ace identifier.discord:{id} \"command\" allow");
                 CitizenFX.Core.Debug.WriteLine($"load whitelist id : {id}");
             }
+
 
             respawnLocationsDict = LoadResources.respawnLocations();
             maxzzzieCalloutsDict = LoadResources.calloutsList();
@@ -55,6 +55,7 @@ namespace STHMaxzzzie.Server
             ServerMain.sendRespawnLocationsDict(Players[source]);
             ServerMain.sendVehicleinfoDict(Players[source]);
             ServerMain.sendMaxzzzieCalloutsDict(Players[source]);
+            Vehicles.vehicleColourForPlayer = LoadResources.playerVehicleColour();
         }
 
         [EventHandler("pri-spawn-requested")]
@@ -150,7 +151,7 @@ namespace STHMaxzzzie.Server
 
         [Command("rejoin", Restricted = false)] //restriction default = true
         void runPlayerJoining(int source, List<object> args, string raw)
-        {   
+        {
             reloadResources(source);
             Player player = Players[source];
             playerJoiningHandler(player, "0");
@@ -826,6 +827,14 @@ namespace STHMaxzzzie.Server
 
     public class Vehicles : BaseScript
     {
+        public static Dictionary<string, Vector2> vehicleColourForPlayer = new Dictionary<string, Vector2>();
+
+
+        public Vehicles()
+        {
+            vehicleColourForPlayer = LoadResources.playerVehicleColour();
+        }
+
         [Command("clientveh", Restricted = true)] //restriction default = true
         void clientveh(int source, List<object> args, string raw)
         {
@@ -856,6 +865,21 @@ namespace STHMaxzzzie.Server
             {
                 TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Something went wrong!\nYou should do /clientveh \"VehicleName\" \"clientID/ Empty for all.\"" } });
             }
+        }
+
+        [EventHandler("requestVehicleColor")]
+        private void requestVehicleColor([FromSource] Player player)
+        {
+            string Name = player.Name;
+            if (vehicleColourForPlayer.ContainsKey(Name))
+                { 
+                    CitizenFX.Core.Debug.WriteLine($"vehicleColourForPlayer contains {Name} with {vehicleColourForPlayer[Name].X} {vehicleColourForPlayer[Name].Y}");
+                    TriggerClientEvent(player, "receiveVehicleColor", vehicleColourForPlayer[Name].X, vehicleColourForPlayer[Name].Y); //x and y for a Vector2 value. X = primairy colour, Y= secundary   
+                }
+                else
+                {
+                    TriggerClientEvent(player, "chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"Your name isn't linked to a vehicle colour yet. Ask the host to add it."}});
+                }
         }
     }
 }
