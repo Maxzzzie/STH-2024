@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Diagnostics;
 
 
+
 namespace STHMaxzzzie.Server
 {
     public class ServerMain : BaseScript
@@ -821,12 +822,15 @@ namespace STHMaxzzzie.Server
             foreach (string model in nonAnimalModel)
             {
                 source.TriggerEvent("getNonAnimalModelList", model);
+
             }
         }
     }
 
     public class Vehicles : BaseScript
     {
+        bool vehicleShouldChangePlayerColour = true;
+        bool vehicleShouldNotDespawn = true;
         public static Dictionary<string, Vector2> vehicleColourForPlayer = new Dictionary<string, Vector2>();
 
 
@@ -872,14 +876,121 @@ namespace STHMaxzzzie.Server
         {
             string Name = player.Name;
             if (vehicleColourForPlayer.ContainsKey(Name))
-                { 
-                    CitizenFX.Core.Debug.WriteLine($"vehicleColourForPlayer contains {Name} with {vehicleColourForPlayer[Name].X} {vehicleColourForPlayer[Name].Y}");
-                    TriggerClientEvent(player, "receiveVehicleColor", vehicleColourForPlayer[Name].X, vehicleColourForPlayer[Name].Y); //x and y for a Vector2 value. X = primairy colour, Y= secundary   
+            {
+                CitizenFX.Core.Debug.WriteLine($"vehicleColourForPlayer contains {Name} with {vehicleColourForPlayer[Name].X} {vehicleColourForPlayer[Name].Y}");
+                TriggerClientEvent(player, "receiveVehicleColor", vehicleColourForPlayer[Name].X, vehicleColourForPlayer[Name].Y); //x and y for a Vector2 value. X = primairy colour, Y= secundary   
+            }
+            else
+            {
+                TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"Your name isn't linked to a vehicle colour yet. Ask the host to add it." } });
+            }
+        }
+
+        [Command("togglepvd", Restricted = false)]
+        void setVehicleShouldNotDespawn(int source, List<object> args, string raw)
+        {
+            Player player = Players[source];
+
+            if (args.Count == 0)
+            {
+                vehicleShouldNotDespawn = !vehicleShouldNotDespawn;
+                if (vehicleShouldNotDespawn) TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { "Player vehicles will no longer despawn." } });
+                else TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { "Player vehicles will now despawn." } });
+            }
+            else if (args.Count == 1)
+            {
+                string toggleArg = args[0].ToString().ToLower();
+
+                if (toggleArg == "true" || toggleArg == "on")
+                {
+                    vehicleShouldNotDespawn = true;
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { "Player vehicles will no longer despawn." } });
+                }
+                else if (toggleArg == "false" || toggleArg == "off")
+                {
+                    vehicleShouldNotDespawn = false;
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { "Player vehicles will now despawn." } });
                 }
                 else
                 {
-                    TriggerClientEvent(player, "chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"Your name isn't linked to a vehicle colour yet. Ask the host to add it."}});
+                    TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "Something went wrong. Do /togglepvd \"true/false\" to toggle vehicle player vehicle despawning." } });
                 }
+
+            }
+            else TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "Something went wrong. Do /togglepvd \"true/false\" to toggle vehicle player vehicle despawning." } });
+
+            TriggerClientEvent("updateClientColourAndDespawn", vehicleShouldChangePlayerColour, vehicleShouldNotDespawn);
+
+        }
+        [Command("togglepvc", Restricted = false)]
+        void setVehicleShouldChangePlayerColour(int source, List<object> args, string raw)
+        {
+            Player player = Players[source];
+
+            if (args.Count == 0)
+            {
+                vehicleShouldChangePlayerColour = !vehicleShouldChangePlayerColour;
+                if (vehicleShouldChangePlayerColour) TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { "Vehicles will now change to the drivers colour." } });
+                else TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { "Vehicles will no longer change to the drivers colour." } });
+                TriggerClientEvent("updateClientColourAndDespawn", vehicleShouldChangePlayerColour, vehicleShouldNotDespawn);
+            }
+            else if (args.Count == 1)
+            {
+                string toggleArg = args[0].ToString().ToLower();
+
+                if (toggleArg == "true" || toggleArg == "on")
+                {
+                    vehicleShouldChangePlayerColour = true;
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { "Vehicles will now change to the drivers colour." } });
+                }
+                else if (toggleArg == "false" || toggleArg == "off")
+                {
+                    vehicleShouldChangePlayerColour = false;
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { "Vehicles will no longer change to the drivers colour." } });
+                }
+
+                else TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "Something went wrong. Do /togglepvc \"true/false\" or \"playerID, primary colour id, secondary colour id\"" } });
+
+
+                TriggerClientEvent("updateClientColourAndDespawn", vehicleShouldChangePlayerColour, vehicleShouldNotDespawn);
+
+            }
+            else if (args.Count == 3)
+            {
+                // Attempt to parse the arguments as integers
+                if (int.TryParse(args[0].ToString(), out int playerId) && int.TryParse(args[1].ToString(), out int primaryColorId) && int.TryParse(args[2].ToString(), out int secondaryColorId))
+                {
+                    string playerName = Players[playerId].Name;
+                    AddOrUpdatePlayerVehicleColour(playerName, new Vector2(primaryColorId, secondaryColorId));
+                    CitizenFX.Core.Debug.WriteLine("Setting player colour.");
+                }
+                else
+                {
+                    TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "Something went wrong. Do /togglepvc \"true/false\" or \"playerID, primary colour id, secondary colour id\"" } });
+                }
+            }
+            else
+            {
+                TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "Something went wrong. Do /togglepvc \"true/false\" or \"playerID, primary colour id, secondary colour id\"" } });
+            }
+        }
+
+        private void AddOrUpdatePlayerVehicleColour(string playerName, Vector2 vehicleColours)
+        {
+            vehicleColourForPlayer[playerName] = vehicleColours;
+
+            LoadResources.SavePlayerVehicleColours(vehicleColourForPlayer);
+            updateClientsVehicleColours();
+        }
+
+        private void updateClientsVehicleColours()
+        {
+            foreach (Player player in Players)
+            {
+                string name = player.Name;
+                if (vehicleColourForPlayer.ContainsKey(name))
+                    TriggerClientEvent(player, "receiveVehicleColor", vehicleColourForPlayer[name].X, vehicleColourForPlayer[name].Y);
+            }
         }
     }
 }

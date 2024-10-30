@@ -401,18 +401,42 @@ namespace STHMaxzzzie.Client
     }
 
 
-public class VehiclePersistenceClient : BaseScript
+    public class VehiclePersistenceClient : BaseScript
     {
+        bool vehicleShouldChangePlayerColour = true;
+        bool vehicleShouldNotDespawn = true;
         private int? primaryColor = null;
         private int? secondaryColor = null;
         private Vehicle lastVehicle = null;
 
-        public VehiclePersistenceClient()
+        [EventHandler("updateClientColourAndDespawn")]
+        private void updateClientColourAndDespawn(bool setVehicleShouldChangePlayerColour, bool setVehicleShouldNotDespawn)
         {
-            Tick += CheckVehicleEntry;  
+            vehicleShouldChangePlayerColour = setVehicleShouldChangePlayerColour;
+            vehicleShouldNotDespawn = setVehicleShouldNotDespawn;
+            lastVehicle = null;
         }
 
-        // Tick loop to check if the player has entered a new vehicle
+        private async Task WaitFor100Milliseconds(int seconds)
+        {
+            int targetTime = Environment.TickCount + (seconds * 100);
+            while (Environment.TickCount < targetTime)
+            {
+                await Delay(1);
+            }
+        }
+
+// Usage in the constructor:
+public VehiclePersistenceClient()
+{
+    Tick += async () =>
+    {
+        await WaitFor100Milliseconds(1);
+        await CheckVehicleEntry();
+    };
+}
+
+        // Main loop to check if the player has entered a new vehicle
         private async Task CheckVehicleEntry()
         {
             // Check if the player is in a vehicle
@@ -420,38 +444,16 @@ public class VehiclePersistenceClient : BaseScript
             {
                 Vehicle currentVehicle = Game.PlayerPed.CurrentVehicle;
 
-                // Check if this is a new vehicle (not the last one the player entered)
-                if (currentVehicle != lastVehicle)
+                // Check if this is a new vehicle (not the last one the player entered) and player is in the driver seat
+                if (currentVehicle != lastVehicle && Game.PlayerPed.SeatIndex == VehicleSeat.Driver)
                 {
                     // Set the new vehicle as the current vehicle
                     lastVehicle = currentVehicle;
                     Debug.WriteLine("Player entered a new vehicle.");
 
-                    // Check if the player is in the driver seat
-                    if (Game.PlayerPed.SeatIndex == VehicleSeat.Driver)
-                    {
-                        // Check if the vehicle is already a mission entity
-                        if (!API.IsEntityAMissionEntity(currentVehicle.Handle))
-                        {
-                            Debug.WriteLine("Vehicle is not a mission entity; setting it now.");
-
-                            // Set as mission entity to prevent despawn
-                            API.SetEntityAsMissionEntity(currentVehicle.Handle, true, false);
-
-                            // Only request color from server if it's not already set
-                            if (!primaryColor.HasValue || !secondaryColor.HasValue)
-                            {
-                                Debug.WriteLine("Requesting vehicle color from the server.");
-                                TriggerServerEvent("requestVehicleColor");
-                            }
-                            else
-                            {
-                                Debug.WriteLine("Applying stored vehicle color.");
-                                // Apply color directly if we already have it
-                                ApplyVehicleColor(currentVehicle.Handle);
-                            }
-                        }
-                    }
+                    // Handle mission entity and color only if conditions are met
+                    await HandleMissionEntity(currentVehicle);
+                    await HandleVehicleColor(currentVehicle);
                 }
             }
             else
@@ -459,8 +461,40 @@ public class VehiclePersistenceClient : BaseScript
                 // Reset lastVehicle if the player is not in any vehicle
                 lastVehicle = null;
             }
+        }
 
-            await Task.FromResult(0); // Required for Tick function
+        // Ensure vehicle does not despawn by making it a mission entity if required
+        private async Task HandleMissionEntity(Vehicle vehicle)
+        {
+            // Only set as mission entity if vehicleShouldNotDespawn is true
+            if (vehicleShouldNotDespawn && !API.IsEntityAMissionEntity(vehicle.Handle))
+            {
+                Debug.WriteLine("Setting vehicle as mission entity to prevent despawn.");
+                API.SetEntityAsMissionEntity(vehicle.Handle, true, false);
+            }
+
+            await Task.FromResult(0);
+        }
+
+        // Apply or request vehicle color based on conditions
+        private async Task HandleVehicleColor(Vehicle vehicle)
+        {
+            // Apply color if needed, regardless of mission entity status
+            if (vehicleShouldChangePlayerColour)
+            {
+                if (!primaryColor.HasValue || !secondaryColor.HasValue)
+                {
+                    Debug.WriteLine("Requesting vehicle color from the server.");
+                    TriggerServerEvent("requestVehicleColor");
+                }
+                else
+                {
+                    Debug.WriteLine("Applying stored vehicle color.");
+                    API.SetVehicleColours(vehicle.Handle, primaryColor.Value, secondaryColor.Value);
+                }
+            }
+
+            await Task.FromResult(0);
         }
 
         // Called when the client receives color data from the server
@@ -474,7 +508,7 @@ public class VehiclePersistenceClient : BaseScript
             secondaryColor = secondary;
 
             // Apply color to the vehicle if the player is currently in one and in the driver seat
-            if (Game.PlayerPed.IsInVehicle() && Game.PlayerPed.SeatIndex == VehicleSeat.Driver)
+            if (Game.PlayerPed.IsInVehicle() && Game.PlayerPed.SeatIndex == VehicleSeat.Driver && vehicleShouldChangePlayerColour)
             {
                 ApplyVehicleColor(Game.PlayerPed.CurrentVehicle.Handle);
             }

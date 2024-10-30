@@ -1,13 +1,10 @@
-//Store player vehicle colours here. 
-//Use the following method of storing it. \"PlayerName, primairy_colour__id, secundary_colour_id\". 
-//Capitals are important. 
-//Find the colour id's here. http://wiki.rage.mp/index.php?title=Vehicle_Colors
-Maxzzzie, 41, 41
-Max_ed, 41, 41
-maxbo, 41, 1
-Firewolf_XP, 12, 32
-Boss, 53, 53
-Just Gilly, 126, 127
-Rivstar, 120, 120
-Fireaspectgaming621, 73, 73
-gionnirostbiff, 152, 152
+Maxzzzie,41,41
+Max_ed,41,41
+Firewolf_XP,12,32
+Boss,53,53
+Just Gilly,126,127
+Rivstar,120,120
+Fireaspectgaming621,73,73
+gionnirostbiff,152,152
+Thrashy,135,140
+maxbo,40,45

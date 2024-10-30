@@ -4,6 +4,7 @@ using System.IO;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using System.Globalization;
+using STHMaxzzzie.Server;
 
 public static class LoadResources
 {
@@ -32,7 +33,11 @@ public static class LoadResources
             string[] parts = line.Trim().Split(':');
 
             // Check if the split resulted in the expected format
-            if (parts.Length == 2)
+            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
+            {
+                continue; // Skip empty lines and any lines starting with //
+            }
+            else if (parts.Length == 2)
             {
                 // Trim the Discord ID and check if it's an integer
                 string discordIdString = parts[1].Trim();
@@ -81,7 +86,11 @@ public static class LoadResources
         foreach (string line in tpLines)
         {
             string[] parts = line.Split(' ');
-            if (parts.Length < 4)
+            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
+            {
+                continue; // Skip empty lines and any lines starting with //
+            }
+            else if (parts.Length < 4)
             {
                 CitizenFX.Core.Debug.WriteLine($"Insufficient data in TeleportLocations.txt line: {line}");
                 continue;
@@ -121,7 +130,11 @@ public static class LoadResources
         foreach (string line in spawnLines)
         {
             string[] parts = line.Split(',');
-            if (parts.Length != 5)
+            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
+            {
+                continue; // Skip empty lines and any lines starting with //
+            }
+            else if (parts.Length != 5)
             {
                 CitizenFX.Core.Debug.WriteLine($"Insufficient data in RespawnLocations.txt line: {line}");
                 continue;
@@ -163,7 +176,11 @@ public static class LoadResources
         foreach (string line in calloutsLines)
         {
             string[] parts = line.Split(',');
-            if (parts.Length < 4)
+            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
+            {
+                continue; // Skip empty lines and any lines starting with //
+            }
+            else if (parts.Length < 4)
             {
                 CitizenFX.Core.Debug.WriteLine($"Insufficient data in MaxzzzieCallouts.txt line: {line}");
                 continue;
@@ -289,10 +306,13 @@ public static class LoadResources
 
         foreach (string line in AllowedVehiclesLines)
         {
-            if (string.IsNullOrWhiteSpace(line)) continue; // Skip empty lines
 
             string[] parts = line.Split(' ');
-            if (parts.Length < 2)
+            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
+            {
+                continue; // Skip empty lines and any lines starting with //
+            }
+            else if (parts.Length < 2)
             {
                 CitizenFX.Core.Debug.WriteLine($"Insufficient data in AllowedVehicles.txt line: {line}");
                 continue;
@@ -322,9 +342,9 @@ public static class LoadResources
         foreach (string line in playerVehicleColourLine)
         {
             string[] parts = line.Split(',');
-            if (line.StartsWith("//"))
+            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
             {
-                continue; // Skip the info line in the top of the msg
+                continue; // Skip empty lines and any lines starting with //
             }
             else if (parts.Length != 3)
             {
@@ -346,7 +366,27 @@ public static class LoadResources
                 CitizenFX.Core.Debug.WriteLine($"Error processing line '{line}': {ex.Message}");
             }
         }
-        Debug.WriteLine("playerVehicleColour resource successfully loaded.");
+        //Debug.WriteLine("playerVehicleColour resource successfully loaded.");
         return playerVehicleColourDict;
+    }
+
+    // Function to save player vehicle colors to the file
+    public static void SavePlayerVehicleColours(Dictionary<string, Vector2> vehicleColourDict)
+    {
+        var path_to_resource = API.GetResourcePath(API.GetCurrentResourceName());
+        var path_to_playerVehicleColour_file = $"{path_to_resource}/Resources/playerVehicleColour.txt";
+
+        // Prepare data to write to the file
+        List<string> lines = new List<string>();
+        foreach (var entry in vehicleColourDict)
+        {
+            string line = $"{entry.Key},{(int)entry.Value.X},{(int)entry.Value.Y}";
+            lines.Add(line);
+        }
+
+        // Write data to the file, overwriting existing content
+        File.WriteAllLines(path_to_playerVehicleColour_file, lines);
+
+        CitizenFX.Core.Debug.WriteLine("playerVehicleColour resource successfully saved.");
     }
 }
