@@ -4,8 +4,6 @@ Fix pri spawner neons etc. (https://docs.fivem.net/natives/?_0x57F24253)
 Give player invincibility at spawn (https://docs.fivem.net/natives/?_0xDFB9A2A2)
 Make /nudge or /stuck ( https://docs.fivem.net/natives/?_0xFF5A1988 https://docs.fivem.net/natives/?_0xA345EFE )
 Heading indicator
-Location indicator
-Callout indicator
 Make expanded map
 Speed indicator
 Vehicle name/type warning or speed limiter
@@ -24,14 +22,11 @@ Add vehiclecolorerererrer.
 Increase health?
 Add an option for traffic density
 add karma system kill log of sorts
-Add some autocolor feature
-Make a log. (like shitting on the toilet but a toilet where every player adds on to whenever they write a command.)
+Make a log.
 Add a whitelist to the server.
 Make TxAdmin'able.
 Add tpall to host sending the request.
 force 1st person possibility
-fix model glitches
-Players old car despawns i don't want it to
 /cveh sets you in closest vehicle.
 Add pma voice (proximity chat) Increase range and add a radio frequency
 mechanics sound while repairing
@@ -39,6 +34,23 @@ make display player online list visual instead of in chat
 
 
 //finished
+
+30-10-2024
+/togglepvc Added player specific player colours, it updates automatically, and can be set from ingame.
+/togglepvd Vehicles occupied by a player have the option to not despawn automatically.
+
+29-10-2024
+Added a way to prevent spawnkilling.
+added /reloadresource to update the .txt files without restarting the server. Also /rejoin updates the client with all it needs.
+updated /mugshot to show the correct model configurations and spawn it as an npc instead of also changing camera. Update at some point.
+
+
+27-10-2024
+added automated callout indicators, callouts, respawnpoints and a way to add them from ingame.
+
+23-10-2024
+added teststate for /mugshot command
+
 19-10-2024
 delay mode added
 playerlist added

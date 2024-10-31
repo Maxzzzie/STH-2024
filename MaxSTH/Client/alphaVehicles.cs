@@ -173,8 +173,8 @@ namespace STHMaxzzzie.Client
         async void finger(int source, List<object> args, string raw)
         {
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a specialized f620. Enjoy Finger!" } });
-            int color1 = 57;
-            int color2 = 57; //57 = Util Green
+            int color1 = 52;
+            int color2 = 52; //52 = Metalic olive green
             var model = new Model(VehicleNameToHash["f620"]);
             Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
             API.SetVehicleColours(vehicle.Handle, color1, color2);

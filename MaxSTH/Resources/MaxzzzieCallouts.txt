@@ -16,10 +16,10 @@ Movie studio, -1128.808, -518.6096, 33.43983
 Richards majestic, -924.1899, -354.1303, 38.62968
 Life Invader, -1065.292, -240.9474, 39.73314
 Low carparks, -932.1575, -166.9659, 41.87978
-rockford church, -767.0086, -23.18074, 41.08138
-rockford sign, -852.8739, -62.28775, 37.55703
+Rockford church, -767.0086, -23.18074, 41.08138
+Rockford sign, -852.8739, -62.28775, 37.55703
 mainPD, -557.7357, -148.5691, 37.62638
-rockford LS customs, -360.3566, -123.0564, 38.2217
+LS customs Rockford, -360.3566, -123.0564, 38.2217
 Rockford plaza, -188.5361, -189.777, 43.40707
 Red carpark, -330.457, -760.9752, 33.53185
 Main banner hotel, -287.5471, -1089.143, 23.53601
@@ -168,7 +168,7 @@ Lombank, -1565.781, -591.898, 33.56355
 Maxzzzies alleyway North, -1408.937, -649.3342, 28.27905
 Behind banner hotel, -1612.606, -486.8369, 36.29591
 Up-n-atom vespucci, -1523.922, -431.0262, 35.04782
-Crastenburg Vespucci, -1239.25, -182.7505, 38.95837
+Crastenburg Rockford, -1239.25, -182.7505, 38.95837
 Pier, -1579.945, -923.2043, 15.792
 End of pier, -1802.954, -1183.244, 12.62478
 Korean monument, -917.4196, -880.4235, 15.27338
@@ -260,3 +260,26 @@ Kortz museum North, -2348.652, 490.4518, 191.8096
 Kortz museum East, -2131.154, 277.1585, 167.9339
 Kortz museum South, -2150.185, 81.81556, 163.7988
 Playboy mansion, -1547.959, 115.0715, 56.48724
+Lombank Alleyway, -1490.061, -544.4171, 32.23331
+Parkers multistory carpark, -1232.556, -371.7719, 42.36756
+Morningwood Theater, -1385.136, -171.8511, 47.05462
+Crastenburg tenniscourts Rockford, -1337.987, -119.4024, 49.50013
+Multistory carpak Crastenburg Rockford, -1281.805, -230.2559, 49.38208
+Green thing, -993.6124, -642.3654, 23.37313
+Bean machine intersection, -840.768, -610.5565, 28.3755
+Movie studio highway bridge, -904.8836, -537.4285, 34.10696
+Weasel plaza, -859.3932, -444.5816, 36.1158
+Horse statue, -701.3398, -224.8644, 36.35791
+Jewlery, -631.0402, -242.5467, 38.19072
+Mount zonah medical center, -467.1521, -330.1185, 33.71345
+Suburban, 125.8623, -213.8512, 53.90624
+Roof skatepark, 286.5755, -201.5439, 60.91482
+Needle building, 464.8828, -104.854, 62.35841
+CNT, 740.3757, 226.6388, 87.2765
+PD Vinewood, 639.3777, -1.040572, 82.13259
+Clappers, 411.608, 148.4052, 103.2058
+Go postal, 70.89407, 111.4579, 78.45206
+Vinewood plaza, 228.846, -42.01798, 68.97005
+Benefactor Vinewood, -65.12073, 76.73695, 70.96724
+Small red carpark, -194.7061, 156.4737, 69.95679
+Hardcore Comic store, -143.4432, 232.3661, 94.30335

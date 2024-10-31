@@ -47,16 +47,22 @@ namespace STHMaxzzzie.Server
         void reloadResources(int source)
         {
             //CitizenFX.Core.Debug.WriteLine($"reloadResources triggered");
-            respawnLocationsDict?.Clear(); //the ? checks if the dictionairy isn't null. It gave an error without it.
-            maxzzzieCalloutsDict?.Clear();
-            vehicleinfoDict?.Clear();
             respawnLocationsDict = LoadResources.respawnLocations();
             maxzzzieCalloutsDict = LoadResources.calloutsList();
             vehicleinfoDict = LoadResources.allowedVehicles();
-            ServerMain.sendRespawnLocationsDict(Players[source]);
-            ServerMain.sendVehicleinfoDict(Players[source]);
-            ServerMain.sendMaxzzzieCalloutsDict(Players[source]);
             Vehicles.vehicleColourForPlayer = LoadResources.playerVehicleColour();
+            MapBounds.updateCircle(true);
+            foreach (Player player in Players)
+            {
+            ServerMain.sendRespawnLocationsDict(player);
+            ServerMain.sendVehicleinfoDict(player);
+            ServerMain.sendMaxzzzieCalloutsDict(player);
+            Appearance.sendNonAnimalModel(player);
+            player.TriggerEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
+            string name = player.Name;
+                if (Vehicles.vehicleColourForPlayer.ContainsKey(name))
+                    TriggerClientEvent(player, "receiveVehicleColor", Vehicles.vehicleColourForPlayer[name].X, Vehicles.vehicleColourForPlayer[name].Y);
+            }
         }
 
         [EventHandler("pri-spawn-requested")]
@@ -886,7 +892,7 @@ namespace STHMaxzzzie.Server
             }
         }
 
-        [Command("togglepvd", Restricted = false)]
+        [Command("togglepvd", Restricted = true)]
         void setVehicleShouldNotDespawn(int source, List<object> args, string raw)
         {
             Player player = Players[source];
@@ -922,7 +928,7 @@ namespace STHMaxzzzie.Server
             TriggerClientEvent("updateClientColourAndDespawn", vehicleShouldChangePlayerColour, vehicleShouldNotDespawn);
 
         }
-        [Command("togglepvc", Restricted = false)]
+        [Command("togglepvc", Restricted = true)]
         void setVehicleShouldChangePlayerColour(int source, List<object> args, string raw)
         {
             Player player = Players[source];
@@ -983,7 +989,7 @@ namespace STHMaxzzzie.Server
             updateClientsVehicleColours();
         }
 
-        private void updateClientsVehicleColours()
+        void updateClientsVehicleColours()
         {
             foreach (Player player in Players)
             {

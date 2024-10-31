@@ -15,7 +15,7 @@ namespace STHMaxzzzie.Server
 
         public DevelopTools()
         {
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"This is the develop build. Develop tools are on!" } });
+            //TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"This is the develop build. Develop tools are on!" } });
         }
 
         //         [EventHandler("clearRespawnBlips")]
@@ -68,7 +68,7 @@ namespace STHMaxzzzie.Server
             CitizenFX.Core.Debug.WriteLine($"Callout blips placed.");
         }
 
-        [Command("reloadresource", Restricted = false)] //restriction default = true
+        [Command("reloadresource", Restricted = true)] //restriction default = true
         [EventHandler("reloadresource")]
         void reloadresource(int source, List<object> args, string raw)
         {
@@ -82,7 +82,7 @@ namespace STHMaxzzzie.Server
             //             //if (displayCalloutBlips) TriggerEvent("placeCalloutBlips");
         }
 
-        [Command("devblip", Restricted = false)] //restriction default = true
+        [Command("devblip", Restricted = true)] //restriction default = true
         void devBlip(int source, List<object> args, string raw)
         {
             TriggerEvent("placeRespawnBlips");
@@ -134,7 +134,7 @@ namespace STHMaxzzzie.Server
     public class SavePositions : BaseScript
     {
         // Save callout location
-        [Command("c", Restricted = false)] //restriction default = true
+        [Command("c", Restricted = true)] //restriction default = true
         private void CalloutCommand(int source, List<object> args, string raw)
         {
             string calloutName = string.Join(" ", args);
@@ -153,7 +153,7 @@ namespace STHMaxzzzie.Server
             }
         }
         // Save respawn location
-        [Command("r", Restricted = false)] //restriction default = true
+        [Command("r", Restricted = true)] //restriction default = true
         private void RespawnCommand(int source, List<object> args, string raw)
         {
             string calloutName = string.Join(" ", args);

@@ -377,7 +377,11 @@ public static class LoadResources
         var path_to_playerVehicleColour_file = $"{path_to_resource}/Resources/playerVehicleColour.txt";
 
         // Prepare data to write to the file
-        List<string> lines = new List<string>();
+        List<string> lines = new List<string>(); 
+        lines.Add("//Store player vehicle colours here. ");
+        lines.Add("//Use the following method of storing it. \"PlayerName, primairy_colour__id, secundary_colour_id\". ");
+        lines.Add("//Capitals are important. ");
+        lines.Add("//Find the colour id's here. http://wiki.rage.mp/index.php?title=Vehicle_Colors");
         foreach (var entry in vehicleColourDict)
         {
             string line = $"{entry.Key},{(int)entry.Value.X},{(int)entry.Value.Y}";
@@ -387,6 +391,6 @@ public static class LoadResources
         // Write data to the file, overwriting existing content
         File.WriteAllLines(path_to_playerVehicleColour_file, lines);
 
-        CitizenFX.Core.Debug.WriteLine("playerVehicleColour resource successfully saved.");
+        //CitizenFX.Core.Debug.WriteLine("playerVehicleColour resource successfully saved.");
     }
 }
