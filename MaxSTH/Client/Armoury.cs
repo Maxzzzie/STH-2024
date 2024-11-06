@@ -104,7 +104,7 @@ namespace STHMaxzzzie.Client
 
         //Giving a runweapon
         [EventHandler("runWeapon")]
-        void giveRunWeapon(bool model)
+        public void giveRunWeapon(bool model)
         //Void doesn't return anything. These are datatypes. (var/int/string/bool/double/char/my_own!)
 
         {

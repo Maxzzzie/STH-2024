@@ -4,6 +4,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using static CitizenFX.Core.Native.API;
 using System.Collections.Generic;
+using STHMaxzzzie.Server;
 
 
 namespace STHMaxzzzie.Client
@@ -12,7 +13,7 @@ namespace STHMaxzzzie.Client
     {
         string allowedToFixStatus = "wait"; //can be on/off/wait/lsc.
         int timeStationairBeforeFix = 10;
-        bool isVehAllowed = false;
+        bool isVehSpawningRestricted = true;
         static Dictionary<string, string> vehicleinfoDict = new Dictionary<string, string>();
         Dictionary<string, VehicleHash> VehicleNameToHash = null;
         public max_Vehicle()
@@ -31,7 +32,7 @@ namespace STHMaxzzzie.Client
         [EventHandler("getVehicleinfoDict")]
         void getVehicleinfoDict(string vehicleName, string vehicleInfo)
         {
-            vehicleinfoDict.Add(vehicleName, vehicleInfo);
+            vehicleinfoDict[vehicleName] = vehicleInfo;
 
             //vehicle dict formatting --> Key= Tug || value= -2100640717,Boats,true || Value is vehiclehash, vehicle class, allowed to spawn or not bool.
             //use these formats to access the vehicleInfo components.
@@ -42,9 +43,9 @@ namespace STHMaxzzzie.Client
         }
 
         [EventHandler("whatIsVehAllowed")]
-        void whatIsVehicleAllowed(bool vehicleAllowed)
+        void whatIsVehicleAllowed(bool vehicleSpawningRestricted)
         {
-            isVehAllowed = vehicleAllowed;
+            isVehSpawningRestricted = vehicleSpawningRestricted;
         }
 
         [EventHandler("VehicleFixStatus")]
@@ -58,6 +59,11 @@ namespace STHMaxzzzie.Client
         [Command("veh")]
         async void vehicle(int source, List<object> args, string raw)
         {
+            if (RoundHandling.gameMode != "none") 
+            {
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"A game is running, vehicle spawns are disabled." } });
+            return;
+            }
             if (args.Count == 0)
             {
                 TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"What vehicle do you want to spawn?" } });
@@ -66,7 +72,7 @@ namespace STHMaxzzzie.Client
             else if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()) && vehicleinfoDict.ContainsKey(args[0].ToString()))
             {
                 string vehicleInfo = vehicleinfoDict[args[0].ToString()];
-                if (bool.Parse(vehicleInfo.Split(',')[2]) || isVehAllowed)
+                if (bool.Parse(vehicleInfo.Split(',')[2]) || !isVehSpawningRestricted)
                 {
                     var model = new Model(VehicleNameToHash[args[0].ToString()]);
                     Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
@@ -76,7 +82,23 @@ namespace STHMaxzzzie.Client
             }
             else if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()) && !vehicleinfoDict.ContainsKey(args[0].ToString()))
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Ask Max to add this to the list of secrets, he might do it." } });
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Ask Max. FiveM recognises this vehicle but it doesn't have a definition for a restriction." } });
+            }
+            else if (args.Count == 1)
+            {
+                string playerName = args[0].ToString();
+                if (playerName == "boss") vehBoss();
+                else if (playerName == "drift") vehDrifting();
+                else if (playerName == "finger") vehFinger();
+                else if (playerName == "fw2") vehFirewolf2();
+                else if (playerName == "fw") vehFirewolf1();
+                else if (playerName == "ed") vehEd();
+                else if (playerName == "gil") vehGilly();
+                else if (playerName == "max") vehMax();
+                //else if (playerName == "") veh();
+                else TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Something went wrong!\nYou should do /veh \"vehiclename\"." } });
+
+
             }
             else
             {
@@ -88,6 +110,11 @@ namespace STHMaxzzzie.Client
         [Command("inveh")]
         async void inVehicle(int source, List<object> args, string raw)
         {
+            if (RoundHandling.gameMode != "none") 
+            {
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"A game is running, vehicle spawns are disabled." } });
+            return;
+            }
             if (args.Count == 0)
             {
                 TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"What vehicle do you want to spawn in?" } });
@@ -95,7 +122,7 @@ namespace STHMaxzzzie.Client
             else if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()) && vehicleinfoDict.ContainsKey(args[0].ToString()))
             {
                 string vehicleInfo = vehicleinfoDict[args[0].ToString()];
-                if (bool.Parse(vehicleInfo.Split(',')[2]) || isVehAllowed) //checks if vehicle is true OR if vehicles aren't restricted.
+                if (bool.Parse(vehicleInfo.Split(',')[2]) || !isVehSpawningRestricted) //checks if vehicle is true OR if vehicles aren't restricted.
                 {
                     var model = new Model(VehicleNameToHash[args[0].ToString()]);
                     Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
@@ -145,8 +172,7 @@ namespace STHMaxzzzie.Client
 
 
         //spawns a custom fq2 for cornelius, 
-        [Command("vehboss")]
-        async void cor(int source, List<object> args, string raw)
+        async void vehBoss()
         {
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a specialized fq2. Enjoy Cornelius!" } });
             int color1 = 53; //53 is dark green
@@ -168,9 +194,33 @@ namespace STHMaxzzzie.Client
             API.SetVehicleXenonLightsColor(vehicle.Handle, 3);
         }
 
+        //spawns a custom vehicle for Drifting
+        async void vehDrifting()
+        {
+            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a vehicle. Enjoy Drifting!" } });
+            int color1 = 73; //12 is matte black
+            int color2 = 73;
+            var model = new Model(VehicleNameToHash["sultan"]);
+            Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+            API.SetVehicleColours(vehicle.Handle, color1, color2);
+            API.SetVehicleExtraColours(vehicle.Handle, 131, 73);
+            API.SetVehicleNumberPlateText(vehicle.Handle, "drifting");
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 0, true);
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 1, true);
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 2, true);
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 3, true);
+            API.SetVehicleNeonLightsColour(vehicle.Handle, 10, 70, 255);
+            API.SetVehicleNumberPlateTextIndex(vehicle.Handle, 2);
+            API.ToggleVehicleMod(vehicle.Handle, 22, true);
+            //XENON --> Default = 255,White = 0, Blue = 1, ElectricBlue = 2, MintGreen = 3, LimeGreen = 4,Yellow = 5,GoldenShower = 6,Orange = 7,Red = 8,PonyPink = 9,HotPink = 10,Purple = 11,Blacklight = 12
+            API.SetVehicleXenonLightsColor(vehicle.Handle, 2);
+            Game.PlayerPed.SetIntoVehicle(vehicle, VehicleSeat.Driver);
+            API.SetVehicleEngineOn(vehicle.Handle, true, true, false);
+        }
+
+
         //spawns a custom f620 for finger 
-        [Command("vehfinger")]
-        async void finger(int source, List<object> args, string raw)
+        async void vehFinger()
         {
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a specialized f620. Enjoy Finger!" } });
             int color1 = 52;
@@ -191,8 +241,7 @@ namespace STHMaxzzzie.Client
         }
 
         //spawns a custom sanctus for Firewolf
-        [Command("vehfw2")]
-        async void firewolf(int source, List<object> args, string raw)
+        async void vehFirewolf2()
         {
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You morphed into GhostRider. Enjoy Firewolf!" } });
             int color1 = 12; //12 is matte black
@@ -220,8 +269,7 @@ namespace STHMaxzzzie.Client
         }
 
         //spawns a custom vehicle for Firewolf
-        [Command("vehfw")]
-        async void fireWolf(int source, List<object> args, string raw)
+        async void vehFirewolf1()
         {
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a vehicle. Enjoy Firewolf!" } });
             int color1 = 12; //12 is matte black
@@ -243,11 +291,11 @@ namespace STHMaxzzzie.Client
             API.SetVehicleXenonLightsColor(vehicle.Handle, 8);
             Game.PlayerPed.SetIntoVehicle(vehicle, VehicleSeat.Driver);
             API.SetVehicleEngineOn(vehicle.Handle, true, true, false);
+            API.SetVehicleExtraColours(vehicle.Handle, 28, 28);
         }
 
         //spawns a custom police cruiser for ed
-        [Command("vehed")]
-        async void ed(int source, List<object> args, string raw)
+        async void vehEd()
         {
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a custom police cruiser. Enjoy Ed!" } });
             int color1 = 42; //53 is dark green
@@ -265,6 +313,51 @@ namespace STHMaxzzzie.Client
             API.SetVehicleEngineOn(vehicle.Handle, true, true, false);
             API.ToggleVehicleMod(vehicle.Handle, 22, true);
             API.SetVehicleHeadlightsColour(vehicle.Handle, 5);
+        }
+
+        //spawns a custom police cruiser for ed
+        async void vehGilly()
+        {
+            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a custom Alpha. Enjoy Gilly!" } });
+            int color1 = 127;
+            int color2 = 140;
+            var model = new Model(VehicleNameToHash["alpha"]);
+            Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+            API.SetVehicleColours(vehicle.Handle, color1, color2);
+            API.SetVehicleNumberPlateText(vehicle.Handle, "Gilly");
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 0, true);
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 1, true);
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 2, true);
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 3, true);
+            API.SetVehicleNeonLightsColour(vehicle.Handle, 8, 233, 250);
+            Game.PlayerPed.SetIntoVehicle(vehicle, VehicleSeat.Driver);
+            API.SetVehicleEngineOn(vehicle.Handle, true, true, false);
+            API.ToggleVehicleMod(vehicle.Handle, 22, true);
+            SetVehicleXenonLightsCustomColor(vehicle.Handle, 8, 233, 250);
+            API.SetVehicleExtraColours(vehicle.Handle, 131, 131);
+        }
+
+        //spawns a custom comet for max
+        async void vehMax()
+        {
+            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a custom comet. Enjoy Max!" } });
+            int color1 = 41;
+            int color2 = 42;
+            var model = new Model(VehicleNameToHash["comet2"]);
+            Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+            API.SetVehicleColours(vehicle.Handle, color1, color2);
+            API.SetVehicleNumberPlateText(vehicle.Handle, "Maxzzzie");
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 0, true);
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 1, true);
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 2, true);
+            API.SetVehicleNeonLightEnabled(vehicle.Handle, 3, true);
+            API.SetVehicleNeonLightsColour(vehicle.Handle, 251, 226, 18);
+            Game.PlayerPed.SetIntoVehicle(vehicle, VehicleSeat.Driver);
+            API.SetVehicleEngineOn(vehicle.Handle, true, true, false);
+            API.ToggleVehicleMod(vehicle.Handle, 22, true);
+            API.SetVehicleHeadlightsColour(vehicle.Handle, 5);
+            API.SetVehicleExtraColours(vehicle.Handle, 89, 89);
+
         }
 
         //fix help/on/off/wait/lsc
@@ -426,15 +519,15 @@ namespace STHMaxzzzie.Client
             }
         }
 
-// Usage in the constructor:
-public VehiclePersistenceClient()
-{
-    Tick += async () =>
-    {
-        await WaitFor100Milliseconds(1);
-        await CheckVehicleEntry();
-    };
-}
+        // Usage in the constructor:
+        public VehiclePersistenceClient()
+        {
+            Tick += async () =>
+            {
+                await WaitFor100Milliseconds(1);
+                await CheckVehicleEntry();
+            };
+        }
 
         // Main loop to check if the player has entered a new vehicle
         private async Task CheckVehicleEntry()
@@ -479,8 +572,8 @@ public VehiclePersistenceClient()
         // Apply or request vehicle color based on conditions
         private async Task HandleVehicleColor(Vehicle vehicle)
         {
-            // Apply color if needed, regardless of mission entity status
-            if (vehicleShouldChangePlayerColour)
+            // Apply color if needed, regardless of mission entity status and checks if player isn't a runner.
+            if (vehicleShouldChangePlayerColour && RoundHandling.thisClientIsTeam != 1)
             {
                 if (!primaryColor.HasValue || !secondaryColor.HasValue)
                 {
@@ -499,7 +592,7 @@ public VehiclePersistenceClient()
 
         // Called when the client receives color data from the server
         [EventHandler("receiveVehicleColor")]
-        private void receiveVehicleColor(int primary, int secondary)
+        private void receiveVehicleColor(int primary, int secondary) //add neon's here!
         {
             Debug.WriteLine("Received vehicle color from server."); // Debug message for receiving data
 
@@ -521,6 +614,15 @@ public VehiclePersistenceClient()
             {
                 Debug.WriteLine($"Setting vehicle colors to Primary: {primaryColor.Value}, Secondary: {secondaryColor.Value}");
                 API.SetVehicleColours(vehicleHandle, primaryColor.Value, secondaryColor.Value);
+
+                // Enable all neon lights
+                // API.SetVehicleNeonLightEnabled(vehicleHandle, 0, true);
+                // API.SetVehicleNeonLightEnabled(vehicleHandle, 1, true);
+                // API.SetVehicleNeonLightEnabled(vehicleHandle, 2, true);
+                // API.SetVehicleNeonLightEnabled(vehicleHandle, 3, true);
+
+                // Apply the primary color's RGB values to the neon lights
+                //API.SetVehicleNeonLightsColour(vehicleHandle, 242, 125, 32);
             }
         }
     }

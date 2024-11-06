@@ -6,7 +6,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using STHMaxzzzie.Server;
 
-namespace STHMaxzzzie.Client
+namespace STHMaxzzzie.Server
 {
     public class DelayMode : BaseScript
     {
@@ -16,63 +16,43 @@ namespace STHMaxzzzie.Client
         public static bool runnerSeesDelayBlip = false;
         int delayBlipHandle = 0;
 
-        [Command("delaymode", Restricted = true)] //normal restriction true 
-        [EventHandler("delaymode")] //delaymode (playerID) (optional: distance) (optional: runner sees blip)
-        public void delayMode(int source, List<object> args, string raw)
+        //[Command("delaymode", Restricted = true)] //normal restriction true 
+        //[EventHandler("delaymode")] //delaymode (playerID) (optional: distance) (optional: runner sees blip)
+        public static void delayMode(Player sourceHost, Player runPlayer, List<object> args)
         {
-            Player sourceHost = Players[source];
-            if (args.Count == 1 && args[0].ToString() == "false" || args[0].ToString() == "true")
+            int temp = 0;
+            if (args.Count == 2 && int.TryParse(args[1].ToString(), out temp) == true)
             {
-                if (args[0].ToString() == "true")
-                {
-                    TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Something went wrong, start a delay run with /delaymode (playerID) (optional: distance) (optional: runner sees blip)." } });
-                }
-                else
-                {
-                    delayModeOn = false;
-                    TriggerClientEvent("updateBlipLocationOnMapForDelayMode", new Vector3(0, 0, 0), delayModeOn);
-                }
-            }
-            else if (args.Count == 1)
-            {
-                runPlayer = Players[int.Parse(args[0].ToString())];
                 delayModeOn = true;
                 runnerSeesDelayBlip = false;
-                TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"{sourceHost.Name} started a round of delay mode with {distanceToBlip}m distance. {runPlayer.Name} is the runner." } });
                 TriggerClientEvent(runPlayer, "getBlipLocationForDelayMode", delayModeOn, distanceToBlip);
             }
-            else if (args.Count == 2)
+            else if (args.Count == 3 && int.TryParse(args[1].ToString(), out temp) == true && int.TryParse(args[2].ToString(), out temp) == true)
             {
-                runPlayer = Players[int.Parse(args[0].ToString())];
-                distanceToBlip = int.Parse(args[1].ToString());
+                distanceToBlip = int.Parse(args[2].ToString());
                 runnerSeesDelayBlip = false;
                 delayModeOn = true;
-                TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"{sourceHost.Name} started a round of delay mode with {distanceToBlip}m distance. {runPlayer.Name} is the runner." } });
                 TriggerClientEvent(runPlayer, "getBlipLocationForDelayMode", delayModeOn, distanceToBlip);
             }
-            else if (args.Count == 3)
+            else if (args.Count == 4)
             {
-                bool isBool = bool.TryParse(args[2].ToString(), out isBool);
+                bool isBool = bool.TryParse(args[3].ToString(), out isBool);
                 if (isBool)
                 {
-                    runnerSeesDelayBlip = bool.Parse(args[2].ToString());
-                    runPlayer = Players[int.Parse(args[0].ToString())];
-                    distanceToBlip = int.Parse(args[1].ToString());
+                    runnerSeesDelayBlip = bool.Parse(args[3].ToString());
+                    distanceToBlip = int.Parse(args[2].ToString());
                     delayModeOn = true;
+                    TriggerEvent("startGame", "delay", int.Parse(args[1].ToString()));
                     TriggerClientEvent(runPlayer, "getBlipLocationForDelayMode", delayModeOn, distanceToBlip);
-                    if (runnerSeesDelayBlip)
-                        TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"{sourceHost.Name} started a round of delay mode with {distanceToBlip}m distance. {runPlayer.Name} is the runner and does see their blip." } });
-                    else
-                        TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"{sourceHost.Name} started a round of delay mode with {distanceToBlip}m distance. {runPlayer.Name} is the runner." } });
-
                 }
                 else
-                    TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Something went wrong, start a delay run with /delaymode (playerID) (optional: distance) (optional: runner sees blip)." } });
-
+                {
+                    TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Something went wrong, start a delay run with /start delay (playerID) (optional: distance) (optional: runner sees blip)." } });
+                }
             }
             else
             {
-                TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Something went wrong, start a delay run with /delaymode (playerID) (optional: distance) (optional: runner sees blip)." } });
+                TriggerClientEvent(sourceHost, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Something went wrong, start a delay run with /start delay (playerID) (optional: distance) (optional: runner sees blip)." } });
             }
         }
 
@@ -83,7 +63,7 @@ namespace STHMaxzzzie.Client
 
             if (runnerSeesDelayBlip && isDelayModeOn)
             {
-                TriggerClientEvent("updateBlipLocationOnMapForDelayMode", newBlipPos, delayModeOn);
+                TriggerClientEvent("updateBlipLocationOnMapForDelayMode", newBlipPos);
             }
             else if (isDelayModeOn)
             {
@@ -92,15 +72,15 @@ namespace STHMaxzzzie.Client
                     int playerId = int.Parse(player.Handle);
                     if (playerId != int.Parse(runPlayer.Handle))
                     {
-                        TriggerClientEvent(player, "updateBlipLocationOnMapForDelayMode", newBlipPos, delayModeOn);
+                        TriggerClientEvent(player, "updateBlipLocationOnMapForDelayMode", newBlipPos);
                     }
                 }
             }
             else //when delay mode is off
             {
                 delayModeOn = false;
-                TriggerClientEvent("updateBlipLocationOnMapForDelayMode", newBlipPos, delayModeOn);
-                TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { $"Delay mode is now concluded." } });
+                TriggerEvent("endGame", "hunter");
+                TriggerClientEvent("updateBlipLocationOnMapForDelayMode", newBlipPos);
             }
         }
     }

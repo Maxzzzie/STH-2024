@@ -38,10 +38,10 @@ Vespucci hairdresser, -1282.359, -1131.056, 6.793107
 Container carpark, -1230.348, -1417.834, 3.67306
 Floyd's house, -1151.394, -1527.568, 3.606839
 Fish restaurant, -1050.224, -1388.699, 5.558093
-South-West canals pedestrian bridge, -1094.643, -1170.35, 2.834405
-Monument canals exit, -914.8668, -1067.418, 3.029327
-Dead mans alley, -978.5504, -980.2361, 1.569863
-North-West canals pedestrian bridge, -1149.793, -1081.266, 2.770371
+Canals South-West pedestrian bridge, -1094.643, -1170.35, 2.834405
+Canals monument exit, -914.8668, -1067.418, 3.029327
+Canals Dead mans alley, -978.5504, -980.2361, 1.569863
+Canals North-West  pedestrian bridge, -1149.793, -1081.266, 2.770371
 V-hotel bridge, -1222.564, -983.6544, 4.817577
 North bumpy roads, -1116.187, -936.9754, 1.984292
 Middle bumpy roads, -1033.169, -1073.235, 3.396679
@@ -145,7 +145,6 @@ Drydocks, -39.18206, -2698.303, 5.536139
 Pier 400, -152.7467, -2569.478, 5.347761
 Los santos marine, -346.8181, -2644.486, 5.34746
 Post op warehouse, -441.5696, -2793.726, 5.351751
-devblip, -341.3071, -2738.694, 5.423203
 Train bridge to elysian island, 219.4622, -2329.272, 7.74966
 PD Mission row, 424.4972, -994.3895, 30.71209
 Ammunation Downtown, 28.04496, -1106.673, 28.6855
@@ -283,3 +282,125 @@ Vinewood plaza, 228.846, -42.01798, 68.97005
 Benefactor Vinewood, -65.12073, 76.73695, 70.96724
 Small red carpark, -194.7061, 156.4737, 69.95679
 Hardcore Comic store, -143.4432, 232.3661, 94.30335
+Megamall stormdrain bridge, -202.9093, -1798.276, 29.22689
+Gas company stormdrain bridge, 655.5906, -2054.981, 28.81896
+Vitreous, 947.7073, -2015.301, 30.13462
+White water tower, 1069.846, -1833.847, 36.78242
+Highway end, 1236.73, -2053.2, 43.69765
+Covington, 1379.827, -2073.719, 51.3471
+Oil fields South, 1482.033, -2095.234, 75.59939
+Oilfield smokestack, 1657.071, -1652.049, 111.6036
+Oilfield middle, 1635.411, -1785.421, 101.2392
+Oilfield north, 1676.135, -1568.877, 111.9147
+Oilfield tip, 1975.206, -933.1774, 78.51795
+St. Fiarce hospital, 1148.172, -1520.494, 34.19153
+Hardwood highway bridge, 1064.414, -1433.478, 36.11894
+San an, 991.5272, -1400.384, 30.70865
+Lesters house, 1280.858, -1729.455, 51.98577
+Container yard, 589.822, -1889.53, 24.67706
+Small church, 533.6357, -1736.674, 30.23955
+Robs liquer, 1143.615, -980.1478, 45.57707
+Highway cross, 1069.844, -1186.568, 46.67443
+Moms Tacos, 1141.258, -960.8926, 47.50056
+Vinewood bowl sign, 1007.849, 510.9726, 98.65113
+Vinewood bowl, 719.5451, 617.1231, 128.259
+Vinewood bowl enterance, 886.5659, 536.2453, 123.7805
+Globe oil Vinewood, 608.101, 277.7917, 102.4285
+Beaver bush ranger station, 384.1872, 791.6144, 187.0008
+Vinewood sign, 712.1997, 1198.288, 324.9243
+La Fuente Blanca Enrerance, 1307.248, 1110.51, 105.5642
+Radio tower Vinewood hill, 753.4147, 1286.034, 359.645
+La Fuente Blanca House, 1391.751, 1141.96, 114.4434
+Sisyphus theather, 224.9706, 1171.825, 225.9891
+Super Car Road, 1293.788, 1243.507, 108.5329
+Baytree canyon intersection, 315.4942, 991.7551, 209.8786
+Vespucci bowl hill, 488.7663, 535.981, 179.9908
+Super Car Road - Blarneys Beer, 1234.602, 1746.864, 79.68233
+Franklin's hill house, 8.290489, 534.2702, 175.289
+Observatory East hill, -119.1519, 1194.906, 286.8036
+Observatory, -424.3535, 1127.519, 325.2031
+Arthurs pass trails, -328.0292, 1363.487, 346.4675
+Big orange ball, -439.7779, 1594.824, 357.7008
+Observatory North hill, -529.8062, 1535.434, 353.1804
+Observatory West hill, -684.2493, 1300.246, 280.7643
+Observatory South hill, -459.3555, 1038.356, 303.6385
+Super Car Road - North, 1110.03, 1936.892, 60.5248
+Stickman intersection, -718.2316, 974.8359, 237.1534
+Hills playground, -812.2687, 859.1662, 202.315
+Concrete ramp hills, -568.1252, 771.0405, 187.1803
+Hills construction, -747.5504, 700.3607, 149.7683
+Martin Madrazo's house hills, -1034.515, 685.329, 160.652
+Dirt road Hills, -1024.289, 642.7378, 140.5639
+Bin ramp intersection Hills, -1246.113, 460.9717, 92.46503
+Miguel madrazzo's mansion, -1810.39, 454.558, 127.6454
+Parsons rehab center, -1525.861, 854.7493, 180.9134
+Eclipse viewpoint, -1158.234, 930.1766, 197.9399
+Northest hills road, -977.2146, 1173.754, 217.7223
+Mount Vinewood, -960.5099, 1366.251, 295.0578
+LTD North Rockford, -1802.154, 803.6841, 138.5147
+Richman hills jump, -1436.077, 461.4239, 110.9933
+Flowy hills road, -484.0429, 811.5908, 183.6338
+West reservoir road, -399.6973, 815.1144, 223.2932
+American flag hills, -308.739, 631.2059, 174.3907
+Behind eclipse tower, -672.0574, 486.6318, 109.4731
+Hills crossroad, -525.367, 658.4882, 139.6009
+Hills foundation construction, -389.7899, 377.9542, 108.1104
+CNT parking, 622.1309, 135.6706, 95.38165
+Needle mutltistory parkinglot, 496.5709, -61.45491, 77.06883
+Calisto apartments, 378.4816, -1.629125, 90.61718
+Yellow parkinglot, 280.366, 74.16542, 93.71296
+Nightclub Vinewood, -25.45329, 213.6649, 105.915
+Elgin house, -67.6414, 153.2059, 80.69971
+Maxzzzie's roof jump, -315.6815, 50.7733, 57.28558
+The generic parkinglot, -470.4111, 194.6527, 74.60074
+The lust drop parkinglot, -598.548, 187.7461, 69.92651
+Epsilon program, -693.6938, 74.74006, 55.20636
+Dead end estate, -940.6237, 161.8927, 65.33286
+Total bankers, -699.8945, 263.4169, 80.17345
+Dorset alleyway, -453.5933, -431.8544, 32.6186
+The archipelago, -1112.009, -323.2737, 37.24017
+North of movie studio, -1191.195, -419.1987, 33.56834
+Post op office, -263.9074, -926.2557, 30.63433
+Globe oil Strawberry, -317.1396, -1467.651, 29.96418
+RGB, -454.8929, -1423.795, 28.77672
+Penris, 162.0116, -562.8945, 43.3018
+Mexican square, 396.4284, -354.9759, 46.16416
+Peckerwood parking, 279.2969, -317.3299, 44.3686
+Construction Paleto, 83.02631, 6540.94, 31.67645
+Rons Paleto, 175.4082, 6601.187, 31.19746
+LS customs Paleto, 106.1861, 6631.485, 31.13484
+Cliff road North-East, -25.81403, 6621.723, 29.91983
+Cliff road middle, -159.305, 6503.395, 28.95882
+Cliff road South-West, -327.7767, 6343.509, 29.6456
+South seas apt., -149.5519, 6433.399, 31.26246
+Xero Paleto, -92.19602, 6415.332, 30.81326
+Willies supermarket, -58.63476, 6527.283, 30.8382
+Famous, -155.6864, 6355.477, 30.8456
+Dream view motel, -102.0519, 6337.697, 30.83705
+Clucking bell farms, -30.69506, 6307.55, 31.37058
+Clucking bell farms North-East, 76.41151, 6353.987, 31.37508
+Clucking bell farms South-West, -203.758, 6120.386, 30.81544
+PD Paleto, -465.2406, 6015.997, 30.68709
+Ammunation Paleto, -328.8785, 6091.56, 30.75925
+Church Paleto, -331.4245, 6156.737, 30.83559
+Post op Paleto, -424.9257, 6165.533, 30.82481
+Beach road South-West, -371.6178, 6395.736, 13.21891
+Beach road Middle, -196.8329, 6543.639, 10.4444
+Beach road jump, -140.1312, 6598.922, 9.681166
+Beach road North-East, -55.8803, 6687.104, 13.40584
+Obstacle run course, 112.702, 6957.454, 12.5035
+Helmuts, -229.1059, 6204.716, 30.84282
+The hen house, -296.4754, 6259.765, 31.4934
+Red's machine suplies, -196.4125, 6289.859, 30.92609
+Dirt ramp, -150.1191, 6290.021, 39.62375
+Cablecar basestation, -766.9069, 5559.513, 32.95326
+Logyard West, -654.5723, 5375.117, 55.40553
+Logyard South, -588.5074, 5207.555, 80.38686
+Logyard, -529.6143, 5296.579, 74.38031
+Logyard North, -516.401, 5414.996, 63.82054
+Logyard East, -458.0727, 5281.261, 84.94259
+Bayview lodge, -686.4929, 5815.411, 16.86805
+Mount Chiliad, 484.4904, 5578.259, 792.8333
+Trainyard Paleto, 35.4699, 6251.43, 31.99571
+Paleto Farm, 421.4378, 6472.505, 28.16019
+Paleto greenhouses, 367.7713, 6639.82, 28.20695
