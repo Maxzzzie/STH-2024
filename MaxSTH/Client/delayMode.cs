@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using System.Collections.Generic;
 using static CitizenFX.Core.Native.API;
+using STHMaxzzzie.Server;
 
 namespace STHMaxzzzie.Client
 {
     public class DelayMode : BaseScript
     {
-        public bool delayModeOn = false;
         int distanceToBlip = 400;
         static List<Vector4> delayLocationList = new List<Vector4>();
         int delayBlipHandle = 0;
@@ -17,13 +17,13 @@ namespace STHMaxzzzie.Client
         [EventHandler("getBlipLocationForDelayMode")]
         public async void getBlipLocationForDelayMode(bool isDelayModeOn, int distance)
         {
-            delayModeOn = isDelayModeOn;
+            
             distanceToBlip = distance;
             Vector3 lastPos = Game.PlayerPed.Position;
             Vector3 blipPosition = Game.PlayerPed.Position;
             delayLocationList.Add(new Vector4(lastPos.X, lastPos.Y, lastPos.Z, 0));
 
-            while (delayModeOn && !Game.PlayerPed.IsDead)
+            while (RoundHandling.gameMode == "delay" && !Game.PlayerPed.IsDead)
             {
                 Vector3 pos = Game.PlayerPed.Position;
                 float positionDifference = GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, lastPos.X, lastPos.Y, lastPos.Z, true);
@@ -71,7 +71,6 @@ namespace STHMaxzzzie.Client
                 await WaitFor50Miliseconds(6);
             }
             TriggerServerEvent("updateDelayBlip", blipPosition, false);
-            delayModeOn = false;
             //Debug.WriteLine($"Ending getBlipLocationForDelayMode");
             delayLocationList.Clear();
         }
@@ -86,16 +85,14 @@ namespace STHMaxzzzie.Client
         }
 
         [EventHandler("updateBlipLocationOnMapForDelayMode")]
-        public void updateBlipLocationOnMapForDelayMode(Vector3 coordsForDelayBlip, bool isDelayModeOn)
+        public void updateBlipLocationOnMapForDelayMode(Vector3 coordsForDelayBlip)
         {
             //Debug.WriteLine($"updateBlipLocationOnMapForDelayMode: updated!");
             RemoveBlip(ref delayBlipHandle);
-            if (isDelayModeOn)
+            if (RoundHandling.gameMode == "delay")
             {
-                delayModeOn = isDelayModeOn;
                 delayBlipHandle = AddBlipForCoord(coordsForDelayBlip.X, coordsForDelayBlip.Y, coordsForDelayBlip.Z);
             }
-            else delayModeOn = false;
         }
     }
 }

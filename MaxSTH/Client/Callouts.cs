@@ -17,6 +17,7 @@ namespace STHMaxzzzie.Client
         private bool isProcessing = false; // Flag to check if OnTick is already running
         private int calloutRange = 750; // Distance to store callouts in a temp dict.
         private int reloadRange = 500;  // Distance to move before the temp callouts dict gets remade.
+        private bool triedOnce = false;
 
         public Callouts()
         {
@@ -42,6 +43,12 @@ namespace STHMaxzzzie.Client
             // Check if the player has moved more than the reloadRange or if nearbyCallouts is empty
             if (Vector3.Distance(lastPlayerPosition, playerPosition) > reloadRange || nearbyCallouts.Count == 0)
             {
+                if(nearbyCallouts.Count == 0 && triedOnce)
+                {
+                    TriggerServerEvent("reloadResources");
+                    triedOnce = false;
+                }
+                triedOnce = true;
                 // Update nearby callouts within calloutRange
                 nearbyCallouts = maxzzzieCalloutsDict
                     .Where(callout => Vector3.Distance(playerPosition, callout.Value) <= calloutRange)

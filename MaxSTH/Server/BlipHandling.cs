@@ -49,7 +49,7 @@ namespace STHMaxzzzie.Server
                 blipInfoArray[5] = blipFriendly;
                 blipInfoArray[6] = blipFlashing;
                 blipInfoArray[7] = blipAllClients;
-                sharedBlipDict.Add(blipName, blipInfoArray);
+                sharedBlipDict[blipName] = blipInfoArray;
                 updateSharedClientBlips();
             }
 

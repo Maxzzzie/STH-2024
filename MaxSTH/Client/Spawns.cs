@@ -57,7 +57,7 @@ namespace STHMaxzzzie.Client
         async void respawnPlayerHandler()
         {
             Debug.WriteLine("running spawn function");
-            TriggerEvent("updateBlipLocationOnMapForDelayMode", new Vector3(0, 0, 0), false);//turns of delaymode if this player is the runner.
+            TriggerServerEvent("thisClientDiedForGameStateCheck", Game.Player.ServerId);
 
             //-------------------------------------------------- temp respawn code. Can use the bits for later on in the main code -------------------------------- below here including didIAlreadySpawnOnce bool up top of this funciton
             if (!didIAlreadySpawnOnce)
@@ -105,7 +105,7 @@ namespace STHMaxzzzie.Client
                 }
                 else
                 {
-                    Debug.WriteLine($"respawnLocationsDict not found. Aborting respawn.");
+                    Debug.WriteLine($"respawnLocationsDict not found. Default respawn.");
                     Spawn.SpawnPlayer(-1610f, -1055f, 13f, 318f);
                     //SetPlayerInvincible(Game.PlayerPed.Handle, true);
                     lastRespawnPoint = "null";

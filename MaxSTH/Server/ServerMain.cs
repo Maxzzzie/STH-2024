@@ -5,7 +5,7 @@ using CitizenFX.Core.Native;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Diagnostics;
-
+using System.Numerics;
 
 
 namespace STHMaxzzzie.Server
@@ -18,7 +18,7 @@ namespace STHMaxzzzie.Server
         public static Dictionary<string, Vector4> respawnLocationsDict;
         public static Dictionary<string, Vector3> maxzzzieCalloutsDict;
         public static Dictionary<string, string> vehicleinfoDict;
-        public static bool isVehRestricted = false;
+        public static bool isVehRestricted = true;
 
         private Dictionary<Player, int> playerPris = new Dictionary<Player, int>();
 
@@ -27,8 +27,6 @@ namespace STHMaxzzzie.Server
             //load whitelist to list allowed_discord_ids
             allowed_discord_ids = LoadResources.loadWhitelist();
 
-            //add ace permissions
-            //remove if permissions still work... string[] commands = { "toggleweapon", "circle", "delcircle", "tpall", "toggletp" };
             foreach (string id in allowed_discord_ids)
             {
                 API.ExecuteCommand($"add_ace identifier.discord:{id} \"command\" allow");
@@ -54,12 +52,12 @@ namespace STHMaxzzzie.Server
             MapBounds.updateCircle(true);
             foreach (Player player in Players)
             {
-            ServerMain.sendRespawnLocationsDict(player);
-            ServerMain.sendVehicleinfoDict(player);
-            ServerMain.sendMaxzzzieCalloutsDict(player);
-            Appearance.sendNonAnimalModel(player);
-            player.TriggerEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
-            string name = player.Name;
+                ServerMain.sendRespawnLocationsDict(player);
+                ServerMain.sendVehicleinfoDict(player);
+                ServerMain.sendMaxzzzieCalloutsDict(player);
+                Appearance.sendNonAnimalModel(player);
+                player.TriggerEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
+                string name = player.Name;
                 if (Vehicles.vehicleColourForPlayer.ContainsKey(name))
                     TriggerClientEvent(player, "receiveVehicleColor", Vehicles.vehicleColourForPlayer[name].X, Vehicles.vehicleColourForPlayer[name].Y);
             }
@@ -73,26 +71,33 @@ namespace STHMaxzzzie.Server
                 int oldPriusHandle = playerPris[player];
                 if (API.DoesEntityExist(oldPriusHandle))
                 {
-
                     API.DeleteEntity(oldPriusHandle);
                 }
                 playerPris.Remove(player); // Remove the old vehicle from the dictionary
             }
+            string closestCalloutToPri = "Los Santos";
+            float distanceToClosestCalloutToPri = 10000;
+            foreach (var kvp in maxzzzieCalloutsDict)
+            {
+                float distance = Vector3.Distance(position, kvp.Value);
+                if (distance < distanceToClosestCalloutToPri)
+                {
+                    closestCalloutToPri = kvp.Key;
+                    distanceToClosestCalloutToPri = distance;
+                }
+            }
 
             int vehicle = API.CreateVehicle(vehicleHash, position.X, position.Y, position.Z, heading, true, true); // Vehicle Hash gotten from VehicleHash on client, for some reason not available on server?
 
-            TriggerClientEvent("chat:addMessage", new
-            {
-                color = new[] { 204, 0, 204 },
-                multiline = true,
-                args = new[] { "Server", $"{player.Name} is spawning a Prius!" }
-            });
+            TriggerClientEvent("chat:addMessage", new { color = new[] { 204, 0, 204 }, multiline = true, args = new[] { "Server", $"{player.Name} is spawning a Prius near {closestCalloutToPri}!" } });
 
             API.SetVehicleColours(vehicle, 135, 135);
             API.SetVehicleNumberPlateText(vehicle, $"{player.Name}");
             playerPris.Add(player, vehicle);
             TriggerEvent("addBlip", false, $"pri{player.Name}", "coord", new Vector3(position.X, position.Y, position.Z), vehicle, 119, 48, true, false, true);
         }
+
+
 
         [Tick]
         private Task OnTick()
@@ -279,7 +284,7 @@ namespace STHMaxzzzie.Server
     public class Misc : BaseScript
 
     {
-        public static string AllowedToFixStatus = "on";
+        public static string AllowedToFixStatus = "wait";
         public static int fixWaitTime = 10;
         public static bool isPodOn = true;
 
@@ -302,7 +307,7 @@ namespace STHMaxzzzie.Server
                     TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PlayerOverheadDisplay is now off." } });
                 }
             }
-            if (args.Count == 1 && args[0].ToString() == "true")
+            else if (args.Count == 1 && args[0].ToString() == "true")
             {
                 isPodOn = true;
                 API.StartResource("playernames");
@@ -365,29 +370,50 @@ namespace STHMaxzzzie.Server
                     CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/wait(and a value)/)");
                 }
             }
-            // if (AllowedToFixStatus == "lsc")
-            // {
-            //     TriggerEvent("addBlip", false, $"lsc1", "coord", new Vector3(-337, -136, 39), 0, 402, 0, true, false, true);
-            //     TriggerEvent("addBlip", false, $"lsc2", "coord", new Vector3(732, -1085, 22), 0, 402, 0, true, false, true);
-            //     TriggerEvent("addBlip", false, $"lsc3", "coord", new Vector3(-1152, 2008, 13), 0, 402, 0, true, false, true);
-            //     TriggerEvent("addBlip", false, $"lsc4", "coord", new Vector3(1178, 2638, 37), 0, 402, 0, true, false, true);
-            //     TriggerEvent("addBlip", false, $"lsc5", "coord", new Vector3(107, 6624, 31), 0, 402, 0, true, false, true);
-            //     TriggerEvent("addBlip", false, $"lsc6", "coord", new Vector3(-1538, -577, 25), 0, 402, 0, true, false, true);
-            // }
-            // if (AllowedToFixStatus != "lsc")
-            // {
-            //     TriggerEvent("addBlip", true, $"lsc1", "coord", new Vector3(-337, -136, 39), 0, 402, 1, true, false, true);
-            //     await Delay(500);
-            //     TriggerEvent("addBlip", true, $"lsc2", "coord", new Vector3(732, -1085, 22), 0, 402, 1, true, false, true);
-            //     await Delay(500);
-            //     TriggerEvent("addBlip", true, $"lsc3", "coord", new Vector3(-1152, 2008, 13), 0, 402, 1, true, false, true);
-            //     await Delay(500);
-            //     TriggerEvent("addBlip", true, $"lsc4", "coord", new Vector3(1178, 2638, 37), 0, 402, 1, true, false, true);
-            //     await Delay(500);
-            //     TriggerEvent("addBlip", true, $"lsc5", "coord", new Vector3(107, 6624, 31), 0, 402, 1, true, false, true);
-            //     await Delay(500);
-            //     TriggerEvent("addBlip", true, $"lsc6", "coord", new Vector3(-1538, -577, 25), 0, 402, 1, true, false, true);
-            // }
+            if (AllowedToFixStatus == "lsc")
+            {
+                TriggerEvent("addBlip", false, $"lsc1", "coord", new Vector3(-337, -136, 39), 0, 402, 0, true, false, true);
+                await Delay(200);
+                TriggerEvent("addBlip", false, $"lsc2", "coord", new Vector3(732, -1085, 22), 0, 402, 0, true, false, true);
+                await Delay(200);
+                TriggerEvent("addBlip", false, $"lsc3", "coord", new Vector3(-1152, 2008, 13), 0, 402, 0, true, false, true);
+                await Delay(200);
+                TriggerEvent("addBlip", false, $"lsc4", "coord", new Vector3(1178, 2638, 37), 0, 402, 0, true, false, true);
+                await Delay(200);
+                TriggerEvent("addBlip", false, $"lsc5", "coord", new Vector3(107, 6624, 31), 0, 402, 0, true, false, true);
+                await Delay(200);
+                TriggerEvent("addBlip", false, $"lsc6", "coord", new Vector3(-1538, -577, 25), 0, 402, 0, true, false, true);
+                await Delay(200);
+                TriggerEvent("addBlip", false, $"lsc7", "coord", new Vector3(-415, -2179, 10), 0, 402, 0, true, false, true);
+                await Delay(200);
+                TriggerEvent("addBlip", false, $"lsc8", "coord", new Vector3(-69, -1336, 29), 0, 402, 0, true, false, true);
+                await Delay(200);
+                TriggerEvent("addBlip", false, $"lsc9", "coord", new Vector3(1204, -3115, 5), 0, 402, 0, true, false, true);
+                await Delay(200);
+                TriggerEvent("addBlip", false, $"lsc10", "coord", new Vector3(-213, -1327, 30), 0, 402, 0, true, false, true);
+            }
+            if (AllowedToFixStatus != "lsc")
+            {
+                TriggerEvent("addBlip", true, $"lsc1", "coord", new Vector3(-337, -136, 39), 0, 402, 1, true, false, true);
+                await Delay(25);
+                TriggerEvent("addBlip", true, $"lsc2", "coord", new Vector3(732, -1085, 22), 0, 402, 1, true, false, true);
+                await Delay(25);
+                TriggerEvent("addBlip", true, $"lsc3", "coord", new Vector3(-1152, 2008, 13), 0, 402, 1, true, false, true);
+                await Delay(25);
+                TriggerEvent("addBlip", true, $"lsc4", "coord", new Vector3(1178, 2638, 37), 0, 402, 1, true, false, true);
+                await Delay(25);
+                TriggerEvent("addBlip", true, $"lsc5", "coord", new Vector3(107, 6624, 31), 0, 402, 1, true, false, true);
+                await Delay(25);
+                TriggerEvent("addBlip", true, $"lsc6", "coord", new Vector3(-1538, -577, 25), 0, 402, 1, true, false, true);
+                await Delay(25);
+                TriggerEvent("addBlip", true, $"lsc7", "coord", new Vector3(-415, -2179, 10), 0, 402, 1, true, false, true);
+                await Delay(25);
+                TriggerEvent("addBlip", true, $"lsc8", "coord", new Vector3(-69, -1336, 296), 0, 402, 1, true, false, true);
+                await Delay(25);
+                TriggerEvent("addBlip", true, $"lsc9", "coord", new Vector3(1204, -3115, 5), 0, 402, 1, true, false, true);
+                await Delay(25);
+                TriggerEvent("addBlip", true, $"lsc10", "coord", new Vector3(-213, -1327, 30), 0, 402, 1, true, false, true);
+            }
             else
             {
                 CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/wait(and a value)/)");
@@ -423,8 +449,19 @@ namespace STHMaxzzzie.Server
         [Command("togglesfv", Restricted = true)] //restriction (default true)
         void toggleShootingFromVehicle(int source, List<object> args, string raw)
         {
-
-            if (args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "true"))
+            if (args.Count == 0)
+            {
+                isShootingFromVehicleAllowed = !isShootingFromVehicleAllowed;
+                if (isShootingFromVehicleAllowed)
+                {
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Shooting from vehicles is now enabled." } });
+                }
+                else
+                {
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Shooting from vehicles is now disabled." } });
+                }
+            }
+            else if (args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "true"))
             {
                 isShootingFromVehicleAllowed = bool.Parse(args[0].ToString());
                 TriggerClientEvent("disableCanPlayerShootFromVehicles", isShootingFromVehicleAllowed);
@@ -439,7 +476,7 @@ namespace STHMaxzzzie.Server
             }
             else
             {
-                CitizenFX.Core.Debug.WriteLine($"This command toggle's shooting from vehicle. It is currently set to: {isShootingFromVehicleAllowed}\nThe right command is: /togglesfv (true/false)");
+                CitizenFX.Core.Debug.WriteLine($"Shooting from vehicle is set to: {isShootingFromVehicleAllowed}. The right command is: /togglesfv (true/false)");
             }
         }
 

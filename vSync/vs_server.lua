@@ -1,7 +1,13 @@
 ------------------ change this -------------------
 
 admins = {
-    'discord:223722176048529408',
+    'discord:223722176048529408', --Maxzzzie
+    'discord:265522387963871234', --Gilly
+    'discord:238179320378556416', --Boss
+    'discord:178524963270164481', --Riv
+    'discord:161100587050598400', --Thrashy
+    'discord:300197260535267328', --Firewolf
+
 }
 
 -- Set this to false if you don't want the weather to change automatically every 10 minutes.
