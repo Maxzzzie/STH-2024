@@ -1,7 +1,35 @@
-/heal command with delay for health and armour. Make toggleable. wait instant locationspecific.
-Change death msg to notification (SetNotificationTextEntry, AddTextComponentSubstringPlayerName, DrawNotification)
+Known issues -----
+Endgame hunt twice crashes the server.
+
+To fix ------
+GameHandler doesn't deal with wrong commands right.
+Commands are visible and availible for non moderators like /heartbeat
+dogleg to add
+strawberry callouts to add
+blaine county callouts to add
+Add toggle'able blips.
+Increase health?
+
+
+To upgrade -------
+Upgrade callouts dict to filter out a number with a seperator. Think of having 2 main road callouts both showing "West coastal highway" saved as "West coastal highway =1, x,y,z" and "West coastal highway =2" for example.
+Change death msg to notification (SetNotificationTextEntry, AddTextComponentSubstringPlayerName, DrawNotification) (better is textcommand natives)
 Fix pri spawner neons etc. (https://docs.fivem.net/natives/?_0x57F24253)
 Give player invincibility at spawn (https://docs.fivem.net/natives/?_0xDFB9A2A2)
+Fix teleport to teleport with vehicle if personal teleport
+Add tpall to host sending the request.
+make legal vehicles more versatile. class/runner/hunter playerbased etc.
+Toggle pvp per person
+mechanics sound while repairing
+make display player online list visual instead of in chat
+Fire extinghuishers or location based fire prevention
+vehcle colour include neon and lisence plate
+
+To add ------
+change runner ragdol physics when out of the car for a while to prevent running over loads
+disable firetruck water
+disable peds have weapons
+/heal command with delay for health and armour. Make toggleable. wait instant locationspecific.
 Make /nudge or /stuck ( https://docs.fivem.net/natives/?_0xFF5A1988 https://docs.fivem.net/natives/?_0xA345EFE )
 Heading indicator
 Make expanded map
@@ -11,29 +39,54 @@ Display all commands
 Display time ( https://docs.fivem.net/natives/?_0xA4EA0691 )
 Implement a menu
 add ped that gets in player car https://docs.fivem.net/natives/?_0x374827C2
-Fix teleport to teleport with vehicle if personal teleport
-make legal vehicles more versatile. class/runner/hunter playerbased etc.
 Remove weapons from npcs/ fix getting weapons from npcs and gangmembers. https://docs.fivem.net/natives/?_0xA44CE817
-add toggle weapon sets
-Toggle pvp per person
 Add a good vehiclespawner
-Add toggle'able blips.
 Add vehiclecolorerererrer.
-Increase health?
 Add an option for traffic density
 add karma system kill log of sorts
-Make a log.
-Add a whitelist to the server.
-Make TxAdmin'able.
-Add tpall to host sending the request.
+Make a archive log.
 force 1st person possibility
 /cveh sets you in closest vehicle.
 Add pma voice (proximity chat) Increase range and add a radio frequency
-mechanics sound while repairing
-make display player online list visual instead of in chat
+Spectator mode
+Out of bounds notification
+
+
+
+
+Gamemode ideas ------
+Team deathmatch
+Capture the flag
+Capture the frag
+ANPR placement for reading lisence plates or a camera on the side of the road making a notification when a player drives by the camera
+NPC panic at car change
+NPC panic around the runner
+Straight line hint
+Circle shrinking hint
+Circle size determined by speed hint
+Circle bounces when client hits the sides or at random intervals
+Nearby indicator at random intervals
+Runner leaves a trace somehow
+Runner is famous gets crowded
+Flare drop at random intervals with a chance to be close to the runners location
+Car clone mode, where all hunters are in a car the runner is in too
+Car class clone mode, where all hunters are in a car class same as the runner
+Rainbow mode where each client spawns their personal colours for all vehicles
+Police radio in the area of the runner
+Hotspot for last few locations
+A few potential spots for runners location
+Blipmode where more speed means the blip is closer
+Hide 'n seek
+Stepbro
+Survive the chase
+Tag
+Infected
+Tracer mode
 
 
 //finished
+
+
 
 30-10-2024
 /togglepvc Added player specific player colours, it updates automatically, and can be set from ingame.

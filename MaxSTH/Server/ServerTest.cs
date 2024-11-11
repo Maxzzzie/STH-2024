@@ -9,8 +9,7 @@ namespace STHMaxzzzie.Server
                 [Command("test", Restricted = false)]
                 async void TestCommand(int source, List<object> args, string raw)
                 {
-                        TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"Test" } });
-                        TriggerClientEvent("gameStartNotification");
+                        
                 }
 
                 [Command("rpi", Restricted = true)]
@@ -18,9 +17,9 @@ namespace STHMaxzzzie.Server
                 {
                         TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"Did you mean to do /pri?" } });
                         foreach (Player notGil in Players)
-                                if (notGil != Players[source])
+                                if (notGil == Players[source])
                                 {
-                                        TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"Hahaha, Gilly wrote /pri wrong! He typed /rpi." } });
+                                 TriggerClientEvent(notGil, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"Hahaha, Gilly wrote /pri wrong! He typed /rpi." } });       
                                 }
                 }
         }

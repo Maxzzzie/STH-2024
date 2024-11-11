@@ -9,10 +9,10 @@ public class ShotBlipServer : BaseScript
 [EventHandler("OnShotsFired")]
     private void OnShotsFired(int X, int Y)
     {
-        Debug.WriteLine($"OnShotsFired 1");
+        //Debug.WriteLine($"OnShotsFired 1");
         if (areShotsFiredVisible)
         {
-            Debug.WriteLine($"onShotsFired {X},{Y}");
+            //Debug.WriteLine($"onShotsFired {X},{Y}");
             TriggerClientEvent("CreateShotBlip", X,Y); 
         }
     }

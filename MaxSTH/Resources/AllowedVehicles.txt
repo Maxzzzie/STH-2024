@@ -68,7 +68,7 @@ TriBike3 -400295096,Cycles,true
 Ambulance 1171614426,Emergency,true
 FBI 1127131465,Emergency,true
 FBI2 -1647941228,Emergency,true
-FireTruck 1938952078,Emergency,true
+FireTruk 1938952078,Emergency,true
 PBus -2007026063,Emergency,true
 polgauntlet 3061199846,Emergency,true
 Police 2046537925,Emergency,true
@@ -288,7 +288,7 @@ FQ2 -1137532101,SUVs,true
 Granger -1775728740,SUVs,true
 Gresley -1543762099,SUVs,true
 Habanero 884422927,SUVs,true
-Huntley 486987393,SUVs,false
+Huntley 486987393,SUVs,true
 Landstalker 1269098716,SUVs,true
 Patriot -808457413,SUVs,false
 Patriot2 3874056184,SUVs,false

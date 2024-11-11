@@ -34,7 +34,7 @@ Dashhound bus depot, 416.7971, -633.8034, 28.06391
 Pillbox hill hospital, 299.0893, -585.0489, 43.26086
 Town hall, 236.9798, -412.7879, 48.11194
 V-hotel, -1319.842, -1031.485, 7.68584
-Vespucci hairdresser, -1282.359, -1131.056, 6.793107
+Hairdresser Vespucci , -1282.359, -1131.056, 6.793107
 Container carpark, -1230.348, -1417.834, 3.67306
 Floyd's house, -1151.394, -1527.568, 3.606839
 Fish restaurant, -1050.224, -1388.699, 5.558093
@@ -46,7 +46,7 @@ V-hotel bridge, -1222.564, -983.6544, 4.817577
 North bumpy roads, -1116.187, -936.9754, 1.984292
 Middle bumpy roads, -1033.169, -1073.235, 3.396679
 South bumpy roads, -966.4299, -1189.609, 3.556327
-Vespucci binco, -811.6337, -1096.52, 10.09275
+Binco Vespucci, -811.6337, -1096.52, 10.09275
 Noodles, -639.5592, -1232.113, 10.8317
 Marina carpark, -800.0236, -1307.056, 4.350928
 pegasus helicopter spawn, -722.1886, -1440.774, 4.351003
@@ -314,7 +314,7 @@ La Fuente Blanca House, 1391.751, 1141.96, 114.4434
 Sisyphus theather, 224.9706, 1171.825, 225.9891
 Super Car Road, 1293.788, 1243.507, 108.5329
 Baytree canyon intersection, 315.4942, 991.7551, 209.8786
-Vespucci bowl hill, 488.7663, 535.981, 179.9908
+Vinewood bowl hill, 488.7663, 535.981, 179.9908
 Super Car Road - Blarneys Beer, 1234.602, 1746.864, 79.68233
 Franklin's hill house, 8.290489, 534.2702, 175.289
 Observatory East hill, -119.1519, 1194.906, 286.8036
@@ -404,3 +404,40 @@ Mount Chiliad, 484.4904, 5578.259, 792.8333
 Trainyard Paleto, 35.4699, 6251.43, 31.99571
 Paleto Farm, 421.4378, 6472.505, 28.16019
 Paleto greenhouses, 367.7713, 6639.82, 28.20695
+Origin, 0, 0, 71
+Simmet alley South, 456.5922, -794.3059, 26.92599
+Simmet alley North, 456.3191, -731.1891, 26.92171
+Import office, 508.3876, -768.5917, 24.30567
+Casino*1, 935.0004, -1.101146, 78.76487
+Beach North*1, -1789.589, -888.9843, 5.830113
+West highway*1, -2231.052, -342.8988, 13.0497
+West highway*2, -2428.201, -239.8, 15.67347
+West highway*3, -2641.84, -93.33769, 18.15771
+West highway*4, -2789.476, 38.8, 14.58713
+Pacific bluffs*1, -2988.056, 80.22211, 11.21473
+Fleeca bank West coast, -2975.848, 459.6896, 14.76122
+West highway*5, -3025.824, 179.2919, 15.48973
+Pacific bluffs housing estate, -3041.951, 432.2157, 5.909063
+Pacific bluffs housing estate*2, -3076.488, 688.1134, 15.16276
+West highway*6, -3140.019, 864.0804, 14.97759
+Middle road*1, -1407.874, -923.794, 10.62705
+Middle road*2, -1276.014, -1246.92, 3.825034
+Middle road*3, -1104.198, -1557.785, 4.018661
+Far south lifeguard tower, -1173.571, -1756.55, 3.561054
+South beach tennis courts, -1181.753, -1642.26, 3.980211
+Beach walkway*1, -1158.52, -1598.081, 3.970166
+Beach walkway*2, -1229.318, -1501.182, 3.867092
+Beach walkway*3, -1297.631, -1401.616, 3.987298
+Beach walkway*4, -1338.465, -1290.009, 4.427872
+South beach*2, -1298.291, -1693.268, 2.284483
+Main road*1, -1194.953, -1247.583, 6.644047
+Main road*2, -1218.169, -1145.041, 7.356712
+Main road*3, -1297.258, -886.0634, 11.21461
+Main road*4, -1385.663, -794.2183, 18.90601
+Main road*5, -1522.3, -680.0917, 28.46153
+Main road*6, -1773.526, -467.8083, 40.13398
+Monument road*1, -1663.088, -19.88704, 61.43942
+Monument road*2, -1519.435, -237.2328, 50.90128
+Monument road*3, -1407.944, -372.248, 36.97413
+Bulldozer spawn, -795.934, -811.7809, 20.21351
+Dog leg, -231.4555, -712.8608, 33.11909

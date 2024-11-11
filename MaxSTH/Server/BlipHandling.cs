@@ -7,96 +7,127 @@ using System.Reflection;
 using System.Linq;
 
 
+
 namespace STHMaxzzzie.Server
 {
     public class BlipHandler : BaseScript
     {
-        public static Dictionary<string, object> sharedBlipDict = new Dictionary<string, object>();
+        static Dictionary<string, BlipData> blips = new Dictionary<string, BlipData>();
 
-        [EventHandler("addBlip")]
-        void addBlip(bool blipRemove, string blipName, string blipType, Vector3 blipCoords, int blipEntityHandle, int blipSprite, int blipColour, bool blipFriendly, bool blipFlashing, bool blipAllClients)
+
+        public static void AddBlips(UpdateBlipsRequest request)
         {
-            Debug.WriteLine($"addblip is triggered - remove:{blipRemove} name:{blipName} Type:{blipType} XYZ:{blipCoords.X},{blipCoords.Y},{blipCoords.Z} entityHandle:{blipEntityHandle} sprite:{blipSprite} colour:{blipColour} friendly:{blipFriendly} flashing:{blipFlashing} shared:{blipAllClients}");
-            if (blipAllClients)
+            foreach (BlipData blip in request.BlipsToAdd)
             {
-                setSharedBlipHandler(blipRemove, blipName, blipType, blipCoords, blipEntityHandle, blipSprite, blipColour, blipFriendly, blipFlashing, blipAllClients);
-            }
-            else
-            {
-                Debug.WriteLine($"blip per player isn't implemented yet.");
-            }
-        }
-
-
-        [EventHandler("sharedBlipHandler")]
-        void setSharedBlipHandler(bool blipRemove, string blipName, string blipType, Vector3 blipCoords, int blipEntityHandle, int blipSprite, int blipColour, bool blipFriendly, bool blipFlashing, bool blipAllClients)
-        {
-            Debug.WriteLine($"sharedBlipHandler 0");
-            if (!blipRemove)
-            {
-                Debug.WriteLine($"sharedBlipHandler 1 {blipName}");
-                if (sharedBlipDict.ContainsKey(blipName))
+                if (!blips.ContainsKey(blip.Name))
                 {
-                    Debug.WriteLine($"sharedBlipHandler 3");
-                    sharedBlipDict.Remove(blipName);
+                    blips.Add(blip.Name, blip);
                 }
-                object[] blipInfoArray = new object[8];
-                blipInfoArray[0] = blipType;
-                blipInfoArray[1] = blipCoords;
-                blipInfoArray[2] = blipEntityHandle;
-                blipInfoArray[3] = blipSprite;
-                blipInfoArray[4] = blipColour;
-                blipInfoArray[5] = blipFriendly;
-                blipInfoArray[6] = blipFlashing;
-                blipInfoArray[7] = blipAllClients;
-                sharedBlipDict[blipName] = blipInfoArray;
-                updateSharedClientBlips();
+                else
+                {
+                    blips[blip.Name] = blip;
+                }
             }
+            foreach (string blip in request.BlipsToRemove)
+            {
+                if (blips.ContainsKey(blip))
+                {
+                    blips.Remove(blip);
+                }
 
-            else if (blipRemove && sharedBlipDict.ContainsKey(blipName))
-            {
-                Debug.WriteLine($"sharedBlipHandler 2");
-                sharedBlipDict.Remove(blipName);
-                TriggerClientEvent("removeBlipWithName", blipName);
             }
-            else
-            {
-                Debug.WriteLine($"something went wrong and stopped at sharedbliphandler");
-            }
+            List<BlipData> updatedBlips = blips.Values.ToList();
+            UnpackBlipDataForClient(updatedBlips);
         }
 
-        [Command("redoblips", Restricted = true)]
-        [EventHandler("updateSharedClientBlips")]
-        async void updateSharedClientBlips()
+        public static void UpdateClientBlips()
         {
-            //Debug.WriteLine($"updateSharedClientBlips 1");
-            TriggerClientEvent("ClearBlips");
-            await Delay(1000);
-            foreach (var kvp in sharedBlipDict)
-            {
+            List<BlipData> updatedBlips = blips.Values.ToList();
+            UnpackBlipDataForClient(updatedBlips);
+        }
 
-                string blipName = kvp.Key;
-                object[] blipInfoArray = kvp.Value as object[];
-                Debug.WriteLine($"updateSharedClientBlips {blipName}");
-                string blipType = (string)blipInfoArray[0];
-                Vector3 blipCoords = (Vector3)blipInfoArray[1];
-                int blipEntityHandle = (int)blipInfoArray[2];
-                int blipSprite = (int)blipInfoArray[3];
-                int blipColour = (int)blipInfoArray[4];
-                bool blipFriendly = (bool)blipInfoArray[5];
-                bool blipFlashing = (bool)blipInfoArray[6];
-                bool blipAllClients = (bool)blipInfoArray[7];
-                TriggerClientEvent("HandleBlip", //leave as is
-            blipName, //blipname
-            blipType, //coord or entity
-            blipCoords, //coords if coord
-            blipEntityHandle,  //int entity handle
-            blipSprite, //blip sprite
-            blipColour, //blip colour
-            blipFriendly, //is blip classed as friendly. True = friendly
-            blipFlashing, //is blip flashing
-            blipAllClients); //is blip shared with all clients or just the source.
+        public static void UnpackBlipDataForClient(List<BlipData> unpack)
+        {
+            List<string> unpacked = new List<string>();
+            foreach (var blip in unpack)
+            {
+                string blipDetails = $"{blip.Name}," +
+                                     $"{blip.Type}," +
+                                     $"{blip.Coords.X},{blip.Coords.Y},{blip.Coords.Z}," +
+                                     $"{blip.EntityId}," +
+                                     $"{blip.Sprite}," +
+                                     $"{blip.Colour}," +
+                                     $"{blip.Alpha}," +
+                                     $"{blip.IsFlashing}," +
+                                     $"{blip.IsFriendly}," +
+                                     $"{blip.IsShortRange}," +
+                                     $"{blip.IsOnRadar}," +
+                                     $"{blip.FlashIntervalInMs}," +
+                                     $"{blip.Priority}," +
+                                     $"{blip.Shrink}," +
+                                     $"{blip.HasFriendIndicator}," +
+                                     $"{blip.HasCrewIndicator}," +
+                                     $"{blip.MapName}," +
+                                     $"{blip.Category}," +
+                                     $"{blip.Visibility.VisibilityType}," +
+                                     $"[{string.Join(",", blip.Visibility.Players)}]";
+                unpacked.Add(blipDetails);
+                //TriggerClientEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"blipDetails: {blipDetails}"}});
             }
+            if (unpacked.Count == 0)
+            {
+                TriggerClientEvent("DeleteAllBlips");
+                Debug.WriteLine("unpacked.Count was 0");
+            }
+            TriggerClientEvent("RepackBlipDataForClient", unpacked);
+            //Debug.WriteLine("sending unpacked list to client");
+        }
+
+        public class BlipData
+        {
+            public BlipData(string name)
+            {
+                Name = name;
+            }
+            public string Name { get; }
+            //public bool Remove { get; set; } = false;
+            public BlipVisibility Visibility { get; set; } = new BlipVisibility();
+            public string Type { get; set; } = "coord";
+            public Vector3 Coords { get; set; } = Vector3.Zero;
+            public int EntityId { get; set; }
+            public int Sprite { get; set; } = 0;
+            public int Colour { get; set; } = 0;
+            public int Alpha { get; set; } = 255;
+            public bool IsFlashing { get; set; } = false;
+            public bool IsFriendly { get; set; } = true;
+            public bool IsShortRange { get; set; } = false;
+            public bool IsOnRadar { get; set; } = true;
+            public int FlashIntervalInMs { get; set; } = 750;
+            public int Priority { get; set; } = 3;
+            public bool Shrink { get; set; } = true;
+            public bool HasFriendIndicator { get; set; } = false;
+            public bool HasCrewIndicator { get; set; } = false;
+            public string MapName { get; set; } = "unknown";
+            public int Category { get; set; } = 1; //1 = No distance shown in legend 2 = Distance shown in legend 7 = "Other Players" category, also shows distance in legend 10 = "Property" category 11 = "Owned Property" category
+        }
+
+        public class BlipVisibility
+        {
+            public List<int> Players { get; set; } = new List<int>();
+            public VisibilityType VisibilityType { get; set; } = VisibilityType.All;
+        }
+
+        public enum VisibilityType
+        {
+            All,
+            Except,
+            Only,
+        }
+
+        public class UpdateBlipsRequest
+        {
+            public List<BlipData> BlipsToAdd { get; set; } = new List<BlipData>();
+            public List<string> BlipsToRemove { get; set; } = new List<string>();
         }
     }
 }

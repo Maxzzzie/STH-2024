@@ -59,9 +59,9 @@ namespace STHMaxzzzie.Client
         [Command("veh")]
         async void vehicle(int source, List<object> args, string raw)
         {
-            if (RoundHandling.gameMode != "none") 
+            if (RoundHandling.gameMode != "none" && RoundHandling.thisClientIsTeam == 1) 
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"A game is running, vehicle spawns are disabled." } });
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"A game is running, vehicle spawns are disabled for runners." } });
             return;
             }
             if (args.Count == 0)
@@ -110,9 +110,9 @@ namespace STHMaxzzzie.Client
         [Command("inveh")]
         async void inVehicle(int source, List<object> args, string raw)
         {
-            if (RoundHandling.gameMode != "none") 
+            if (RoundHandling.gameMode != "none" && RoundHandling.thisClientIsTeam == 1) 
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"A game is running, vehicle spawns are disabled." } });
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"A game is running, vehicle spawns are disabled for runners." } });
             return;
             }
             if (args.Count == 0)
@@ -291,7 +291,7 @@ namespace STHMaxzzzie.Client
             API.SetVehicleXenonLightsColor(vehicle.Handle, 8);
             Game.PlayerPed.SetIntoVehicle(vehicle, VehicleSeat.Driver);
             API.SetVehicleEngineOn(vehicle.Handle, true, true, false);
-            API.SetVehicleExtraColours(vehicle.Handle, 28, 28);
+            API.SetVehicleExtraColours(vehicle.Handle, 34, 34);
         }
 
         //spawns a custom police cruiser for ed
@@ -380,14 +380,14 @@ namespace STHMaxzzzie.Client
                 }
 
                 //fix where vehicle repair is set to on.
-                else if (allowedToFixStatus == "on")
+                else if (allowedToFixStatus == "on" && RoundHandling.thisClientIsTeam != 1)
                 {
                     Game.PlayerPed.CurrentVehicle.Repair();
                     TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You fixed your vehicle." } });
                 }
 
                 //fix where vehicle repair is set to wait.
-                else if (allowedToFixStatus == "wait")
+                else if (allowedToFixStatus == "wait" && RoundHandling.thisClientIsTeam != 1)
                 {
                     TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Stand still for {timeStationairBeforeFix} seconds to get your vehicle fixed." } });
                     Vector3 playerPositionAtStart = Game.PlayerPed.Position;
@@ -433,7 +433,7 @@ namespace STHMaxzzzie.Client
                 //5 | paleto | 107.893, 6624.449, 31.787 | 8
                 //6 | lombank | -1538.579, -577.189, 25.313 | 8
                 //7 | LSIA auto repair | -415.7665, -2179.21, 10.31806 | 15
-                //8 | Strawberry auto repairs | -69.342, -1336.880, 29.256 | 10
+                //8 | Mirror park mechanic | 1120, -779, 57 | 8
                 //9 | Simeon dock garage | 1204.147, -3115.262, 5.540327 || 8 
                 //10 | Benny's | -213.6762, -1327.373, 30.24028 || 8
 
@@ -446,19 +446,19 @@ namespace STHMaxzzzie.Client
                     float d5 = GetDistanceBetweenCoords(107, 6624, 31, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
                     float d6 = GetDistanceBetweenCoords(-1538, -577, 25, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
                     float d7 = GetDistanceBetweenCoords(-415, -2179, 10, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
-                    float d8 = GetDistanceBetweenCoords(-69, -1336, 29, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
+                    float d8 = GetDistanceBetweenCoords(1120, -779, 57, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
                     float d9 = GetDistanceBetweenCoords(1204, -3115, 5, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
                     float d10 = GetDistanceBetweenCoords(-213, -1327, 30, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
 
-                    Debug.WriteLine($"1: rockford {d1} | 2: la mesa {d2} | 3: lsia {d3} | 4: blaine county {d4} | 5: paleto {d5} | lombank {d6} | LSIA auto repair {d7} | Strawberry auto repairs {d8} | Simeon dock garage {d9}");
-                    if (d1 < 19 || d2 < 11 || d3 < 15 || d4 < 11 || d5 < 8 || d6 < 8 || d7 < 15 || d8 < 10 || d9 < 8 || d10 < 8)
+                    //Debug.WriteLine($"1: rockford {d1} | 2: la mesa {d2} | 3: lsia {d3} | 4: blaine county {d4} | 5: paleto {d5} \n lombank {d6} | LSIA auto repair {d7} | Simeon dock garage {d9}");
+                    if (d1 < 19 || d2 < 11 || d3 < 15 || d4 < 11 || d5 < 8 || d6 < 8 || d7 < 15 || d8 <8 || d9 < 8 || d10 < 8)
                     {
                         Game.PlayerPed.CurrentVehicle.Repair();
                         TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"The mechanic repaired your vehicle." } });
                     }
                     else
                     {
-                        TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Go to a Los Santos Customs mechanic to fix your vehicle. \nThey are marked on the map with a blip. (I haven't added that to the code yet. Sorry. -Max)" } });
+                        TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Go to a Los Santos Customs mechanic to fix your vehicle. \nThey are marked on the map with a blip." } });
                     }
                 }
             }

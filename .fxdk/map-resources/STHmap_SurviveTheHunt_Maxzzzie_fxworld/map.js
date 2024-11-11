@@ -1,7 +1,7 @@
 // AUTOMATICALLY GENERATED FILE
 // ANY CHANGES TO THIS FILE WILL BE OVERWRITTEN
 //
-// Compiled at 2024-11-07T00.26.38
+// Compiled at 2024-11-10T18.31.54
 setTimeout(EnableEditorRuntime, 0);
 on('onResourceStop', (name) => { if (name === GetCurrentResourceName()) DisableEditorRuntime(); });
 // Map patches

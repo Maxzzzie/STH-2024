@@ -136,14 +136,14 @@ namespace STHMaxzzzie.Client
                 }
                 else if (input == "max")
                 {
-                    string[] maxModel = new string[] { "s_m_y_marine_02" };
+                    string[] maxModel = new string[] { "u_f_y_dancerave_01" };
                     var rand = new Random();
                     int modelIndex = rand.Next(0, maxModel.Length);
                     TriggerEvent("changingModel", maxModel[modelIndex]);
                 }
-                else if (input == "gilly")
+                else if (input == "gil")
                 {
-                    string[] maxModel = new string[] { "g_m_y_mexigoon" };
+                    string[] maxModel = new string[] { "g_m_y_mexgoon" };
                     var rand = new Random();
                     int modelIndex = rand.Next(0, maxModel.Length);
                     TriggerEvent("changingModel", maxModel[modelIndex]);

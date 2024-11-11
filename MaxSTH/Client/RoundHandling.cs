@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Diagnostics;
 using STHMaxzzzie.Server;
 using STHMaxzzzie.Client;
+using System.Linq;
 
 namespace STHMaxzzzie.Server
 {
@@ -73,7 +74,7 @@ namespace STHMaxzzzie.Server
         [EventHandler("gameStartNotification")]
         public void GameStartNotification(List<object> runnerList)
         {
-            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameStartNotification" } });
+            //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameStartNotification" } });
 
             if (runnerList.Count == 0)
             {
@@ -96,16 +97,16 @@ namespace STHMaxzzzie.Server
             }
         }
 
-        [EventHandler("gameDrawNotification")]
-        public void gameDrawNotification()
+        [EventHandler("updateTeamAssignment")]
+        public void updateTeamAssignment(int joinedPlayerId)
         {
-            drawNotification();
+            teamAssignment[joinedPlayerId] = 2;
         }
 
         [EventHandler("gameWonNotification")]
         public void gameWonNotification(List<object> winners, List<object> losers)
         {
-            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameWonNotification" } });
+            //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameWonNotification" } });
             wonNotification(winners, losers);
         }
 
@@ -121,21 +122,52 @@ namespace STHMaxzzzie.Server
             neutralNotification(winningTeam);
         }
 
+        [EventHandler("gameDrawNotification")]
+        public void gameDrawNotification()
+        {
+            drawNotification();
+        }
+
+        [EventHandler("gameJoinNotification")]
+        public void gameJoinNotification(List<object> runnerList)
+        {
+             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameJoinNotification" } });
+
+            if (runnerList.Count == 0)
+            {
+                joinNotification("unknown");
+            }
+            else
+            {
+                // Convert and handle potential conversion errors
+                List<string> runnerNamesList = new List<string>();
+                foreach (var obj in runnerList)
+                {
+                    if (obj is string name)
+                    {
+                        runnerNamesList.Add(name);
+                    }
+                }
+
+                string runnerNames = string.Join(", ", runnerNamesList);
+                joinNotification(runnerNames);
+            }
+        }
+
         public async Task startNotification(string runnerNames)
         {
             string notificationText = "null";
 
+             notificationText = $"A new round of \"{gameMode}\" is starting. \n{runnerNames} is a runner.";
 
-            notificationText = $"A new round of \"{gameMode}\" is starting with {runnerNames} as a runner.";
-
-            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"startNotification" } });
+            //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"startNotification" } });
 
             await DisplayCenteredNotification(notificationText, 0, 255, 0, 255);
         }
 
         public async Task wonNotification(List<object> winners, List<object> losers)
         {
-            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"wonNotification" } });
+            //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"wonNotification" } });
 
             // Convert winners and losers to List<int>
             List<int> winnerIds = winners.ConvertAll(obj => Convert.ToInt32(obj));
@@ -146,17 +178,17 @@ namespace STHMaxzzzie.Server
             string notificationText;
             if (winnerIds.Count == 1)
             {
-                notificationText = $"Congratulations! You win this round of {gameMode}.";
+                notificationText = $"Game over! You win this round of {gameMode}.";
             }
             else if (winnerIds.Count > 1)
             {
                 if (winnerNames.Length > 10)
                 {
-                    notificationText = $"Your team wins this round of {gameMode}";
+                    notificationText = $"Game over!\nYour team wins this round of {gameMode}";
                 }
                 else
                 {
-                    notificationText = $"Your team wins this round of {gameMode}\nCongratulations {winnerNames}";
+                    notificationText = $"Game over!\nYour team wins this round of {gameMode}.";
                 }
             }
             else
@@ -169,7 +201,7 @@ namespace STHMaxzzzie.Server
 
         public async Task lostNotification(List<object> winners, List<object> losers)
         {
-            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"lostNotification" } });
+            //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"lostNotification" } });
 
             // Convert winners and losers to List<int>
             List<int> winnerIds = winners.ConvertAll(obj => Convert.ToInt32(obj));
@@ -180,22 +212,22 @@ namespace STHMaxzzzie.Server
             string notificationText;
             if (winnerIds.Count == 1)
             {
-                notificationText = $"Game over.\nYou lost this round of {gameMode}.";
+                notificationText = $"Game over!\nYou lost this round of {gameMode}.";
             }
             else if (winnerIds.Count > 1)
             {
                 if (winnerNames.Length > 10)
                 {
-                    notificationText = $"Your team lost this round of {gameMode}";
+                    notificationText = $"Game over!\nYour team lost this round of {gameMode}";
                 }
                 else
                 {
-                    notificationText = $"Game over. \nYour team lost this round of {gameMode}";
+                    notificationText = $"Game over!\nYour team lost this round of {gameMode}";
                 }
             }
             else
             {
-                notificationText = $"Game over. \nYou lost.";
+                notificationText = $"Game over. \nYou lost this round.";
             }
 
             await DisplayCenteredNotification(notificationText, 255, 0, 0, 255); // Red for loss
@@ -203,15 +235,15 @@ namespace STHMaxzzzie.Server
 
         public async Task drawNotification()
         {
-            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameDrawNotification" } });
-            string notificationText = "The game ended in a draw.\n Maxzzie is doing a test.";
+            //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameDrawNotification" } });
+            string notificationText = "The game ended in a draw.";
 
             await DisplayCenteredNotification(notificationText, 255, 255, 255, 255);
         }
 
         public async Task neutralNotification(string winningTeam)
         { string notificationText;
-            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameNeutralNotification" } });
+            //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameNeutralNotification" } });
             if (winningTeam == "draw")
             {
                 notificationText = $"This round of {gameMode} has ended before a winner was determined.";
@@ -222,6 +254,14 @@ namespace STHMaxzzzie.Server
             }
 
             await DisplayCenteredNotification(notificationText, 255, 255, 255, 255);
+        }
+
+        public async Task joinNotification(string runnerNames)
+        {
+            string notificationText = "null";
+            notificationText = $"You joined a round of \"{gameMode}\".\n{runnerNames} is the runner.";
+            //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"startNotification" } });
+            await DisplayCenteredNotification(notificationText, 0, 255, 0, 255);
         }
 
         private async Task DisplayCenteredNotification(string text, int r, int g, int b, int a)

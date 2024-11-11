@@ -74,7 +74,7 @@ namespace STHMaxzzzie.Client
         }
 
         private async Task DisplayCalloutOnTick()
-        {
+        {   string[] trimmedClosestCalloutName = closestCalloutName.Split('*');
             if (!string.IsNullOrEmpty(closestCalloutName))
             {
                 SetTextFont(4); // Set font type
@@ -85,7 +85,7 @@ namespace STHMaxzzzie.Client
                 SetTextWrap(0.0f, 1.0f); // Ensure text wraps within the screen boundaries
                 SetTextOutline(); // Add outline for better readability
                 SetTextEntry("STRING");
-                AddTextComponentString($"{closestCalloutName}");
+                AddTextComponentString($"{trimmedClosestCalloutName[0]}");
                 DrawText(0.5f, 0.05f); // Centered near the top
 
                

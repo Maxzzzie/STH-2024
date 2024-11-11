@@ -61,12 +61,10 @@ namespace STHMaxzzzie.Client
                     {
                         delayLocationList.Remove(item);
                     }
-                    //RemoveBlip(ref delayBlipHandle);
-                    //delayBlipHandle = AddBlipForCoord(blipPosition.X, blipPosition.Y, blipPosition.Z);
+    
                     itemsToRemove.Clear();
                     lastPos = pos;
                     TriggerServerEvent("updateDelayBlip", blipPosition, true);
-                    //Debug.WriteLine($"Setting a blip at {blipPosition.X}, {blipPosition.Y}, {blipPosition.Z}");
                 }
                 await WaitFor50Miliseconds(6);
             }

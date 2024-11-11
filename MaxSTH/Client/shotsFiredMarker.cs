@@ -32,7 +32,7 @@ public class ShotDetection : BaseScript
         for (radius = 100; radius > 0; radius--)
         {
             API.SetBlipScale(blip, radius);
-            await Delay(3); //speed of decay
+            await Delay(5); //speed of decay
         }
         API.RemoveBlip(ref blip);
         // radius = 100; is a nice size.

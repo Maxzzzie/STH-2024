@@ -487,7 +487,6 @@ ig_barry
 ig_benny
 ig_bestmen
 ig_beverly
-ig_brad
 ig_bride
 ig_car3guy1
 ig_car3guy2
@@ -541,7 +540,6 @@ ig_lacey_jones_02
 ig_lamardavis
 ig_lazlow
 ig_lazlow_2
-ig_lestercrest
 ig_lestercrest_2
 ig_lifeinvad_01
 ig_lifeinvad_02

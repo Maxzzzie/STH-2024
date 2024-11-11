@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Diagnostics;
 using System.Numerics;
+using STHMaxzzzie;
+using System.Drawing;
 
 
 namespace STHMaxzzzie.Server
@@ -19,6 +21,7 @@ namespace STHMaxzzzie.Server
         public static Dictionary<string, Vector3> maxzzzieCalloutsDict;
         public static Dictionary<string, string> vehicleinfoDict;
         public static bool isVehRestricted = true;
+        public static bool didClearJustHappen = false; //for the pri check. If clear happened i wanna remove blips.
 
         private Dictionary<Player, int> playerPris = new Dictionary<Player, int>();
 
@@ -49,18 +52,23 @@ namespace STHMaxzzzie.Server
             maxzzzieCalloutsDict = LoadResources.calloutsList();
             vehicleinfoDict = LoadResources.allowedVehicles();
             Vehicles.vehicleColourForPlayer = LoadResources.playerVehicleColour();
-            MapBounds.updateCircle(true);
             foreach (Player player in Players)
             {
                 ServerMain.sendRespawnLocationsDict(player);
                 ServerMain.sendVehicleinfoDict(player);
                 ServerMain.sendMaxzzzieCalloutsDict(player);
                 Appearance.sendNonAnimalModel(player);
-                player.TriggerEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
                 string name = player.Name;
                 if (Vehicles.vehicleColourForPlayer.ContainsKey(name))
                     TriggerClientEvent(player, "receiveVehicleColor", Vehicles.vehicleColourForPlayer[name].X, Vehicles.vehicleColourForPlayer[name].Y);
             }
+            MapBounds.updateCircle(true);
+            TriggerClientEvent("isWeaponAllowed", Armoury.isWeaponsAllowed);
+            TriggerClientEvent("updatePvp", Armoury.isPvpAllowed);
+            TriggerClientEvent("stamina");
+            TriggerClientEvent("whatIsVehAllowed", isVehRestricted);
+            TriggerClientEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
+            TriggerClientEvent("disableCanPlayerShootFromVehicles", Armoury.isShootingFromVehicleAllowed);
         }
 
         [EventHandler("pri-spawn-requested")]
@@ -75,7 +83,7 @@ namespace STHMaxzzzie.Server
                 }
                 playerPris.Remove(player); // Remove the old vehicle from the dictionary
             }
-            string closestCalloutToPri = "Los Santos";
+            string closestCalloutToPri = "the Void";
             float distanceToClosestCalloutToPri = 10000;
             foreach (var kvp in maxzzzieCalloutsDict)
             {
@@ -89,12 +97,24 @@ namespace STHMaxzzzie.Server
 
             int vehicle = API.CreateVehicle(vehicleHash, position.X, position.Y, position.Z, heading, true, true); // Vehicle Hash gotten from VehicleHash on client, for some reason not available on server?
 
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 204, 0, 204 }, multiline = true, args = new[] { "Server", $"{player.Name} is spawning a Prius near {closestCalloutToPri}!" } });
+            string[] trimmedClosestCalloutName = closestCalloutToPri.Split('*');
+            TriggerClientEvent("chat:addMessage", new { color = new[] { 204, 0, 204 }, multiline = true, args = new[] { "Server", $"{player.Name} is spawning a Prius near {trimmedClosestCalloutName}!" } });
 
             API.SetVehicleColours(vehicle, 135, 135);
             API.SetVehicleNumberPlateText(vehicle, $"{player.Name}");
             playerPris.Add(player, vehicle);
-            TriggerEvent("addBlip", false, $"pri{player.Name}", "coord", new Vector3(position.X, position.Y, position.Z), vehicle, 119, 48, true, false, true);
+            //TriggerEvent("addBlip", false, $"pri{player.Name}", "coord", new Vector3(position.X, position.Y, position.Z), vehicle, 119, 48, true, false, true);
+            BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
+            BlipHandler.BlipData pri = new BlipHandler.BlipData($"pri{player.Name}")
+            {
+                Coords = new Vector3(position.X, position.Y, position.Z),
+                Sprite = 119,
+                Colour = 48,
+                MapName = $"Pri of {player.Name}"
+            };
+            request.BlipsToAdd.Add(pri);
+            BlipHandler.AddBlips(request);
+            //TriggerClientEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"Trying to spawn a pri blip. with {pri.MapName}"}});
         }
 
 
@@ -106,26 +126,9 @@ namespace STHMaxzzzie.Server
             return Task.CompletedTask;
         }
 
-        // private bool isRunning = false;  // A flag to track if the method is already running
-
-        // [Tick]
-        // private async Task OnTick()
-        // {
-        //     if (isRunning) return;  // Exit if the task is already running
-
-        //     isRunning = true;  // Set the flag to true so no overlap occurs
-
-        //     // Call your method (e.g., CheckPriStatus)
-        //     CheckPriStatus();
-
-        //     // Introduce a delay of 500ms (or any duration you need)
-        //     await Task.Delay(50);
-
-        //     isRunning = false;  // Reset the flag after the delay
-        // }
-
         private void CheckPriStatus()
         {
+
             List<Player> keysToRemove = new List<Player>();
             foreach (var playerPri in playerPris)
             {
@@ -142,50 +145,48 @@ namespace STHMaxzzzie.Server
                             multiline = false,
                             args = new[] { "Server", "Your pri got destroyed!" }
                         });
-                        TriggerEvent("addBlip", true, $"pri{playerPri.Key.Name}", "coord", new Vector3(-2000, 0, 0), 0, 0, 0, true, false, true);//deletes prius blip
-
+                        BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
+                        request.BlipsToRemove.Add($"pri{playerPri.Key.Name}");
+                        BlipHandler.AddBlips(request);
                     }
                 }
-                // if (!API.DoesEntityExist(playerPri.Value))
-                // {
-                //     keysToRemove.Add(playerPri.Key);
-                //     TriggerClientEvent(playerPri.Key, "chat:addMessage", new
-                //     {
-                //         color = new[] { 204, 0, 204 }, //pink color for msg
-                //         multiline = false,
-                //         args = new[] { "Server", "Your pri disappeared!" }
-                //     });
-                // }
+                if (didClearJustHappen)
+                    {
+                        keysToRemove.Add(playerPri.Key);
+                        TriggerClientEvent(playerPri.Key, "chat:addMessage", new
+                        {
+                            color = new[] { 204, 0, 204 }, //pink color for msg
+                            multiline = false,
+                            args = new[] { "Server", "Your pri disappeared!" }
+                        });
+                        BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
+                        request.BlipsToRemove.Add($"pri{playerPri.Key.Name}");
+                        BlipHandler.AddBlips(request);
+                    }
             }
             foreach (var key in keysToRemove)
                 playerPris.Remove(key);
+                didClearJustHappen = false;
         }
-
-        [Command("rejoin", Restricted = false)] //restriction default = true
-        void runPlayerJoining(int source, List<object> args, string raw)
-        {
-            reloadResources(source);
-            Player player = Players[source];
-            playerJoiningHandler(player, "0");
-        }
-
-        //https://docs.fivem.net/docs/scripting-reference/events/server-events/#playerjoining
-        [EventHandler("playerJoining")]
+        
+ [EventHandler("playerJoining")]
         void playerJoiningHandler([FromSource] Player source, string old_id)
         {
             ServerMain.sendRespawnLocationsDict(source);
             ServerMain.sendVehicleinfoDict(source);
             ServerMain.sendMaxzzzieCalloutsDict(source);
             MapBounds.updateCircle(true);
+            Appearance.sendNonAnimalModel(source);
             source.TriggerEvent("isWeaponAllowed", Armoury.isWeaponsAllowed);
             source.TriggerEvent("updatePvp", Armoury.isPvpAllowed);
             source.TriggerEvent("disableCanPlayerShootFromVehicles", Armoury.isShootingFromVehicleAllowed);
-            Appearance.sendNonAnimalModel(source);
             source.TriggerEvent("respawnPlayer");
             source.TriggerEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
-            TriggerEvent("updateSharedClientBlips");
             source.TriggerEvent("Stamina");
             source.TriggerEvent("whatIsVehAllowed", isVehRestricted);
+            BlipHandler.UpdateClientBlips();
+            TriggerEvent("playerJoinedWhileGameIsActive", source.Handle);
+
         }
 
         [Command("togglevehres", Restricted = true)] //restriction default = true
@@ -328,6 +329,7 @@ namespace STHMaxzzzie.Server
         [Command("togglefix", Restricted = true)]
         async void toggleFix(int source, List<object> args, string raw)
         {
+            string lastFixStatus = AllowedToFixStatus;
             if (args.Count == 1)
             {
                 if (args[0].ToString() == "on" || args[0].ToString() == "off" || args[0].ToString() == "lsc" || args[0].ToString() == "wait")
@@ -345,12 +347,12 @@ namespace STHMaxzzzie.Server
                 }
                 else if (args[0].ToString() == "help")
                 {
-                    CitizenFX.Core.Debug.WriteLine($"/togglefix sets the state of the /fix command. There are 4 options. \n/fix on | allows players to instantly fix their vehicle.\n/fix off | means what it says. It turns the feature off.\n/fix lsc | requires a player to drive to an ls customs and type the command.\n/fix wait (time in seconds) | Makes a player wait stationairy for a fix.");
+                    CitizenFX.Core.Debug.WriteLine($"/togglefix sets the state of the /fix command. There are 4 options. \n/togglefix on | allows players to instantly fix their vehicle.\n/togglefix off | It turns the fix feature off.\n/togglefix lsc | Requires a player to drive to an LS customs for a fix.\n/togglefix wait (time in seconds) | Makes a player wait stationairy for a fix.");
 
                 }
                 else
                 {
-                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix on/off//lsc/wait(and a value).");
+                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix on/off/lsc/wait(and a value).");
                 }
             }
             else if (args.Count == 2)
@@ -367,56 +369,115 @@ namespace STHMaxzzzie.Server
                 }
                 else
                 {
-                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/wait(and a value)/)");
+                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/lsc/wait(and a value))");
                 }
-            }
-            if (AllowedToFixStatus == "lsc")
-            {
-                TriggerEvent("addBlip", false, $"lsc1", "coord", new Vector3(-337, -136, 39), 0, 402, 0, true, false, true);
-                await Delay(200);
-                TriggerEvent("addBlip", false, $"lsc2", "coord", new Vector3(732, -1085, 22), 0, 402, 0, true, false, true);
-                await Delay(200);
-                TriggerEvent("addBlip", false, $"lsc3", "coord", new Vector3(-1152, 2008, 13), 0, 402, 0, true, false, true);
-                await Delay(200);
-                TriggerEvent("addBlip", false, $"lsc4", "coord", new Vector3(1178, 2638, 37), 0, 402, 0, true, false, true);
-                await Delay(200);
-                TriggerEvent("addBlip", false, $"lsc5", "coord", new Vector3(107, 6624, 31), 0, 402, 0, true, false, true);
-                await Delay(200);
-                TriggerEvent("addBlip", false, $"lsc6", "coord", new Vector3(-1538, -577, 25), 0, 402, 0, true, false, true);
-                await Delay(200);
-                TriggerEvent("addBlip", false, $"lsc7", "coord", new Vector3(-415, -2179, 10), 0, 402, 0, true, false, true);
-                await Delay(200);
-                TriggerEvent("addBlip", false, $"lsc8", "coord", new Vector3(-69, -1336, 29), 0, 402, 0, true, false, true);
-                await Delay(200);
-                TriggerEvent("addBlip", false, $"lsc9", "coord", new Vector3(1204, -3115, 5), 0, 402, 0, true, false, true);
-                await Delay(200);
-                TriggerEvent("addBlip", false, $"lsc10", "coord", new Vector3(-213, -1327, 30), 0, 402, 0, true, false, true);
-            }
-            if (AllowedToFixStatus != "lsc")
-            {
-                TriggerEvent("addBlip", true, $"lsc1", "coord", new Vector3(-337, -136, 39), 0, 402, 1, true, false, true);
-                await Delay(25);
-                TriggerEvent("addBlip", true, $"lsc2", "coord", new Vector3(732, -1085, 22), 0, 402, 1, true, false, true);
-                await Delay(25);
-                TriggerEvent("addBlip", true, $"lsc3", "coord", new Vector3(-1152, 2008, 13), 0, 402, 1, true, false, true);
-                await Delay(25);
-                TriggerEvent("addBlip", true, $"lsc4", "coord", new Vector3(1178, 2638, 37), 0, 402, 1, true, false, true);
-                await Delay(25);
-                TriggerEvent("addBlip", true, $"lsc5", "coord", new Vector3(107, 6624, 31), 0, 402, 1, true, false, true);
-                await Delay(25);
-                TriggerEvent("addBlip", true, $"lsc6", "coord", new Vector3(-1538, -577, 25), 0, 402, 1, true, false, true);
-                await Delay(25);
-                TriggerEvent("addBlip", true, $"lsc7", "coord", new Vector3(-415, -2179, 10), 0, 402, 1, true, false, true);
-                await Delay(25);
-                TriggerEvent("addBlip", true, $"lsc8", "coord", new Vector3(-69, -1336, 296), 0, 402, 1, true, false, true);
-                await Delay(25);
-                TriggerEvent("addBlip", true, $"lsc9", "coord", new Vector3(1204, -3115, 5), 0, 402, 1, true, false, true);
-                await Delay(25);
-                TriggerEvent("addBlip", true, $"lsc10", "coord", new Vector3(-213, -1327, 30), 0, 402, 1, true, false, true);
             }
             else
             {
                 CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/wait(and a value)/)");
+            }
+
+
+            BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
+            if (lastFixStatus != "lsc" && AllowedToFixStatus == "lsc")
+            {
+
+                //TriggerClientEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"lsc requested a blip."}});
+                BlipHandler.BlipData lsc1 = new BlipHandler.BlipData("lsc1")
+                {
+                    Coords = new Vector3(-337, -136, 39),
+                    Sprite = 402,
+                    IsShortRange = true,
+                    MapName = "LS customs"
+                };
+                BlipHandler.BlipData lsc2 = new BlipHandler.BlipData("lsc2")
+                {
+                    Coords = new Vector3(732, -1085, 22),
+                    Sprite = 402,
+                    IsShortRange = true,
+                    MapName = "LS customs"
+                };
+                BlipHandler.BlipData lsc3 = new BlipHandler.BlipData("lsc3")
+                {
+                    Coords = new Vector3(-1152, -2008, 13),
+                    Sprite = 402,
+                    IsShortRange = true,
+                    MapName = "LS customs"
+                };
+                BlipHandler.BlipData lsc4 = new BlipHandler.BlipData("lsc4")
+                {
+                    Coords = new Vector3(1178, 2638, 37),
+                    Sprite = 402,
+                    IsShortRange = true,
+                    MapName = "LS customs"
+                };
+                BlipHandler.BlipData lsc5 = new BlipHandler.BlipData("lsc5")
+                {
+                    Coords = new Vector3(107, 6624, 31),
+                    Sprite = 402,
+                    IsShortRange = true,
+                    MapName = "LS customs"
+                };
+                BlipHandler.BlipData lsc6 = new BlipHandler.BlipData("lsc6")
+                {
+                    Coords = new Vector3(-1538, -577, 25),
+                    Sprite = 402,
+                    IsShortRange = true,
+                    MapName = "LS customs"
+                };
+                BlipHandler.BlipData lsc7 = new BlipHandler.BlipData("lsc7")
+                {
+                    Coords = new Vector3(-415, -2179, 10),
+                    Sprite = 402,
+                    IsShortRange = true,
+                    MapName = "LS customs"
+                };
+                BlipHandler.BlipData lsc8 = new BlipHandler.BlipData("lsc8")
+                {
+                    Coords = new Vector3(1120, -779, 57),
+                    Sprite = 402,
+                    IsShortRange = true,
+                    MapName = "LS customs"
+                };
+                BlipHandler.BlipData lsc9 = new BlipHandler.BlipData("lsc9")
+                {
+                    Coords = new Vector3(1204, -3115, 5),
+                    Sprite = 402,
+                    IsShortRange = true,
+                    MapName = "LS customs"
+                };
+                BlipHandler.BlipData lsc10 = new BlipHandler.BlipData("lsc10")
+                {
+                    Coords = new Vector3(-213, -1327, 30),
+                    Sprite = 402,
+                    IsShortRange = true,
+                    MapName = "LS customs"
+                };
+                request.BlipsToAdd.Add(lsc1);
+                request.BlipsToAdd.Add(lsc2);
+                request.BlipsToAdd.Add(lsc3);
+                request.BlipsToAdd.Add(lsc4);
+                request.BlipsToAdd.Add(lsc5);
+                request.BlipsToAdd.Add(lsc6);
+                request.BlipsToAdd.Add(lsc7);
+                request.BlipsToAdd.Add(lsc8);
+                request.BlipsToAdd.Add(lsc9);
+                request.BlipsToAdd.Add(lsc10);
+                BlipHandler.AddBlips(request);
+            }
+            else if (AllowedToFixStatus != "lsc" && lastFixStatus == "lsc")
+            {
+                request.BlipsToRemove.Add("lsc1");
+                request.BlipsToRemove.Add("lsc2");
+                request.BlipsToRemove.Add("lsc3");
+                request.BlipsToRemove.Add("lsc4");
+                request.BlipsToRemove.Add("lsc5");
+                request.BlipsToRemove.Add("lsc6");
+                request.BlipsToRemove.Add("lsc7");
+                request.BlipsToRemove.Add("lsc8");
+                request.BlipsToRemove.Add("lsc9");
+                request.BlipsToRemove.Add("lsc10");
+                BlipHandler.AddBlips(request);
             }
         }
 
@@ -435,6 +496,7 @@ namespace STHMaxzzzie.Server
             {
                 CitizenFX.Core.Debug.WriteLine($"This option clears vehicles and entities.\nType \"/clear\" to clear vehicles and \"/clear all\" to clear all entities.");
             }
+            ServerMain.didClearJustHappen = true;
         }
     }
 
@@ -506,7 +568,19 @@ namespace STHMaxzzzie.Server
         [Command("togglepvp", Restricted = true)]
         void togglepvp(int source, List<object> args, string raw)
         {
-            if (args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "true"))
+            if (args.Count == 0)
+            {
+                isPvpAllowed = !isPvpAllowed;
+                if (isPvpAllowed)
+                {
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PVP is now enabled." } });
+                }
+                else
+                {
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PVP is now disabled." } });
+                }
+            }
+            else if (args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "true"))
             {
                 isPvpAllowed = bool.Parse(args[0].ToString());
                 TriggerClientEvent("updatePvp", isPvpAllowed);
@@ -734,7 +808,6 @@ namespace STHMaxzzzie.Server
                 if (tpLocationsDict.ContainsKey(tpAllName) == false)
                 {
                     CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYour location is invalid. Type /tplocations for all avalible locations.");
-
                 }
 
                 else

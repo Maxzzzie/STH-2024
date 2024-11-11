@@ -38,28 +38,8 @@ namespace STHMaxzzzie.Client
             // await SetCamera();
             await Delay(4000);
             DespawnNPC();
-
-            isRunning = false;
         }
 
-        // Force loading the mugshot area
-        // private async Task ForceLoadMugshotArea()
-        // {
-        //     Debug.WriteLine("running ForceLoadMugshotArea");
-        //     while (pedHandle == 0)
-        //     {
-        //         Debug.WriteLine("No ped to load collision for. Retrying in 10ms.");
-        //         await Delay(10);
-        //     }
-        //     API.RequestCollisionForModel((uint)pedHandle);
-        //     while (!API.HasCollisionLoadedAroundEntity(pedHandle))
-        //     {
-        //         Debug.WriteLine("Collision hasn't loaded around ped. Retrying in 10ms.");
-        //         await Delay(10);
-        //     }
-        // }
-
-        // Spawn an NPC with the given model name
         public async Task SpawnNPC(string modelName)
         {
             Vector3 playerPosition = Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0));
@@ -86,6 +66,22 @@ namespace STHMaxzzzie.Client
             // Release the model from memory
             API.SetModelAsNoLongerNeeded(modelHash);
         }
+
+
+        // Despawn the NPC after the sequence is done
+        private void DespawnNPC()
+        {
+            if (API.DoesEntityExist(pedHandle))
+            {
+                API.DeletePed(ref pedHandle);
+                isRunning= false;
+            }
+        }
+    }
+}
+
+
+
 
         // Set the custom camera to view the NPC
         // public async Task SetCamera()
@@ -127,16 +123,6 @@ namespace STHMaxzzzie.Client
         //     }
         // }
 
-        // Despawn the NPC after the sequence is done
-        private void DespawnNPC()
-        {
-            if (API.DoesEntityExist(pedHandle))
-            {
-                API.DeletePed(ref pedHandle);
-            }
-        }
-    }
-}
 
 
 
@@ -150,11 +136,24 @@ namespace STHMaxzzzie.Client
 
 
 
+        // Force loading the mugshot area
+        // private async Task ForceLoadMugshotArea()
+        // {
+        //     Debug.WriteLine("running ForceLoadMugshotArea");
+        //     while (pedHandle == 0)
+        //     {
+        //         Debug.WriteLine("No ped to load collision for. Retrying in 10ms.");
+        //         await Delay(10);
+        //     }
+        //     API.RequestCollisionForModel((uint)pedHandle);
+        //     while (!API.HasCollisionLoadedAroundEntity(pedHandle))
+        //     {
+        //         Debug.WriteLine("Collision hasn't loaded around ped. Retrying in 10ms.");
+        //         await Delay(10);
+        //     }
+        // }
 
-
-
-
-
+        // Spawn an NPC with the given model name
 
 
 

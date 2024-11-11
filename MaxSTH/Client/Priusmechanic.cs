@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using System.Collections.Generic;
 using CitizenFX.Core.Native;
+using STHMaxzzzie.Server;
 
 namespace STHMaxzzzie.Client
 {
@@ -15,6 +16,11 @@ namespace STHMaxzzzie.Client
         {
             if (canSpawnNextPri)
             {
+                if (RoundHandling.thisClientIsTeam == 1)
+                {
+                    TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"You are a runner you silly goose."}});
+                    return;
+                }
             canSpawnNextPri = false;
             TriggerServerEvent("pri-spawn-requested", VehicleHash.Dilettante, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading - 180);
             await WaitForSeconds(30);//time between pri spawning to prevent spam, in seconds.

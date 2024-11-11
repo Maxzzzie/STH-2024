@@ -85,12 +85,10 @@ namespace STHMaxzzzie.Client
             if (isWeaponAllowed == false)
             {
                 Game.PlayerPed.Weapons.RemoveAll();
-                //Debug.WriteLine($"Weapon's are turned off."); //this msg is now handled by the server.
             }
             if (isWeaponAllowed == true)
             {
-                TriggerEvent("lastWeaponClass");
-                //Debug.WriteLine($"Weapon's are turned on."); //this msg is now handled by the server.
+                TriggerEvent("lastWeaponClass", true);
             }
 
         }
