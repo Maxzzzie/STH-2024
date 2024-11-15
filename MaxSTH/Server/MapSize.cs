@@ -11,7 +11,7 @@ namespace STHMaxzzzie.Server
         [Command("map", Restricted = false)]
         void map(int source, List<object> args, string raw)
         {
-            TriggerClientEvent(Players[source], "setClientMapSize");
+            TriggerClientEvent(Players[source], "setClientMapSize", false);
         }
     }
 }

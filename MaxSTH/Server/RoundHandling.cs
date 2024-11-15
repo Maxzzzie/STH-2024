@@ -5,7 +5,6 @@ using CitizenFX;
 using CitizenFX.Core.Native;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Diagnostics;
 using STHMaxzzzie.Server;
 
 namespace STHMaxzzzie.Server
@@ -22,10 +21,17 @@ namespace STHMaxzzzie.Server
         [EventHandler("startGameMode")]
         public void startGameMode(int source, List<object> args, string raw)
         {
+            // Debug.WriteLine($"server startGameMode");
+            if  (gameMode != "none")
+            {
+                TriggerClientEvent(Players[source], "chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"There is a game of {gameMode} running with {Players[runnerThisGame].Handle} as the runner."}});
+                return;
+            }
             if (args[0].ToString() == "delay")
             {
                 Player sourceHost = Players[source];
                 Player runner = Players[int.Parse(args[1].ToString())];
+                DelayMode.runPlayer = runner;
                 DelayMode.delayMode(sourceHost, runner, args);
             }
             else if (args[0].ToString() == "hunt")
@@ -38,6 +44,7 @@ namespace STHMaxzzzie.Server
         [EventHandler("endGameMode")]
         public void endGameMode(int source, List<object> args, string raw)
         {
+            // Debug.WriteLine($"server endGameMode");
             if (gameMode != "none")
             {
             endGame("end");
@@ -52,6 +59,7 @@ namespace STHMaxzzzie.Server
         [EventHandler("startGame")]
         public void startGame(string mode, int runner)
         {
+            // Debug.WriteLine($"server startGame");
             runnerThisGame = runner;
             gameMode = mode;
             teamAssignment.Clear();
@@ -89,7 +97,7 @@ namespace STHMaxzzzie.Server
             {
                 teamAssignmentForClient.Add(new Vector2(kvp.Key, kvp.Value));
             }
-
+            // Debug.WriteLine($"end server startGame");
             // Trigger client events to start the game and send 
             API.StopResource("playernames");
             TriggerClientEvent("startGame", teamAssignmentForClient, gameMode);
@@ -99,7 +107,8 @@ namespace STHMaxzzzie.Server
         [EventHandler("thisClientDiedForGameStateCheck")]
         public void thisClientDiedForGameStateCheck(int source)
         {
-            if ((gameMode == "delay" || gameMode == "hunt") && teamAssignment.ContainsKey(1))
+            // Debug.WriteLine($"server thisClientDiedForGameStateCheck");
+            if ((gameMode == "delay" || gameMode == "hunt") && teamAssignment.ContainsValue(1))
             {
                 int teamNumber = teamAssignment[source];
                 //CitizenFX.Core.Debug.WriteLine($"thisClientDiedForGameStateCheck {source},{teamNumber}");
@@ -113,6 +122,7 @@ namespace STHMaxzzzie.Server
         //[EventHandler("endGame")]
         public async void endGame(string winningTeam)
         {
+            //  Debug.WriteLine($"server endGame");
             //TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"EndGame {winningTeam} {gameMode}" } });
 
             endGameMessages(winningTeam);
@@ -138,7 +148,7 @@ namespace STHMaxzzzie.Server
             }
             else if (gameMode == "hunt")
             {
-                //reset permissions
+                // Debug.WriteLine($"server endGame hunt");
             }
             //update spawning/ teleports/ /pod /weapons /colouring /clear vehicles maybe/ fix/ 
             gameMode = "none";
@@ -149,6 +159,7 @@ namespace STHMaxzzzie.Server
         [EventHandler("playerJoinedWhileGameIsActive")]
         public void playerJoinedWhileGameIsActive(int JoinedPlayerId)
         {
+            // Debug.WriteLine($"server playerJoinedWhileGameIsActive");
             Player joinedPlayer = Players[JoinedPlayerId];
             //TriggerClientEvent(joinedPlayer, "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"playerJoinedWhileGameIsActive server" } });
             if (gameMode == "none")
@@ -174,7 +185,8 @@ namespace STHMaxzzzie.Server
         }
 
         public void endGameMessages(string winningTeam)
-        {
+        { 
+            // Debug.WriteLine($"server endGameMessages");
             //TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"EndGameMessages {winningTeam}" } });
             List<int> winners = new List<int>();
             List<int> losers = new List<int>();
@@ -182,22 +194,27 @@ namespace STHMaxzzzie.Server
            foreach (var kvp in teamAssignment)
     {
         if (winningTeam == "end")
-        {
+        {   
+            // Debug.WriteLine($"server endGameMessages end");
             neutral.Add(kvp.Key);
             continue;
         }
         if (teamNumberDict.ContainsKey(winningTeam))
-        {
+        { 
+            // Debug.WriteLine($"server endGameMessages {winningTeam}");
             if (kvp.Value == teamNumberDict[winningTeam])
             {
-                winners.Add(kvp.Key);
+                winners.Add(kvp.Key); 
+                // Debug.WriteLine($"server endGameMessages winner {kvp.Key}");
             }
             else if (kvp.Value != 0)
-            {
+            {   
+                // Debug.WriteLine($"server endGameMessages loser {kvp.Key}");
                 losers.Add(kvp.Key);
             }
             else
             {
+                // Debug.WriteLine($"server endGameMessages neutral {kvp.Key}");
                 neutral.Add(kvp.Key);
             }
         }
@@ -209,6 +226,7 @@ namespace STHMaxzzzie.Server
     }
             if (winners.Count == 0)
             {
+                // Debug.WriteLine($"server endGameMessages winner count 0");
                 TriggerClientEvent("gameDrawNotification");
                 return;
             }
@@ -234,5 +252,18 @@ namespace STHMaxzzzie.Server
                 }
             }
         }
-    }
+     [Command("gamestatus", Restricted = true)] //normal restriction true 
+        public void gameStatus(int source, List<object> args, string raw)
+        {
+            // Debug.WriteLine($"server gameStatus");
+            if  (gameMode != "none")
+            {
+                TriggerClientEvent(Players[source], "chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"There is a game of {gameMode} running with {Players[runnerThisGame].Name} as the runner."}});
+            }
+            else
+            {
+                TriggerClientEvent(Players[source], "chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"There is no game running."}});
+            }
+            }
+}
 }

@@ -148,7 +148,7 @@ namespace STHMaxzzzie.Client
         void clientVeh(string vehicleName, bool isPrivate, string sourceName)
         {
             bool exists = VehicleNameToHash.ContainsKey(vehicleName);
-            Debug.WriteLine($"client veh is triggered ?{exists}");
+            // Debug.WriteLine($"client veh is triggered ?{exists}");
             if (exists)
             {
                 var model = new Model(VehicleNameToHash[vehicleName]);
@@ -542,7 +542,7 @@ namespace STHMaxzzzie.Client
                 {
                     // Set the new vehicle as the current vehicle
                     lastVehicle = currentVehicle;
-                    Debug.WriteLine("Player entered a new vehicle.");
+                    // Debug.WriteLine("Player entered a new vehicle.");
 
                     // Handle mission entity and color only if conditions are met
                     await HandleMissionEntity(currentVehicle);
@@ -562,7 +562,7 @@ namespace STHMaxzzzie.Client
             // Only set as mission entity if vehicleShouldNotDespawn is true
             if (vehicleShouldNotDespawn && !API.IsEntityAMissionEntity(vehicle.Handle))
             {
-                Debug.WriteLine("Setting vehicle as mission entity to prevent despawn.");
+                // Debug.WriteLine("Setting vehicle as mission entity to prevent despawn.");
                 API.SetEntityAsMissionEntity(vehicle.Handle, true, false);
             }
 
@@ -577,12 +577,12 @@ namespace STHMaxzzzie.Client
             {
                 if (!primaryColor.HasValue || !secondaryColor.HasValue)
                 {
-                    Debug.WriteLine("Requesting vehicle color from the server.");
+                    // Debug.WriteLine("Requesting vehicle color from the server.");
                     TriggerServerEvent("requestVehicleColor");
                 }
                 else
                 {
-                    Debug.WriteLine("Applying stored vehicle color.");
+                    // Debug.WriteLine("Applying stored vehicle color.");
                     API.SetVehicleColours(vehicle.Handle, primaryColor.Value, secondaryColor.Value);
                 }
             }
@@ -594,7 +594,7 @@ namespace STHMaxzzzie.Client
         [EventHandler("receiveVehicleColor")]
         private void receiveVehicleColor(int primary, int secondary) //add neon's here!
         {
-            Debug.WriteLine("Received vehicle color from server."); // Debug message for receiving data
+            // Debug.WriteLine("Received vehicle color from server."); // Debug message for receiving data
 
             // Store color values locally (only needs to happen once)
             primaryColor = primary;
@@ -610,9 +610,9 @@ namespace STHMaxzzzie.Client
         // Applies the stored colors to a vehicle
         private void ApplyVehicleColor(int vehicleHandle)
         {
-            if (primaryColor.HasValue && secondaryColor.HasValue)
+            if (primaryColor.HasValue && secondaryColor.HasValue && RoundHandling.thisClientIsTeam != 1)
             {
-                Debug.WriteLine($"Setting vehicle colors to Primary: {primaryColor.Value}, Secondary: {secondaryColor.Value}");
+                // Debug.WriteLine($"Setting vehicle colors to Primary: {primaryColor.Value}, Secondary: {secondaryColor.Value}");
                 API.SetVehicleColours(vehicleHandle, primaryColor.Value, secondaryColor.Value);
 
                 // Enable all neon lights

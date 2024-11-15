@@ -27,7 +27,7 @@ namespace STHMaxzzzie.Client
             {
                 Vector3 pos = Game.PlayerPed.Position;
                 float positionDifference = GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, lastPos.X, lastPos.Y, lastPos.Z, true);
-                //Debug.WriteLine($"Count: {delayLocationList.Count} || Difference: {positionDifference} || Position: {pos.X}, {pos.Y}, {pos.Z}");
+                //Debug.WriteLine($"starting getblipLocationForDelayMode \nCount: {delayLocationList.Count} || Difference: {positionDifference} || Position: {pos.X}, {pos.Y}, {pos.Z}");
 
                 if (positionDifference > 1)
                 {
@@ -66,10 +66,11 @@ namespace STHMaxzzzie.Client
                     lastPos = pos;
                     TriggerServerEvent("updateDelayBlip", blipPosition, true);
                 }
-                await WaitFor50Miliseconds(6);
+                await WaitFor50Miliseconds(6); //set slower, used to be 6
+                //Debug.WriteLine($"client GetBlipPositionForDelaymode updated blip position");
             }
-            TriggerServerEvent("updateDelayBlip", blipPosition, false);
-            //Debug.WriteLine($"Ending getBlipLocationForDelayMode");
+            //TriggerServerEvent("updateDelayBlip", blipPosition, false);
+            // Debug.WriteLine($"Ending getBlipLocationForDelayMode");
             delayLocationList.Clear();
         }
 
@@ -90,6 +91,9 @@ namespace STHMaxzzzie.Client
             if (RoundHandling.gameMode == "delay")
             {
                 delayBlipHandle = AddBlipForCoord(coordsForDelayBlip.X, coordsForDelayBlip.Y, coordsForDelayBlip.Z);
+                BeginTextCommandSetBlipName("STRING");
+                AddTextComponentSubstringPlayerName("Runner");
+                EndTextCommandSetBlipName(delayBlipHandle);
             }
         }
     }

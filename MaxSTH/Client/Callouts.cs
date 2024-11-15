@@ -18,6 +18,7 @@ namespace STHMaxzzzie.Client
         private int calloutRange = 750; // Distance to store callouts in a temp dict.
         private int reloadRange = 500;  // Distance to move before the temp callouts dict gets remade.
         private bool triedOnce = false;
+        private bool alreadyRefreshedServerResourceOnce = false;
 
         public Callouts()
         {
@@ -43,10 +44,11 @@ namespace STHMaxzzzie.Client
             // Check if the player has moved more than the reloadRange or if nearbyCallouts is empty
             if (Vector3.Distance(lastPlayerPosition, playerPosition) > reloadRange || nearbyCallouts.Count == 0)
             {
-                if(nearbyCallouts.Count == 0 && triedOnce)
+                if(nearbyCallouts.Count == 0 && triedOnce && !alreadyRefreshedServerResourceOnce)
                 {
                     TriggerServerEvent("reloadResources");
                     triedOnce = false;
+                    alreadyRefreshedServerResourceOnce = true;
                 }
                 triedOnce = true;
                 // Update nearby callouts within calloutRange
@@ -55,7 +57,7 @@ namespace STHMaxzzzie.Client
                     .ToDictionary(callout => callout.Key, callout => callout.Value);
 
                 lastPlayerPosition = playerPosition; // Update last known position
-                Debug.WriteLine($"Updated nearby callouts. Found {nearbyCallouts.Count} callouts within {calloutRange} meters.");
+                // Debug.WriteLine($"Updated nearby callouts. Found {nearbyCallouts.Count} callouts within {calloutRange} meters.");
             }
 
             // Find the closest callout from the nearby ones

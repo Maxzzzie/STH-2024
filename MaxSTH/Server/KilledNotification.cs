@@ -3,8 +3,6 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using System.Collections.Generic;
-using Microsoft.CSharp.RuntimeBinder; // chat gpt addition to prevent compile error
-
 
 namespace STHMaxzzzie.Server
 {
@@ -58,7 +56,7 @@ namespace STHMaxzzzie.Server
 
             foreach (KeyValuePair<string, object> property in killerDataDictionary)
             {
-                Debug.WriteLine($"foreach --> {property.Key} - {property.Value}");
+                //Debug.WriteLine($"foreach --> {property.Key} - {property.Value}");
             }
 
             if (killerDataDictionary.ContainsKey("killerpos"))
@@ -80,12 +78,13 @@ namespace STHMaxzzzie.Server
                     Debug.WriteLine("Killer position data is missing or incomplete from onPlayerKilled.");
                 }
             }
-            Debug.WriteLine($"killed {victim.Name}.");
+            //Debug.WriteLine($"killed {victim.Name}.");
 
             await BaseScript.Delay(500);
             if (latestKillerName == "null")
             {
                 TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"{victim.Name} was killed." } });
+                TriggerClientEvent("ShowNotification", $"~h~~o~{victim.Name}~s~~h~ was killed.");
             }
             else TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"{victim.Name} was killed by {latestKillerName}." } });
         }
@@ -151,6 +150,7 @@ namespace STHMaxzzzie.Server
             }
             Debug.WriteLine($"Player {player.Name} died. Wrong: {cause}. Debug info: {killerType}");
             TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name} died." } });
+            TriggerClientEvent("ShowNotification", $"~o~~h~{player.Name}~h~~s~ died.");
         }
     }
 }

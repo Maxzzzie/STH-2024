@@ -1,6 +1,9 @@
 using CitizenFX.Core;
 using System.Threading.Tasks;
 using CitizenFX.Core.Native;
+
+namespace STHMaxzzzie.Client
+{
 public class FireControl : BaseScript
 {
     public FireControl()
@@ -28,4 +31,5 @@ public class FireControl : BaseScript
 
         await Task.FromResult(0); // Ensure the task completes
     }
+}
 }

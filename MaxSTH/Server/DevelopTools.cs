@@ -58,12 +58,12 @@ namespace STHMaxzzzie.Server
             foreach (var kvp in ServerMain.respawnLocationsDict)
             {
                 string name = kvp.Key;
-                BlipHandler.BlipData blip = new BlipHandler.BlipData($"respawn:{kvp.Key}")
+                BlipHandler.BlipData blip = new BlipHandler.BlipData($"respawn:{name}")
                 {
                     Coords = new Vector3(kvp.Value.X, kvp.Value.Y, kvp.Value.Z),
                     Sprite = 84,
                     IsShortRange = true,
-                    MapName = $"Respawn: {name}"
+                    MapName = $"Respawn"
                 };
                 request.BlipsToAdd.Add(blip);
             }
@@ -91,12 +91,12 @@ namespace STHMaxzzzie.Server
             foreach (var kvp in ServerMain.maxzzzieCalloutsDict)
             {
                 string name = kvp.Key;
-                BlipHandler.BlipData blip = new BlipHandler.BlipData($"callout:{kvp.Key}")
+                BlipHandler.BlipData blip = new BlipHandler.BlipData($"callout:{name}")
                 {
                     Coords = new Vector3(kvp.Value.X, kvp.Value.Y, kvp.Value.Z),
                     Sprite = 133,
                     IsShortRange = true,
-                    MapName = $"Callout: {name}"
+                    MapName = $"Callout"
                 };
                 request.BlipsToAdd.Add(blip);
             }

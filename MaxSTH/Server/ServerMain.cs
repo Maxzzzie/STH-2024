@@ -21,9 +21,9 @@ namespace STHMaxzzzie.Server
         public static Dictionary<string, Vector3> maxzzzieCalloutsDict;
         public static Dictionary<string, string> vehicleinfoDict;
         public static bool isVehRestricted = true;
-        public static bool didClearJustHappen = false; //for the pri check. If clear happened i wanna remove blips.
 
-        private Dictionary<Player, int> playerPris = new Dictionary<Player, int>();
+
+
 
         public ServerMain()
         {
@@ -33,7 +33,7 @@ namespace STHMaxzzzie.Server
             foreach (string id in allowed_discord_ids)
             {
                 API.ExecuteCommand($"add_ace identifier.discord:{id} \"command\" allow");
-                CitizenFX.Core.Debug.WriteLine($"load whitelist id : {id}");
+                //CitizenFX.Core.Debug.WriteLine($"load whitelist id : {id}");
             }
 
 
@@ -41,7 +41,7 @@ namespace STHMaxzzzie.Server
             maxzzzieCalloutsDict = LoadResources.calloutsList();
             vehicleinfoDict = LoadResources.allowedVehicles();
 
-            Tick += OnTick;
+
         }
 
         [EventHandler("reloadResources")]
@@ -71,105 +71,8 @@ namespace STHMaxzzzie.Server
             TriggerClientEvent("disableCanPlayerShootFromVehicles", Armoury.isShootingFromVehicleAllowed);
         }
 
-        [EventHandler("pri-spawn-requested")]
-        void OnPriRequested([FromSource] Player player, uint vehicleHash, Vector3 position, float heading)
-        {
-            if (playerPris.ContainsKey(player))
-            {
-                int oldPriusHandle = playerPris[player];
-                if (API.DoesEntityExist(oldPriusHandle))
-                {
-                    API.DeleteEntity(oldPriusHandle);
-                }
-                playerPris.Remove(player); // Remove the old vehicle from the dictionary
-            }
-            string closestCalloutToPri = "the Void";
-            float distanceToClosestCalloutToPri = 10000;
-            foreach (var kvp in maxzzzieCalloutsDict)
-            {
-                float distance = Vector3.Distance(position, kvp.Value);
-                if (distance < distanceToClosestCalloutToPri)
-                {
-                    closestCalloutToPri = kvp.Key;
-                    distanceToClosestCalloutToPri = distance;
-                }
-            }
 
-            int vehicle = API.CreateVehicle(vehicleHash, position.X, position.Y, position.Z, heading, true, true); // Vehicle Hash gotten from VehicleHash on client, for some reason not available on server?
-
-            string[] trimmedClosestCalloutName = closestCalloutToPri.Split('*');
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 204, 0, 204 }, multiline = true, args = new[] { "Server", $"{player.Name} is spawning a Prius near {trimmedClosestCalloutName}!" } });
-
-            API.SetVehicleColours(vehicle, 135, 135);
-            API.SetVehicleNumberPlateText(vehicle, $"{player.Name}");
-            playerPris.Add(player, vehicle);
-            //TriggerEvent("addBlip", false, $"pri{player.Name}", "coord", new Vector3(position.X, position.Y, position.Z), vehicle, 119, 48, true, false, true);
-            BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
-            BlipHandler.BlipData pri = new BlipHandler.BlipData($"pri{player.Name}")
-            {
-                Coords = new Vector3(position.X, position.Y, position.Z),
-                Sprite = 119,
-                Colour = 48,
-                MapName = $"Pri of {player.Name}"
-            };
-            request.BlipsToAdd.Add(pri);
-            BlipHandler.AddBlips(request);
-            //TriggerClientEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"Trying to spawn a pri blip. with {pri.MapName}"}});
-        }
-
-
-
-        [Tick]
-        private Task OnTick()
-        {
-            CheckPriStatus();
-            return Task.CompletedTask;
-        }
-
-        private void CheckPriStatus()
-        {
-
-            List<Player> keysToRemove = new List<Player>();
-            foreach (var playerPri in playerPris)
-            {
-                if (API.DoesEntityExist(playerPri.Value))
-                {
-                    float health = API.GetVehicleEngineHealth(playerPri.Value);
-                    if (health <= 0)
-                    {
-                        //Debug.WriteLine($"{playerPri.Key.Name}'s Pri got destroyed!");
-                        keysToRemove.Add(playerPri.Key);
-                        TriggerClientEvent(playerPri.Key, "chat:addMessage", new
-                        {
-                            color = new[] { 204, 0, 204 }, //pink color for msg
-                            multiline = false,
-                            args = new[] { "Server", "Your pri got destroyed!" }
-                        });
-                        BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
-                        request.BlipsToRemove.Add($"pri{playerPri.Key.Name}");
-                        BlipHandler.AddBlips(request);
-                    }
-                }
-                if (didClearJustHappen)
-                    {
-                        keysToRemove.Add(playerPri.Key);
-                        TriggerClientEvent(playerPri.Key, "chat:addMessage", new
-                        {
-                            color = new[] { 204, 0, 204 }, //pink color for msg
-                            multiline = false,
-                            args = new[] { "Server", "Your pri disappeared!" }
-                        });
-                        BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
-                        request.BlipsToRemove.Add($"pri{playerPri.Key.Name}");
-                        BlipHandler.AddBlips(request);
-                    }
-            }
-            foreach (var key in keysToRemove)
-                playerPris.Remove(key);
-                didClearJustHappen = false;
-        }
-        
- [EventHandler("playerJoining")]
+        [EventHandler("playerJoining")]
         void playerJoiningHandler([FromSource] Player source, string old_id)
         {
             ServerMain.sendRespawnLocationsDict(source);
@@ -482,7 +385,7 @@ namespace STHMaxzzzie.Server
         }
 
         [Command("clear", Restricted = true)] //restriction (default true)
-        void clear(int source, List<object> args, string raw)
+        async void clear(int source, List<object> args, string raw)
         {
             if (args.Count == 0)
             {
@@ -496,10 +399,15 @@ namespace STHMaxzzzie.Server
             {
                 CitizenFX.Core.Debug.WriteLine($"This option clears vehicles and entities.\nType \"/clear\" to clear vehicles and \"/clear all\" to clear all entities.");
             }
-            ServerMain.didClearJustHappen = true;
+            didClearJustHappen();
         }
+                [EventHandler("didClearJustHappen")] //upon removing pri's this event get's called by the client. This to prevent the msg's not popping up due to ping. As the pri check happens too quick (OnTick).
+                async void didClearJustHappen()
+                {
+                    await Delay(1000);
+                PriusMechanics.didClearJustHappen = true;
+                }
     }
-
     public class Armoury : BaseScript
 
     {
@@ -583,7 +491,6 @@ namespace STHMaxzzzie.Server
             else if (args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "true"))
             {
                 isPvpAllowed = bool.Parse(args[0].ToString());
-                TriggerClientEvent("updatePvp", isPvpAllowed);
                 if (isPvpAllowed)
                 {
                     TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PVP is now enabled." } });
@@ -597,6 +504,7 @@ namespace STHMaxzzzie.Server
             {
                 CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglepvp (true/false)");
             }
+            TriggerClientEvent("updatePvp", isPvpAllowed);
         }
     }
 
@@ -613,7 +521,6 @@ namespace STHMaxzzzie.Server
         public MapBounds()
         {
             mapBoundsDict = LoadResources.mapBounds();
-
             CitizenFX.Core.Debug.WriteLine($"I'm making a MapBounds dictionary.");
         }
 

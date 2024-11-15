@@ -4,7 +4,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Diagnostics;
+
 using STHMaxzzzie.Server;
 using STHMaxzzzie.Client;
 using System.Linq;
@@ -21,6 +21,7 @@ namespace STHMaxzzzie.Server
         [EventHandler("startGame")]
         public void startGame(List<object> playerIdAndTeamAssignment, string newGameMode)
         {
+            Debug.WriteLine($"client startGame");
 
             gameMode = newGameMode;
 
@@ -40,6 +41,7 @@ namespace STHMaxzzzie.Server
             }
             if (gameMode == "hunt")
             {
+                Debug.WriteLine($"client startGame was Hunt");
                 startHuntMode();
             }
         }
@@ -47,6 +49,7 @@ namespace STHMaxzzzie.Server
         [EventHandler("clientEndGame")]
         public void clientEndGame(List<object> playerIdAndTeamAssignment)
         {
+            Debug.WriteLine($"client clientEndGame");
             gameMode = "none";
 
             teamAssignment.Clear();
@@ -67,6 +70,7 @@ namespace STHMaxzzzie.Server
 
         public void startHuntMode()
         {
+            Debug.WriteLine($"client startHuntMode");
             if (thisClientIsTeam == 1) { TriggerEvent("runWeapon", false); }
             else if (thisClientIsTeam == 2) { TriggerEvent("huntWeapon", false); }
         }
@@ -74,7 +78,7 @@ namespace STHMaxzzzie.Server
         [EventHandler("gameStartNotification")]
         public void GameStartNotification(List<object> runnerList)
         {
-            //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameStartNotification" } });
+            Debug.WriteLine($"client gameStartNotification");
 
             if (runnerList.Count == 0)
             {
@@ -100,6 +104,7 @@ namespace STHMaxzzzie.Server
         [EventHandler("updateTeamAssignment")]
         public void updateTeamAssignment(int joinedPlayerId)
         {
+            Debug.WriteLine($"client updateTeamAssignment");
             teamAssignment[joinedPlayerId] = 2;
         }
 
@@ -107,30 +112,35 @@ namespace STHMaxzzzie.Server
         public void gameWonNotification(List<object> winners, List<object> losers)
         {
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameWonNotification" } });
+            Debug.WriteLine($"client gameWonNotification");
             wonNotification(winners, losers);
         }
 
         [EventHandler("gameLostNotification")]
         public void gameLostNotification(List<object> winners, List<object> losers)
         {
+            Debug.WriteLine($"client gameLostNotification");
             lostNotification(winners, losers);
         }
 
         [EventHandler("gameNeutralNotification")]
         public void gameNeutralNotification(string winningTeam)
         {
+            Debug.WriteLine($"client gameNeutralNotification");
             neutralNotification(winningTeam);
         }
 
         [EventHandler("gameDrawNotification")]
         public void gameDrawNotification()
         {
+            Debug.WriteLine($"client gameDrawNotification");
             drawNotification();
         }
 
         [EventHandler("gameJoinNotification")]
         public void gameJoinNotification(List<object> runnerList)
         {
+            Debug.WriteLine($"client gameJoinNotification");
              //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameJoinNotification" } });
 
             if (runnerList.Count == 0)
@@ -156,6 +166,7 @@ namespace STHMaxzzzie.Server
 
         public async Task startNotification(string runnerNames)
         {
+            Debug.WriteLine($"client startNotification");
             string notificationText = "null";
 
              notificationText = $"A new round of \"{gameMode}\" is starting. \n{runnerNames} is a runner.";
@@ -167,6 +178,7 @@ namespace STHMaxzzzie.Server
 
         public async Task wonNotification(List<object> winners, List<object> losers)
         {
+            Debug.WriteLine($"client wonNotification");
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"wonNotification" } });
 
             // Convert winners and losers to List<int>
@@ -178,10 +190,12 @@ namespace STHMaxzzzie.Server
             string notificationText;
             if (winnerIds.Count == 1)
             {
+                Debug.WriteLine($"client wonNotification winners = 1");
                 notificationText = $"Game over! You win this round of {gameMode}.";
             }
             else if (winnerIds.Count > 1)
             {
+                Debug.WriteLine($"client wonNotification winners > 1");
                 if (winnerNames.Length > 10)
                 {
                     notificationText = $"Game over!\nYour team wins this round of {gameMode}";
@@ -200,7 +214,7 @@ namespace STHMaxzzzie.Server
         }
 
         public async Task lostNotification(List<object> winners, List<object> losers)
-        {
+        {Debug.WriteLine($"client lostNotification");
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"lostNotification" } });
 
             // Convert winners and losers to List<int>
@@ -211,11 +225,11 @@ namespace STHMaxzzzie.Server
 
             string notificationText;
             if (winnerIds.Count == 1)
-            {
+            {Debug.WriteLine($"client lostNotification winners = 1");
                 notificationText = $"Game over!\nYou lost this round of {gameMode}.";
             }
             else if (winnerIds.Count > 1)
-            {
+            {Debug.WriteLine($"client lostNotification winners > 1");
                 if (winnerNames.Length > 10)
                 {
                     notificationText = $"Game over!\nYour team lost this round of {gameMode}";
@@ -227,6 +241,7 @@ namespace STHMaxzzzie.Server
             }
             else
             {
+                
                 notificationText = $"Game over. \nYou lost this round.";
             }
 
@@ -234,7 +249,7 @@ namespace STHMaxzzzie.Server
         }
 
         public async Task drawNotification()
-        {
+        {Debug.WriteLine($"client drawNotification");
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameDrawNotification" } });
             string notificationText = "The game ended in a draw.";
 
@@ -243,6 +258,7 @@ namespace STHMaxzzzie.Server
 
         public async Task neutralNotification(string winningTeam)
         { string notificationText;
+        Debug.WriteLine($"client neutralNotification");
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameNeutralNotification" } });
             if (winningTeam == "draw")
             {
@@ -258,6 +274,7 @@ namespace STHMaxzzzie.Server
 
         public async Task joinNotification(string runnerNames)
         {
+            Debug.WriteLine($"client joinNotification");
             string notificationText = "null";
             notificationText = $"You joined a round of \"{gameMode}\".\n{runnerNames} is the runner.";
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"startNotification" } });
@@ -265,7 +282,7 @@ namespace STHMaxzzzie.Server
         }
 
         private async Task DisplayCenteredNotification(string text, int r, int g, int b, int a)
-        {
+        { Debug.WriteLine($"client DisplayCenteredNotification");
             float baseX = 0.5f; // Center X
             float baseY = 0.5f; // Center Y
             float scale = 0.6f; // Text scale

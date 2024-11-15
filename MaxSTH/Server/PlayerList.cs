@@ -52,13 +52,13 @@ namespace STHMaxzzzie.Server
                         break;
                     }
                 }
-                TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 50, 50, 255 }, args = new[] { $"This is what {name} looks like now." } });
-                TriggerClientEvent(Players[source], "MugShotEvent", playerModels[clientId]);
+                string chatMsg = $"This is what {name} looks like now.";
+                TriggerClientEvent(Players[source], "MugShotEvent", playerModels[clientId], chatMsg);
             }
             else 
             {
-                TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"This player's skin isn't registered with the server. It's probably Michael." } });
-                TriggerClientEvent(Players[source], "MugShotEvent", "player_zero");
+                string chatMsg = $"This player's skin isn't registered with the server. It's probably Michael.";
+                TriggerClientEvent(Players[source], "MugShotEvent", "player_zero", chatMsg);
             }
         }
     }

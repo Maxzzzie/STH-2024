@@ -144,10 +144,11 @@ namespace STHMaxzzzie.Client
             API.ShowCrewIndicatorOnBlip(blipHandle, blip.HasCrewIndicator);
             if (blip.MapName != "unknown")
             {
-                API.BeginTextCommandSetBlipName(blip.MapName);
+                API.BeginTextCommandSetBlipName("STRING");
+                API.AddTextComponentSubstringPlayerName(blip.MapName);
                 API.EndTextCommandSetBlipName(blipHandle);
             }
-                API.SetBlipCategory(blipHandle, blip.Category);
+            API.SetBlipCategory(blipHandle, blip.Category);
         }
 
 

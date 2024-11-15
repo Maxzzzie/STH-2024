@@ -165,7 +165,7 @@ namespace STHMaxzzzie.Client
                 TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Oh no. Something went wrong!\nYou should do /model (\"modelname\"/ ems/ story/ special/ or keep it empty for a random model)" } });
             }
             API.SetPlayerMaxStamina(Game.Player.Handle, 100);
-            Debug.WriteLine("model change updated stamina.");
+            // Debug.WriteLine("model change updated stamina.");
         }
     }
 }

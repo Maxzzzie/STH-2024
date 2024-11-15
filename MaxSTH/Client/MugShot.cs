@@ -21,7 +21,7 @@ namespace STHMaxzzzie.Client
 
         // Method that starts the mugshot sequence
         [EventHandler("MugShotEvent")]
-        private async void MugShotEvent(string modelName)
+        private async void MugShotEvent(string modelName, string chatText)
         {
             //Debug.WriteLine($"Mugshot process with {modelName}");
             if (isRunning)
@@ -36,6 +36,7 @@ namespace STHMaxzzzie.Client
             await SpawnNPC(modelName); // Pass the model name dynamically
             // await ForceLoadMugshotArea();
             // await SetCamera();
+            TriggerEvent("chat:addMessage", new { color = new[] { 50, 50, 255 }, args = new[] { $"{chatText}" } });
             await Delay(4000);
             DespawnNPC();
         }

@@ -18,8 +18,8 @@ namespace STHMaxzzzie.Client
         [EventHandler("Stamina")]
         private void Stamina()
         {
-            API.SetPlayerMaxStamina(Game.Player.Handle, 100);
-            Debug.WriteLine($"added 100 stamina");
+            bool worked = API.SetPlayerMaxStamina(Game.Player.Handle, 100);
+            Debug.WriteLine($"set stamina to 100, true if it worked. {worked} ");
         }
 
         [EventHandler("clear_vehicles")]

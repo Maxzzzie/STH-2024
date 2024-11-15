@@ -6,9 +6,12 @@ Maxzzzie,41,42
 Max_ed,41,42
 Firewolf_XP,12,12
 Boss,53,53
-Just Gilly,  
+Just Gilly,140,140
 Rivstar,120,120
 fireaspectgaming621,73,73
 gionnirostbiff,52,52
-Thrashy,135,140
+Thrashy,34,34
 maxbo,41,42
+Reverentia,135,131
+Blade,148,54
+The HitMan,139,126

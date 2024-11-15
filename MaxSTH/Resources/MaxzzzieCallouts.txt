@@ -441,3 +441,45 @@ Monument road*2, -1519.435, -237.2328, 50.90128
 Monument road*3, -1407.944, -372.248, 36.97413
 Bulldozer spawn, -795.934, -811.7809, 20.21351
 Dog leg, -231.4555, -712.8608, 33.11909
+Highway Vespucci*1, -1949.67, -489.4226, 11.34841
+Highway Vespucci*2, -1742.469, -657.684, 9.804052
+Highway Vespucci*3, -1783.955, -596.4821, 10.4761
+Highway tunnel stuntjump, -1564.161, -756.7428, 19.46357
+Maxzzzies alleyway*1, -1258.554, -854.9372, 11.79546
+Pedestrianised South*1, -1286.103, -701.3041, 24.73433
+PD Vespucci*1, -1039.541, -875.2507, 5.540871
+Mask shop, -1338.267, -1275.397, 4.222189
+Vespucci Motel, -1485.088, -666.6955, 28.46807
+West of Square of squares, 138.7607, -901.3871, 29.61543
+South of Square of squares, 160.6865, -1019.274, 28.61981
+East of Square of squares, 258.3275, -944.2906, 28.61413
+North of Square of squares, 230.7423, -838.3544, 29.42389
+Chihuahua Hotdogs, 41.8708, -992.4559, 28.52197
+Brick carpark, 465.8048, -1099.636, 28.43324
+Fridgit South, 960.5495, -1744.132, 30.39576
+Fridgit North, 969.6504, -1489.143, 30.4222
+East end of Red bridge, 1068.717, -2578.386, 34.94495
+Red bridge, 826.0634, -2621.171, 51.76713
+Red bridge*1, 574.4374, -2665.59, 40.60037
+West end of Red bridge, 317.9843, -2666.436, 18.58291
+East end of Green bridge, 167.3634, -2657.377, 17.78736
+Green bridge*1, -30.07778, -2590.851, 30.50827
+Green bridge*2, -202.6962, -2473.43, 52.72141
+Green bridge*3, -476.6391, -2280.765, 61.71653
+Green bridge*4, -774.9943, -2070.869, 31.34313
+West end of Green bridge, -913.3817, -1931.878, 27.54485
+Big House warehouse, -514.5026, -2200.76, 5.625889
+Big House parking lot, -617.6335, -2139.627, 5.22412
+LSIA Devin weston hangar back entrance, -921.789, -2925.471, 13.17634
+University tennis courts, -1619.561, 267.1973, 59.55027
+Vinewood 24/7, 375.5726, 321.5826, 103.0234
+Horse racing track parking lot, 1120.026, 263.2672, 80.42934
+Horse racing track North, 1247.279, 273.2891, 81.57829
+Horse racing track South, 1017.892, -70.41018, 81.7654
+Downtown cab co., 903.9698, -168.4196, 73.66617
+West Mirror park, 869.6715, -550.073, 56.93408
+Jamestown, 327.9052, -2035.027, 20.50116
+Vagos metal art installation, 364.8126, -2120.51, 16.1904
+Large bridges crossing, 251.6074, -2667.165, 17.95217
+Large bridges connecting road, 195.2982, -2815.198, 12.2355
+You are not supposed to be here*firewolf, -2880.731, -1768.14, 132.537
