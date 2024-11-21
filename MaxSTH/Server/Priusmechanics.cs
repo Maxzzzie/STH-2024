@@ -10,7 +10,7 @@ namespace STHMaxzzzie.Server
     public class PriusMechanics : BaseScript
     {
         public static bool didClearJustHappen = false; //for the pri check. If clear happened i wanna remove blips.
-        private Dictionary<Player, int> playerPris = new Dictionary<Player, int>();
+        public static Dictionary<Player, int> playerPris = new Dictionary<Player, int>();
         public PriusMechanics()
         {
             Tick += OnTick;
@@ -90,7 +90,7 @@ namespace STHMaxzzzie.Server
                         //     multiline = false,
                         //     args = new[] { "Server", "Your pri got destroyed!" }
                         // });
-                        TriggerClientEvent("ShowNotification", "~q~Your ~h~pri~h~ got destroyed!");
+                        TriggerClientEvent(playerPri.Key, "ShowNotification", "Your ~q~~h~pri~h~~s~ got destroyed!");
                         BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
                         request.BlipsToRemove.Add($"pri{playerPri.Key.Name}");
                         BlipHandler.AddBlips(request);
@@ -105,7 +105,7 @@ namespace STHMaxzzzie.Server
                     //     multiline = false,
                     //     args = new[] { "Server", "Your pri disappeared!" }
                     // });
-                    TriggerClientEvent("ShowNotification", "~q~Your ~h~pri~h~ disappeared!");
+                    TriggerClientEvent(playerPri.Key, "ShowNotification", "Your ~q~~h~pri~h~~s~ disappeared!");
                     BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
                     request.BlipsToRemove.Add($"pri{playerPri.Key.Name}");
                     BlipHandler.AddBlips(request);

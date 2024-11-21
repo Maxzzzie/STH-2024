@@ -16,18 +16,7 @@
       "enabled": true,
       "restartOnChange": true
     },
-    "vMenu-master": {
-      "enabled": true,
-      "restartOnChange": true
-    },
-    "vMenu": {
-      "enabled": false,
-      "restartOnChange": false
-    },
     "STHmap.fxworld": {
-      "enabled": true
-    },
-    "visual assets": {
       "enabled": true
     },
     "assets": {

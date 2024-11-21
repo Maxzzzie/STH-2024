@@ -40,6 +40,7 @@ namespace STHMaxzzzie.Client
                 }
                 TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"All entities are removed too." } });
             }
+            TriggerServerEvent("didClearJustHappen");
         }
 
         //[EventHandler("disableCanPlayerShootFromVehicles")]

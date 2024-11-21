@@ -60,7 +60,17 @@ namespace STHMaxzzzie.Server
                 Appearance.sendNonAnimalModel(player);
                 string name = player.Name;
                 if (Vehicles.vehicleColourForPlayer.ContainsKey(name))
-                    TriggerClientEvent(player, "receiveVehicleColor", Vehicles.vehicleColourForPlayer[name].X, Vehicles.vehicleColourForPlayer[name].Y);
+                {
+                    string line = Vehicles.vehicleColourForPlayer[name];
+                    string[] parts = line.Split(',');
+                    int primairyColour = int.Parse(parts[1].Trim());
+                    int secundaryColour = int.Parse(parts[2].Trim());
+                    int pearlescentColour = int.Parse(parts[3].Trim());
+                    int lightsR = int.Parse(parts[4].Trim());
+                    int lightsG = int.Parse(parts[5].Trim());
+                    int lightsB = int.Parse(parts[6].Trim());
+                    TriggerClientEvent(player, "receiveVehicleColor", primairyColour, secundaryColour, pearlescentColour, lightsR, lightsG, lightsB);
+                }
             }
             MapBounds.updateCircle(true);
             TriggerClientEvent("isWeaponAllowed", Armoury.isWeaponsAllowed);
@@ -69,6 +79,7 @@ namespace STHMaxzzzie.Server
             TriggerClientEvent("whatIsVehAllowed", isVehRestricted);
             TriggerClientEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
             TriggerClientEvent("disableCanPlayerShootFromVehicles", Armoury.isShootingFromVehicleAllowed);
+            DelayMode.updateClientsDelayModeSettings();
         }
 
 
@@ -90,6 +101,22 @@ namespace STHMaxzzzie.Server
             BlipHandler.UpdateClientBlips();
             TriggerEvent("playerJoinedWhileGameIsActive", source.Handle);
 
+        }
+
+        [EventHandler("playerDropped")]
+        void playerDroppedHandler([FromSource] Player source, string reason)
+        {
+            if (RoundHandling.teamAssignment[int.Parse(source.Handle)] == 1 && RoundHandling.gameMode != "none")
+            {
+                TriggerEvent("endGame", "end");
+            }
+            if (PriusMechanics.playerPris.ContainsKey(source))
+            {
+                PriusMechanics.playerPris.Remove(source);
+                BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
+                request.BlipsToRemove.Add($"pri{source.Name}");
+                BlipHandler.AddBlips(request);
+            }
         }
 
         [Command("togglevehres", Restricted = true)] //restriction default = true
@@ -277,7 +304,7 @@ namespace STHMaxzzzie.Server
             }
             else
             {
-                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/wait(and a value)/)");
+                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/lsc/wait(and a value)/)");
             }
 
 
@@ -401,12 +428,12 @@ namespace STHMaxzzzie.Server
             }
             didClearJustHappen();
         }
-                [EventHandler("didClearJustHappen")] //upon removing pri's this event get's called by the client. This to prevent the msg's not popping up due to ping. As the pri check happens too quick (OnTick).
-                async void didClearJustHappen()
-                {
-                    await Delay(1000);
-                PriusMechanics.didClearJustHappen = true;
-                }
+        [EventHandler("didClearJustHappen")] //upon removing pri's this event get's called by the client. This to prevent the msg's not popping up due to ping. As the pri check happens too quick (OnTick).
+        async void didClearJustHappen()
+        {
+            await Delay(1000);
+            PriusMechanics.didClearJustHappen = true;
+        }
     }
     public class Armoury : BaseScript
 
@@ -422,6 +449,7 @@ namespace STHMaxzzzie.Server
             if (args.Count == 0)
             {
                 isShootingFromVehicleAllowed = !isShootingFromVehicleAllowed;
+                TriggerClientEvent("disableCanPlayerShootFromVehicles", isShootingFromVehicleAllowed);
                 if (isShootingFromVehicleAllowed)
                 {
                     TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Shooting from vehicles is now enabled." } });
@@ -854,7 +882,7 @@ namespace STHMaxzzzie.Server
     {
         bool vehicleShouldChangePlayerColour = true;
         bool vehicleShouldNotDespawn = true;
-        public static Dictionary<string, Vector2> vehicleColourForPlayer = new Dictionary<string, Vector2>();
+        public static Dictionary<string, string> vehicleColourForPlayer = new Dictionary<string, string>();
 
 
         public Vehicles()
@@ -898,10 +926,17 @@ namespace STHMaxzzzie.Server
         private void requestVehicleColor([FromSource] Player player)
         {
             string Name = player.Name;
-            if (vehicleColourForPlayer.ContainsKey(Name))
+            if (Vehicles.vehicleColourForPlayer.ContainsKey(Name))
             {
-                CitizenFX.Core.Debug.WriteLine($"vehicleColourForPlayer contains {Name} with {vehicleColourForPlayer[Name].X} {vehicleColourForPlayer[Name].Y}");
-                TriggerClientEvent(player, "receiveVehicleColor", vehicleColourForPlayer[Name].X, vehicleColourForPlayer[Name].Y); //x and y for a Vector2 value. X = primairy colour, Y= secundary   
+                string line = Vehicles.vehicleColourForPlayer[Name];
+                string[] parts = line.Split(',');
+                int primairyColour = int.Parse(parts[1].Trim());
+                int secundaryColour = int.Parse(parts[2].Trim());
+                int pearlescentColour = int.Parse(parts[3].Trim());
+                int lightsR = int.Parse(parts[4].Trim());
+                int lightsG = int.Parse(parts[5].Trim());
+                int lightsB = int.Parse(parts[6].Trim());
+                TriggerClientEvent(player, "receiveVehicleColor", primairyColour, secundaryColour, pearlescentColour, lightsR, lightsG, lightsB);
             }
             else
             {
@@ -945,6 +980,7 @@ namespace STHMaxzzzie.Server
             TriggerClientEvent("updateClientColourAndDespawn", vehicleShouldChangePlayerColour, vehicleShouldNotDespawn);
 
         }
+
         [Command("togglepvc", Restricted = true)]
         void setVehicleShouldChangePlayerColour(int source, List<object> args, string raw)
         {
@@ -978,29 +1014,66 @@ namespace STHMaxzzzie.Server
                 TriggerClientEvent("updateClientColourAndDespawn", vehicleShouldChangePlayerColour, vehicleShouldNotDespawn);
 
             }
-            else if (args.Count == 3)
+            else if (args.Count == 7)
             {
-                // Attempt to parse the arguments as integers
-                if (int.TryParse(args[0].ToString(), out int playerId) && int.TryParse(args[1].ToString(), out int primaryColorId) && int.TryParse(args[2].ToString(), out int secondaryColorId))
+                int playerId = (args[0].ToString() == "x") ? -1 : int.TryParse(args[0].ToString(), out int parsedPlayerId) ? parsedPlayerId : -1;
+                int primairyColour = (args[1].ToString() == "x") ? -1 : int.TryParse(args[1].ToString(), out int parsedPrimairyColour) ? parsedPrimairyColour : -1;
+                int secundaryColour = (args[2].ToString() == "x") ? -1 : int.TryParse(args[2].ToString(), out int parsedSecundaryColour) ? parsedSecundaryColour : -1;
+                int pearlescentColour = (args[3].ToString() == "x") ? -1 : int.TryParse(args[3].ToString(), out int parsedPearlescentColour) ? parsedPearlescentColour : -1;
+                int lightsR = (args[4].ToString() == "x") ? -1 : int.TryParse(args[4].ToString(), out int parsedLightsR) ? parsedLightsR : -1;
+                int lightsG = (args[5].ToString() == "x") ? -1 : int.TryParse(args[5].ToString(), out int parsedLightsG) ? parsedLightsG : -1;
+                int lightsB = (args[6].ToString() == "x") ? -1 : int.TryParse(args[6].ToString(), out int parsedLightsB) ? parsedLightsB : -1;
+                string playerName = Players[playerId].Name;
+
+                if (playerId != -1 && Vehicles.vehicleColourForPlayer.ContainsKey(Players[playerId].Name)) //player exists. And values might be -1 to be unchanged. Read from the original colour save.
                 {
-                    string playerName = Players[playerId].Name;
-                    AddOrUpdatePlayerVehicleColour(playerName, new Vector2(primaryColorId, secondaryColorId));
-                    CitizenFX.Core.Debug.WriteLine("Setting player colour.");
+                    string[] DataLine = Vehicles.vehicleColourForPlayer[playerName].Split(',');
+                    if (primairyColour == -1)
+                    {
+                        primairyColour = int.Parse(DataLine[1]);
+                    }
+                    if (secundaryColour == -1)
+                    {
+                        secundaryColour = int.Parse(DataLine[2]);
+                    }
+                    if (pearlescentColour == -1)
+                    {
+                        pearlescentColour = int.Parse(DataLine[3]);
+                    }
+                    if (lightsR == -1)
+                    {
+                        lightsR = int.Parse(DataLine[4]);
+                    }
+                    if (lightsG == -1)
+                    {
+                        lightsG = int.Parse(DataLine[5]);
+                    }
+                    if (lightsB == -1)
+                    {
+                        lightsB = int.Parse(DataLine[6]);
+                    }
+                    AddOrUpdatePlayerVehicleColour(playerName, primairyColour, secundaryColour, pearlescentColour, lightsR, lightsG, lightsB);
+                    TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 0, 255, 0 }, args = new[] { "Updating a players colour." } });
+                }
+                else if (playerId != -1) //player doesn't exist yet.
+                {
+                    AddOrUpdatePlayerVehicleColour(playerName, primairyColour, secundaryColour, pearlescentColour, lightsR, lightsG, lightsB);
+                    TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 0, 255, 0 }, args = new[] { "Setting a new player colour." } });
                 }
                 else
                 {
-                    TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "Something went wrong. Do /togglepvc \"true/false\" or \"playerID, primary colour id, secondary colour id\"" } });
+                    TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "Something went wrong. Do /togglepvc \"true/false\" or \"playerID, primary colour id, secondary, pearlescent, lights r, g, b\"\nValue can be \"x\" as well to keep the existing colour." } });
                 }
             }
-            else
+            else 
             {
-                TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "Something went wrong. Do /togglepvc \"true/false\" or \"playerID, primary colour id, secondary colour id\"" } });
+                TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "Something went wrong. Do /togglepvc \"true/false\" or \"playerID, primary colour id, secondary, pearlescent, lights r, g, b\"" } });
             }
         }
 
-        private void AddOrUpdatePlayerVehicleColour(string playerName, Vector2 vehicleColours)
+        private void AddOrUpdatePlayerVehicleColour(string playerName, int primairyColour, int secundaryColour, int pearlescentColour, int lightsR, int lightsG, int lightsB)
         {
-            vehicleColourForPlayer[playerName] = vehicleColours;
+            vehicleColourForPlayer[playerName] = $"{playerName},{primairyColour},{secundaryColour},{pearlescentColour},{lightsR},{lightsG},{lightsB}";
 
             LoadResources.SavePlayerVehicleColours(vehicleColourForPlayer);
             updateClientsVehicleColours();
@@ -1011,8 +1084,18 @@ namespace STHMaxzzzie.Server
             foreach (Player player in Players)
             {
                 string name = player.Name;
-                if (vehicleColourForPlayer.ContainsKey(name))
-                    TriggerClientEvent(player, "receiveVehicleColor", vehicleColourForPlayer[name].X, vehicleColourForPlayer[name].Y);
+                if (Vehicles.vehicleColourForPlayer.ContainsKey(name))
+                {
+                    string line = Vehicles.vehicleColourForPlayer[name];
+                    string[] parts = line.Split(',');
+                    int primairyColour = int.Parse(parts[1].Trim());
+                    int secundaryColour = int.Parse(parts[2].Trim());
+                    int pearlescentColour = int.Parse(parts[3].Trim());
+                    int lightsR = int.Parse(parts[4].Trim());
+                    int lightsG = int.Parse(parts[5].Trim());
+                    int lightsB = int.Parse(parts[6].Trim());
+                    TriggerClientEvent(player, "receiveVehicleColor", primairyColour, secundaryColour, pearlescentColour, lightsR, lightsG, lightsB);
+                }
             }
         }
     }

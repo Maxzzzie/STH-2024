@@ -13,12 +13,13 @@ public class NotificationScript : BaseScript
         SetNotificationTextEntry("STRING");
         AddTextComponentSubstringPlayerName(text);
         DrawNotification(false, false);
-
+        PlaySoundFrontend(-1, "ATM_WINDOW", "HUD_FRONTEND_DEFAULT_SOUNDSET", false); //make little sound when it pops up.
         // Call the method to strip formatting tags
         string DebugString = StripFormattingTags(text);
 
         // Print the changed string
         Debug.WriteLine(DebugString);
+        //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"{DebugString}"}});
     }
 
     public static string StripFormattingTags(string input)

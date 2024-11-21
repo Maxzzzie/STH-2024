@@ -33,8 +33,19 @@ namespace STHMaxzzzie.Client
         [Command("+SelectRandomModel")]
         void randmodelHandler()
         {
-            if (Game.PlayerPed.IsAlive == false)
+            Vector3 speed = Game.PlayerPed.Velocity;
+            if (Game.PlayerPed.IsAlive == false || IsPauseMenuActive())
             {
+                return;
+            }
+            if (!Game.PlayerPed.IsOnFoot)
+            {
+                TriggerEvent("chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"You have to be on foot to change your appearance."}});
+                return;
+            }
+            if (speed.X >= 0.2f || speed.Y >= 0.2f || speed.Z >= 0.2f )
+            {
+                TriggerEvent("chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"Stand still to change your appearance."}});
                 return;
             }
             TriggerEvent("changeRandomModel");
@@ -43,8 +54,6 @@ namespace STHMaxzzzie.Client
         //does nothing but prevends an error msg upon release of f6
         [Command("-SelectRandomModel")]
         void randmodelHandler_() { } //add empty handler for -SelectRandomModel so it doesn't show up in chat. 
-
-
 
         [EventHandler("changingModel")]
         public async void changingModel(string getModel)
@@ -75,8 +84,19 @@ namespace STHMaxzzzie.Client
         [Command("model")]
         public void requestModel(int source, List<object> args, string raw)
         {
+             Vector3 speed = Game.PlayerPed.Velocity;
             if (Game.PlayerPed.IsAlive == false)
             {
+                return;
+            }
+            if (!Game.PlayerPed.IsOnFoot)
+            {
+                TriggerEvent("chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"You have to be on foot to change your appearance."}});
+                return;
+            }
+            if (speed.X >= 0.2f || speed.Y >= 0.2f || speed.Z >= 0.2f )
+            {
+                TriggerEvent("chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"Stand still to change your appearance."}});
                 return;
             }
             if (args.Count == 0)

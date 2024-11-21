@@ -17,7 +17,7 @@ namespace STHMaxzzzie.Server
         public static List<string> runnerList = new List<string>();
         public static int runnerThisGame = -1;
 
-        [Command("startgame", Restricted = true)] //normal restriction true 
+        [Command("startgame", Restricted = false)] //normal restriction true 
         [EventHandler("startGameMode")]
         public void startGameMode(int source, List<object> args, string raw)
         {
@@ -73,6 +73,7 @@ namespace STHMaxzzzie.Server
                 if (playerId == runner)
                 {
                     teamAssignment.Add(playerId, 1);
+                    //TriggerEvent("pma-voice:SetPlayerRadioChannel", playerId, 1);
                     runnerList.Add(player.Name);
                     runnerFound = true;
                     //CitizenFX.Core.Debug.WriteLine($"Player {playerId} added to Runner team with name {player.Name}.");
@@ -80,6 +81,7 @@ namespace STHMaxzzzie.Server
                 else
                 {
                     teamAssignment.Add(playerId, 2);
+                    //TriggerEvent("pma-voice:SetPlayerRadioChannel", playerId, 2);
                     //CitizenFX.Core.Debug.WriteLine($"Player {playerId} added to Hunter team.");
                 }
             }
@@ -102,6 +104,7 @@ namespace STHMaxzzzie.Server
             API.StopResource("playernames");
             TriggerClientEvent("startGame", teamAssignmentForClient, gameMode);
             TriggerClientEvent("gameStartNotification", runnerList);
+            DelayMode.setOrRemoveDistanceBlipsForDelayMode();
         }
 
         [EventHandler("thisClientDiedForGameStateCheck")]
@@ -119,7 +122,7 @@ namespace STHMaxzzzie.Server
             }
         }
 
-        //[EventHandler("endGame")]
+        [EventHandler("endGame")]
         public async void endGame(string winningTeam)
         {
             //  Debug.WriteLine($"server endGame");
@@ -133,6 +136,7 @@ namespace STHMaxzzzie.Server
             foreach (Player player in Players)
             {
                 teamAssignment.Add(int.Parse(player.Handle), 0);
+                //TriggerEvent("pma-voice:SetPlayerRadioChannel", player.Handle, 0);
             }
             List<Vector2> teamAssignmentForClient = new List<Vector2>();
             foreach (var kvp in teamAssignment)
@@ -144,6 +148,7 @@ namespace STHMaxzzzie.Server
             {
                 DelayMode.delayModeOn = false;
                 TriggerClientEvent("updateBlipLocationOnMapForDelayMode", new Vector3(0, 0, 0));
+                DelayMode.setOrRemoveDistanceBlipsForDelayMode();
                 //reset server setting permissions
             }
             else if (gameMode == "hunt")
@@ -168,6 +173,7 @@ namespace STHMaxzzzie.Server
             }
             int id = int.Parse(joinedPlayer.Handle);
             teamAssignment[id] = 2;
+            //TriggerEvent("pma-voice:SetPlayerRadioChannel", id, teamAssignment);
             foreach (Player player in Players) //updates all other clients with the new player.
             {
                 if (player != joinedPlayer)

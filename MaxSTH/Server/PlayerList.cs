@@ -17,6 +17,7 @@ namespace STHMaxzzzie.Server
         }
 
         [Command("players", Restricted = false)]
+        [EventHandler("playerList")]
         void playerList(int source, List<object> args, string raw)
         {
             //TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"All players in the playerlist." } });
@@ -25,12 +26,15 @@ namespace STHMaxzzzie.Server
                 int playerId = int.Parse(player.Handle);
                 if (playerModels.ContainsKey(playerId))
                 {
-                    TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name}({player.Handle}) Model:\"{playerModels[playerId]}\" Ping:{player.Ping}" } });
+                    //TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name}({player.Handle}) Model:\"{playerModels[playerId]}\" Ping:{player.Ping}" } });
+                    TriggerClientEvent(Players[source], "ShowNotification", $"{player.Name}({player.Handle}) Model:\"{playerModels[playerId]}\" Ping:{player.Ping}");
                     //TriggerClientEvent(Players[source], "showDebugMessage", $"{player.Name}({player.Handle}) Model: \"{playerModels[playerId]}\" Ping:{player.Ping}");
+                    
                 }
                 else
                 {
-                    TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name}({player.Handle}) Model:default Ping:{player.Ping}" } });
+                    //TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name}({player.Handle}) Model:default Ping:{player.Ping}" } });
+                   TriggerClientEvent(Players[source], "ShowNotification",  $"{player.Name}({player.Handle}) Model:default Ping:{player.Ping}");
                     //TriggerClientEvent(Players[source], "showDebugMessage", $"{player.Name}({player.Handle}) Model:default Ping:{player.Ping}");
                 }
             }

@@ -482,4 +482,21 @@ Jamestown, 327.9052, -2035.027, 20.50116
 Vagos metal art installation, 364.8126, -2120.51, 16.1904
 Large bridges crossing, 251.6074, -2667.165, 17.95217
 Large bridges connecting road, 195.2982, -2815.198, 12.2355
-You are not supposed to be here*firewolf, -2880.731, -1768.14, 132.537
+You are not supposed to be here*firewolf, -2880.731, -1768.14, 132.537Church Great chapparal, -320.287, 2804.291, 71.44028
+Xero grand senora desert, 51.28518, 2778.051, 62.55007
+Stoner cement plant, 315.8188, 2868.164, 55.61139
+Suburban grand senora desert, 618.7587, 2730.875, 41.60465
+Bunker sandy shores airfield, 847.9448, 2997.384, 45.17408
+Sandy shores airfield West, 1081.13, 3047.723, 40.61987
+Sandy shores airfield center, 1400.783, 3132.616, 40.40012
+Sandy shores airfield East, 1668.643, 3233.584, 40.35864
+Globe oil sandy shores airfield, 1778.855, 3336.683, 40.82715
+Motel East Sandy shores, 1596.297, 3586.738, 41.83304
+Motel West Sandy shores, 1535.508, 3590.607, 41.83278
+Ammunation Sandy Shores, 1692.306, 3761.658, 38.90156
+Alamo fruit market, 1792.926, 4592.506, 37.68287
+Motorcycle gang farm Grapeseed, 1957.103, 4635.559, 40.43562
+Grapeseed airfield west, 1936.061, 4713.211, 40.80388
+Grapeseed airfield Hangar, 2108.984, 4794.674, 40.523
+Airfield bridge Grapeseed, 2199.071, 4832.135, 44.57805
+LS customs Grand senora desert, 1182.82, 2653.487, 37.41716

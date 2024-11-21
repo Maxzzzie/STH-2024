@@ -325,7 +325,7 @@ public static class LoadResources
         return AllowedVehiclesDict;
     }
 
-    public static Dictionary<string, Vector2> playerVehicleColour()
+    public static Dictionary<string, string> playerVehicleColour()
     {
         var path_to_resource = API.GetResourcePath(API.GetCurrentResourceName());
         var path_to_playerVehicleColour_file = $"{path_to_resource}/Resources/playerVehicleColour.txt";
@@ -333,11 +333,11 @@ public static class LoadResources
         if (!File.Exists(path_to_playerVehicleColour_file))
         {
             CitizenFX.Core.Debug.WriteLine($"playerVehicleColour.txt does not exist at: {path_to_playerVehicleColour_file}");
-            return new Dictionary<string, Vector2>();
+            return new Dictionary<string, string>();
         }
 
         string[] playerVehicleColourLine = File.ReadAllLines(path_to_playerVehicleColour_file);
-        var playerVehicleColourDict = new Dictionary<string, Vector2>();
+        var playerVehicleColourDict = new Dictionary<string, string>();
 
         foreach (string line in playerVehicleColourLine)
         {
@@ -346,7 +346,7 @@ public static class LoadResources
             {
                 continue; // Skip empty lines and any lines starting with //
             }
-            else if (parts.Length != 3)
+            else if (parts.Length != 7)
             {
                 CitizenFX.Core.Debug.WriteLine($"Incorrect data in playerVehicleColour.txt line: {line}");
                 continue;
@@ -357,8 +357,11 @@ public static class LoadResources
                 string playerName = parts[0].Trim();
                 int primairyColour = int.Parse(parts[1].Trim());
                 int secundaryColour = int.Parse(parts[2].Trim());
-                Vector2 vehicleColours = new Vector2(primairyColour, secundaryColour);
-                playerVehicleColourDict.Add(playerName, vehicleColours);
+                int pearlescentColour = int.Parse(parts[3].Trim());
+                int R = int.Parse(parts[4].Trim());
+                int G = int.Parse(parts[5].Trim());
+                int B = int.Parse(parts[6].Trim());
+                playerVehicleColourDict.Add(playerName,line);
                 //CitizenFX.Core.Debug.WriteLine($"playerVehicleColourDict : {playerName}, {primairyColour}, {secundaryColour}");
             }
             catch (FormatException ex)
@@ -371,7 +374,7 @@ public static class LoadResources
     }
 
     // Function to save player vehicle colors to the file
-    public static void SavePlayerVehicleColours(Dictionary<string, Vector2> vehicleColourDict)
+    public static void SavePlayerVehicleColours(Dictionary<string, string> vehicleColourDict)
     {
         var path_to_resource = API.GetResourcePath(API.GetCurrentResourceName());
         var path_to_playerVehicleColour_file = $"{path_to_resource}/Resources/playerVehicleColour.txt";
@@ -379,12 +382,12 @@ public static class LoadResources
         // Prepare data to write to the file
         List<string> lines = new List<string>(); 
         lines.Add("//Store player vehicle colours here. ");
-        lines.Add("//Use the following method of storing it. \"PlayerName, primairy_colour__id, secundary_colour_id\". ");
+        lines.Add("//Use the following method of storing it. \"PlayerName, primairy_colour__id, secundary_colour_id, pearlescent_colour_id, Lights_R_value, Lights_G_value, Lights_B_value\". ");
         lines.Add("//Capitals are important. ");
         lines.Add("//Find the colour id's here. http://wiki.rage.mp/index.php?title=Vehicle_Colors");
         foreach (var entry in vehicleColourDict)
         {
-            string line = $"{entry.Key},{(int)entry.Value.X},{(int)entry.Value.Y}";
+            string line = entry.Value;
             lines.Add(line);
         }
 

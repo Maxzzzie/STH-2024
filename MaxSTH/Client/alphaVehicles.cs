@@ -59,10 +59,10 @@ namespace STHMaxzzzie.Client
         [Command("veh")]
         async void vehicle(int source, List<object> args, string raw)
         {
-            if (RoundHandling.gameMode != "none" && RoundHandling.thisClientIsTeam == 1) 
+            if (RoundHandling.gameMode != "none" && RoundHandling.thisClientIsTeam == 1)
             {
                 TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"A game is running, vehicle spawns are disabled for runners." } });
-            return;
+                return;
             }
             if (args.Count == 0)
             {
@@ -110,10 +110,10 @@ namespace STHMaxzzzie.Client
         [Command("inveh")]
         async void inVehicle(int source, List<object> args, string raw)
         {
-            if (RoundHandling.gameMode != "none" && RoundHandling.thisClientIsTeam == 1) 
+            if (RoundHandling.gameMode != "none" && RoundHandling.thisClientIsTeam == 1)
             {
                 TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"A game is running, vehicle spawns are disabled for runners." } });
-            return;
+                return;
             }
             if (args.Count == 0)
             {
@@ -451,9 +451,10 @@ namespace STHMaxzzzie.Client
                     float d10 = GetDistanceBetweenCoords(-213, -1327, 30, playerPosition.X, playerPosition.Y, playerPosition.Z, true);
 
                     //Debug.WriteLine($"1: rockford {d1} | 2: la mesa {d2} | 3: lsia {d3} | 4: blaine county {d4} | 5: paleto {d5} \n lombank {d6} | LSIA auto repair {d7} | Simeon dock garage {d9}");
-                    if (d1 < 19 || d2 < 11 || d3 < 15 || d4 < 11 || d5 < 8 || d6 < 8 || d7 < 15 || d8 <8 || d9 < 8 || d10 < 8)
+                    if (d1 < 19 || d2 < 11 || d3 < 15 || d4 < 11 || d5 < 8 || d6 < 8 || d7 < 15 || d8 < 8 || d9 < 8 || d10 < 8)
                     {
                         Game.PlayerPed.CurrentVehicle.Repair();
+                        //API.PlaySoundFrontend(-1, "MECHANIC_TOOL_RATTLE", "DEFAULT", false);
                         TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"The mechanic repaired your vehicle." } });
                     }
                     else
@@ -498,9 +499,11 @@ namespace STHMaxzzzie.Client
     {
         bool vehicleShouldChangePlayerColour = true;
         bool vehicleShouldNotDespawn = true;
-        private int? primaryColor = null;
-        private int? secondaryColor = null;
-        private Vehicle lastVehicle = null;
+        private int? primaryColour = null;
+        private int? secondaryColour = null;
+        private int pearlescentColour = -1;
+        private Vector3 rgbLightsColour; 
+        public static Vehicle lastVehicle = null;
 
         [EventHandler("updateClientColourAndDespawn")]
         private void updateClientColourAndDespawn(bool setVehicleShouldChangePlayerColour, bool setVehicleShouldNotDespawn)
@@ -575,15 +578,14 @@ namespace STHMaxzzzie.Client
             // Apply color if needed, regardless of mission entity status and checks if player isn't a runner.
             if (vehicleShouldChangePlayerColour && RoundHandling.thisClientIsTeam != 1)
             {
-                if (!primaryColor.HasValue || !secondaryColor.HasValue)
+                if (!primaryColour.HasValue || !secondaryColour.HasValue || pearlescentColour == -1 || rgbLightsColour == null)
                 {
                     // Debug.WriteLine("Requesting vehicle color from the server.");
                     TriggerServerEvent("requestVehicleColor");
                 }
                 else
                 {
-                    // Debug.WriteLine("Applying stored vehicle color.");
-                    API.SetVehicleColours(vehicle.Handle, primaryColor.Value, secondaryColor.Value);
+                   ApplyVehicleColor(vehicle.Handle);
                 }
             }
 
@@ -592,13 +594,15 @@ namespace STHMaxzzzie.Client
 
         // Called when the client receives color data from the server
         [EventHandler("receiveVehicleColor")]
-        private void receiveVehicleColor(int primary, int secondary) //add neon's here!
+        private void receiveVehicleColor(int primary, int secondary, int pearlescent, int lightR, int lightG, int lightB)
         {
             // Debug.WriteLine("Received vehicle color from server."); // Debug message for receiving data
 
             // Store color values locally (only needs to happen once)
-            primaryColor = primary;
-            secondaryColor = secondary;
+            primaryColour = primary;
+            secondaryColour = secondary;
+            pearlescentColour = pearlescent;
+            rgbLightsColour = new Vector3(lightR, lightG, lightB);
 
             // Apply color to the vehicle if the player is currently in one and in the driver seat
             if (Game.PlayerPed.IsInVehicle() && Game.PlayerPed.SeatIndex == VehicleSeat.Driver && vehicleShouldChangePlayerColour)
@@ -610,19 +614,18 @@ namespace STHMaxzzzie.Client
         // Applies the stored colors to a vehicle
         private void ApplyVehicleColor(int vehicleHandle)
         {
-            if (primaryColor.HasValue && secondaryColor.HasValue && RoundHandling.thisClientIsTeam != 1)
+            if (primaryColour.HasValue && secondaryColour.HasValue && RoundHandling.thisClientIsTeam != 1 && !StreamLootsEffects.isStarmodeOn)
             {
                 // Debug.WriteLine($"Setting vehicle colors to Primary: {primaryColor.Value}, Secondary: {secondaryColor.Value}");
-                API.SetVehicleColours(vehicleHandle, primaryColor.Value, secondaryColor.Value);
-
-                // Enable all neon lights
-                // API.SetVehicleNeonLightEnabled(vehicleHandle, 0, true);
-                // API.SetVehicleNeonLightEnabled(vehicleHandle, 1, true);
-                // API.SetVehicleNeonLightEnabled(vehicleHandle, 2, true);
-                // API.SetVehicleNeonLightEnabled(vehicleHandle, 3, true);
-
-                // Apply the primary color's RGB values to the neon lights
-                //API.SetVehicleNeonLightsColour(vehicleHandle, 242, 125, 32);
+                    API.SetVehicleColours(vehicleHandle, primaryColour.Value, secondaryColour.Value);
+                    API.SetVehicleExtraColours(vehicleHandle, pearlescentColour, pearlescentColour);
+                    API.SetVehicleNeonLightEnabled(vehicleHandle, 0, true);
+                    API.SetVehicleNeonLightEnabled(vehicleHandle, 1, true);
+                    API.SetVehicleNeonLightEnabled(vehicleHandle, 2, true);
+                    API.SetVehicleNeonLightEnabled(vehicleHandle, 3, true);
+                    API.SetVehicleNeonLightsColour(vehicleHandle, (int)rgbLightsColour.X, (int)rgbLightsColour.Y, (int)rgbLightsColour.Z);
+                    API.ToggleVehicleMod(vehicleHandle, 22, true); //turns on neons
+                    API.SetVehicleXenonLightsCustomColor(vehicleHandle, (int)rgbLightsColour.X, (int)rgbLightsColour.Y, (int)rgbLightsColour.Z);
             }
         }
     }
