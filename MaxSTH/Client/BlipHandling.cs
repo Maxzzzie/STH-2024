@@ -109,19 +109,26 @@ namespace STHMaxzzzie.Client
             }
 
             int blipHandle = 0;
-            if (blip.Type == "coord")
+            if (blip.Type == "coord") 
             {
                 //Debug.WriteLine($"HandleBlip 2 coord added {blip.Name}");
                 blipHandle = API.AddBlipForCoord(blip.Coords.X, blip.Coords.Y, blip.Coords.Z);
             }
+                else if (blip.Type == "player")
+                {
+                    string[] splitName = blip.Name.Split('-');
+                    Debug.WriteLine($"{splitName[1]} and {splitName[0]}");
+                    int entityId = API.GetPlayerPed(API.GetPlayerFromServerId(int.Parse(splitName[1])));
+                    blipHandle = API.AddBlipForEntity(entityId);
+                }
+
             else if (blip.Type == "entity")
             {
-                //Debug.WriteLine($"HandleBlip 3 entity added {blip.Name}");
                 blipHandle = API.AddBlipForEntity(blip.EntityId);
             }
             else
             {
-                Debug.WriteLine($"Error: Cannot add blip, type wasn't coord or entity.");
+                Debug.WriteLine($"Error: Cannot add blip, type wasn't coord, player or entity.");
                 return;
             }
 
@@ -185,7 +192,6 @@ namespace STHMaxzzzie.Client
         public bool HasCrewIndicator { get; set; } = false;
         public string MapName { get; set; } = "unknown";
         public int Category { get; set; } = 1; //1 = No distance shown in legend 2 = Distance shown in legend 7 = "Other Players" category, also shows distance in legend 10 = "Property" category 11 = "Owned Property" category
-
 
     }
 

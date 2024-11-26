@@ -161,3 +161,29 @@ public void OnReceivePlayerCoords([FromSource] Player player, Vector3 coords)
 4. **From Name to Server ID**: Loop through `Players` on server or loop through indices on the client.
 
 By using the **Player class**, **ped handle**, and **server ID** as explained, you can navigate between the various identifiers for players in FiveM.
+
+
+
+
+
+
+Registering a keybind.
+
+public xxxclassxxx()
+        {
+            API.RegisterKeyMapping("+|||Function|||", "|||description ingame|||", "keyboard", "|||key (a)|||");
+        }
+
+        [Command("+|||Function|||")]
+        void |||Function|||IsPressed()
+        {
+            if (Game.PlayerPed.IsAlive == false || API.IsPauseMenuActive())
+            {
+                return;
+            }
+            Put in function to run.
+        }
+
+        //does nothing but prevends an error msg upon release of the key.
+        [Command("-|||Function|||")]
+        void |||Function|||IsUnpressed() { } //add empty handler so it doesn't show up in chat. 

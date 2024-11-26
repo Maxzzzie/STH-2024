@@ -1098,6 +1098,12 @@ namespace STHMaxzzzie.Server
                 }
             }
         }
+
+        [Command("stuck", Restricted = false)]
+        void stuckCommand([FromSource] Player source, List<object> args, string raw)
+        {
+            TriggerClientEvent(source, "StuckCommand");
+        }
     }
 }
 

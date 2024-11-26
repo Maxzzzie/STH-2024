@@ -15,7 +15,7 @@ namespace STHMaxzzzie.Client
         int timeStationairBeforeFix = 10;
         bool isVehSpawningRestricted = true;
         static Dictionary<string, string> vehicleinfoDict = new Dictionary<string, string>();
-        Dictionary<string, VehicleHash> VehicleNameToHash = null;
+        public static Dictionary<string, VehicleHash> VehicleNameToHash = null;
         public max_Vehicle()
         {
             //make a dictionary mapping vehicle name => hash

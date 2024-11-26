@@ -21,4 +21,4 @@ heaven 1200 3950 400
 chiliad 495 5591 795
 sky 0 -1000 1200
 lifeinvader -1080 -251 38
-mugshot -2500 -1500 50
+mugshot 402 -996 -99

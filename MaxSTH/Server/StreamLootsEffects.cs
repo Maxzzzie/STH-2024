@@ -22,18 +22,19 @@ namespace STHMaxzzzie.Server
                 "bounce", //reverses the clients direction and heading
                 "kickflip", //jumps the client vehicle up a little and gives it a rolling force
                 "gunjam", //(broken forces instant reload) after a few shots the gun stops working until the client reloads
-                "fame", //(broken npcs go to 1 location) npc's run towards the client
-                "carfame", //(broken npcs go to 1 location) npc's drive their car into the client
+                "fame", //(broken npcs don't all get targeted) npc's run towards the client
+                "carfame", //(broken npcs don't all get targeted) npc's drive their car into the client
                 "imponent", //(broken spawns a few times but goes to old cords and doesn't get in car) imponent rage steals your car
                 "paint", //paints the clients car a bright colour
                 "paintall", //paints all cars in the area a bright colour
-                "pebble", //(works at times) breaks all windows around the client
+                "pebble", //(works at times) breaks all windows around the clienta6
                 "electricalglitch", //flashes the lights and horn and doors of the clients car
                 "starmode", //sets the clients car to rgb mode and resets it when its done
                 "carborrow", // (broken does nothing) sets the client into an npc's car
                 "compacted", //(broken does only panto) sets the client into a compact
                 "speedlimiter", //limits the speed of the client
-                "carswap" //(broken does nothing) swaps the clients car with a different players vehicle
+                "carswap", //(broken does nothing) swaps the clients car with a different players vehicle
+                "shake" // (broken does nothing) shakes player cam for 5 secs
              };
 
         [Command("sl", Restricted = false)]

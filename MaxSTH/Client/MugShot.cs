@@ -1,3 +1,141 @@
+// using System;
+// using System.Threading.Tasks;
+// using CitizenFX.Core;
+// using CitizenFX.Core.Native;
+
+// namespace STHMaxzzzie.Client
+// {
+//     public class MugShot : BaseScript
+//     {
+//         private Vector3 mugshotModelPosition = new Vector3(402.848f, -996.826f, -99.900f);
+//         private float cameraFov = 5.0f; // Zoom in for a close-up
+//         private int customCamera = 0; // Camera handle
+//         private int pedHandle = 0; // NPC handle
+//         private bool isRunning = false;
+
+//         public MugShot()
+//         {
+//             API.RegisterKeyMapping("+MugShotKey", "Show Mugshot", "keyboard", "m");
+//         }
+
+//         [Command("+MugShotKey")]
+//         private void MugShotKeyIsPressed()
+//         {
+//             if (!Game.PlayerPed.IsAlive || API.IsPauseMenuActive() || isRunning)
+//                 return;
+
+//             TriggerServerEvent("mugShot");
+//         }
+
+//         [Command("-MugShotKey")]
+//         private void MugShotKeyIsUnpressed()
+//         { }//empty to prevent a msg in chat.
+
+//         [EventHandler("MugShotEvent")]
+//         private async void MugShotEvent(string modelName)
+//         {
+//             if (isRunning)
+//                 return;
+
+//             isRunning = true;
+
+//             try
+//             {
+//                 FocusMugshotArea(); // Ensure the area is loaded
+//                 await SpawnNPC(modelName); // Spawn the NPC model
+//                 SetupCamera(); // Set up the camera
+//                 await Delay(4000); // Wait for 4 seconds
+//             }
+//             finally
+//             {
+//                 ClearFocus(); // Clear the focus to reload the player's area
+//                 ResetCamera(); // Reset the camera to default
+//                 DespawnNPC(); // Remove the NPC
+//                 isRunning = false;
+//             }
+//         }
+
+//         private void FocusMugshotArea()
+//         {
+//             // Use SetFocusPosAndVel to ensure the area is loaded
+//             API.SetFocusPosAndVel(mugshotModelPosition.X, mugshotModelPosition.Y-1, mugshotModelPosition.Z, 0.0f, 0.0f, 0.0f);
+//         }
+
+//         private void ClearFocus()
+//         {
+//             API.ClearFocus(); // Reset focus back to the player's area
+//         }
+
+//         private async Task SpawnNPC(string modelName)
+//         {
+//             uint modelHash = (uint)API.GetHashKey(modelName);
+
+//             // Request and load the NPC model
+//             API.RequestModel(modelHash);
+//             while (!API.HasModelLoaded(modelHash))
+//             {
+//                 await Delay(50);
+//             }
+
+//             // Spawn the NPC
+//             pedHandle = API.CreatePed(4, modelHash, mugshotModelPosition.X, mugshotModelPosition.Y, mugshotModelPosition.Z, 178.805f, true, false);
+
+//             // Set all components to default
+//             for (int componentId = 0; componentId < 12; componentId++)
+//             {
+//                 API.SetPedComponentVariation(pedHandle, componentId, 0, 0, 0);
+//             }
+
+//             // Release model from memory
+//             API.SetModelAsNoLongerNeeded(modelHash);
+//         }
+
+//         private void SetupCamera()
+//         {
+//             if (pedHandle == 0)
+//             {
+//                 Debug.WriteLine("NPC not found, camera setup aborted.");
+//                 return;
+//             }
+
+//             // Create or reuse the custom camera
+//             if (customCamera == 0)
+//             {
+//                 customCamera = API.CreateCam("DEFAULT_SCRIPTED_CAMERA", true);
+//             }
+
+//             // Attach the camera to the ped's head/neck (bone index 31086 = head)
+//             API.AttachCamToPedBone(customCamera, pedHandle, 31086, 0.0f, 4.8f, 0.0f, true); // Adjust offset as needed
+//             API.SetCamFov(customCamera, cameraFov);
+//             API.PointCamAtPedBone(customCamera, pedHandle, 31086, 0.0f, 0.0f, 0.09f, true);
+
+//             // Enable the custom camera
+//             API.RenderScriptCams(true, false, 0, true, false);
+//         }
+
+//         private void ResetCamera()
+//         {
+//             // Return to the player's default camera view
+//             API.RenderScriptCams(false, false, 0, true, false);
+
+//             if (customCamera != 0)
+//             {
+//                 API.DestroyCam(customCamera, false);
+//                 customCamera = 0;
+//             }
+//         }
+
+//         private void DespawnNPC()
+//         {
+//             if (API.DoesEntityExist(pedHandle))
+//             {
+//                 API.DeletePed(ref pedHandle);
+//                 pedHandle = 0;
+//             }
+//         }
+//     }
+// }
+
 using System;
 using System.Threading.Tasks;
 using CitizenFX.Core;
@@ -7,182 +145,142 @@ namespace STHMaxzzzie.Client
 {
     public class MugShot : BaseScript
     {
-        //fix ped component variation
-        //         //location mugshotroom player =     position: 402.848, -996.826, -99.000 rotation: 0.000, -0.000, 178.805 heading: 178.805
-        //         //location camera =                 Position: 402.629, -1002.263, -99.004 rotation: 0.000, -0.000, 0.230 heading: 0.230
-
-        private Vector3 mugshotModelPosition = new Vector3(-2148.798f, 223.015f, 183.702f);
-        private Vector3 cameraRotation = new Vector3(180f, 180f, 65f); //tilt, roll, pan (tilt 180 is level, 170 is up slightly) 180f, 180f, 123f
-        int pedHeadBoneIndex = 0;
-        private float cameraFov = 10;
-        private int customCamera;
-        private int pedHandle;
+        private Vector3 mugshotModelPosition = new Vector3(402.848f, -996.826f, -99.900f);
+        private float cameraFov = 5.0f; // Zoom in for a close-up
+        private int customCamera = 0; // Camera handle
+        private int pedHandle = 0; // NPC handle
         private bool isRunning = false;
 
-        // Method that starts the mugshot sequence
-        [EventHandler("MugShotEvent")]
-        private async void MugShotEvent(string modelName, string chatText)
+        public MugShot()
         {
-            //Debug.WriteLine($"Mugshot process with {modelName}");
-            if (isRunning)
-            {
-                // Prevent command spamming
-                TriggerEvent("chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"Wait"}});
+            API.RegisterKeyMapping("+MugShotKey", "Show Mugshot", "keyboard", "m");
+        }
+
+        [Command("+MugShotKey")]
+        private void MugShotKeyIsPressed()
+        {
+            if (!Game.PlayerPed.IsAlive || API.IsPauseMenuActive() || isRunning)
                 return;
-            }
+
+            TriggerServerEvent("mugShot");
+        }
+
+        [Command("-MugShotKey")]
+        private void MugShotKeyIsUnpressed()
+        { } // Empty to prevent chat message spam
+
+        [EventHandler("MugShotEvent")]
+        private async void MugShotEvent(string modelName)
+        {
+            if (isRunning)
+                return;
 
             isRunning = true;
 
-            await SpawnNPC(modelName); // Pass the model name dynamically
-            // await ForceLoadMugshotArea();
-            // await SetCamera();
-            TriggerEvent("chat:addMessage", new { color = new[] { 50, 50, 255 }, args = new[] { $"{chatText}" } });
-            await Delay(4000);
-            DespawnNPC();
+            try
+            {
+                await SpawnNPC(modelName); // Spawn the NPC model
+                FocusMugshotArea(); // Ensure the area is visually loaded
+                SetupCamera(); // Set up the camera
+                await Delay(4000); // Wait for 4 seconds
+            }
+            finally
+            {
+                ResetCamera(); // Reset the camera to default
+                DespawnNPC(); // Remove the NPC
+                ClearFocus(); // Clear the focus to reload the player's area
+                isRunning = false;
+            }
         }
 
-        public async Task SpawnNPC(string modelName)
+        private void FocusMugshotArea()
+{
+    if (pedHandle != 0 && API.DoesEntityExist(pedHandle))
+    {
+        // Focus on the NPC ped to prioritize loading its area
+        API.SetFocusEntity(pedHandle);
+    }
+    else
+    {
+        Debug.WriteLine("Ped handle is invalid. Focus not set.");
+    }
+}
+
+        private void ClearFocus()
         {
-            Vector3 playerPosition = Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0));
+            // Reset focus back to the player's current position
+            API.ClearFocus();
+        }
+
+        private async Task SpawnNPC(string modelName)
+        {
             uint modelHash = (uint)API.GetHashKey(modelName);
 
-            // Request the model
+            // Request and load the NPC model
             API.RequestModel(modelHash);
-
-            // Wait until the model is loaded
             while (!API.HasModelLoaded(modelHash))
             {
                 await Delay(50);
             }
 
-            // Create the NPC (ped)
-            pedHandle = API.CreatePed(4, modelHash, playerPosition.X, playerPosition.Y, playerPosition.Z, 70, true, false);
-            //pedHandle = API.CreatePed(4, modelHash, mugshotModelPosition.X, mugshotModelPosition.Y, mugshotModelPosition.Z, 70, true, false);
+            // Spawn the NPC
+            pedHandle = API.CreatePed(4, modelHash, mugshotModelPosition.X, mugshotModelPosition.Y, mugshotModelPosition.Z, 178.805f, true, false);
 
-            //sets all components default.
-            for (int componentId = 0; componentId < 12; componentId++) // 0-11 covers all drawable components
+            // Set all components to default
+            for (int componentId = 0; componentId < 12; componentId++)
             {
                 API.SetPedComponentVariation(pedHandle, componentId, 0, 0, 0);
             }
-            // Release the model from memory
+
+            // Release model from memory
             API.SetModelAsNoLongerNeeded(modelHash);
         }
 
 
-        // Despawn the NPC after the sequence is done
+
+        private void SetupCamera()
+        {
+            if (pedHandle == 0)
+            {
+                Debug.WriteLine("NPC not found, camera setup aborted.");
+                return;
+            }
+
+            // Create or reuse the custom camera
+            if (customCamera == 0)
+            {
+                customCamera = API.CreateCam("DEFAULT_SCRIPTED_CAMERA", true);
+            }
+
+            // Attach the camera to the ped's head/neck (bone index 31086 = head)
+            API.AttachCamToPedBone(customCamera, pedHandle, 31086, 0.0f, 4.8f, 0.0f, true); // Adjust offset as needed
+            API.SetCamFov(customCamera, cameraFov);
+            API.PointCamAtPedBone(customCamera, pedHandle, 31086, 0.0f, 0.0f, 0.09f, true);
+
+            // Enable the custom camera
+            API.RenderScriptCams(true, false, 0, true, false);
+        }
+
+        private void ResetCamera()
+        {
+            // Return to the player's default camera view
+            API.RenderScriptCams(false, false, 0, true, false);
+
+            if (customCamera != 0)
+            {
+                API.DestroyCam(customCamera, false);
+                customCamera = 0;
+            }
+        }
+
         private void DespawnNPC()
         {
             if (API.DoesEntityExist(pedHandle))
             {
                 API.DeletePed(ref pedHandle);
-                isRunning= false;
+                pedHandle = 0;
             }
         }
     }
 }
 
-
-
-
-        // Set the custom camera to view the NPC
-        // public async Task SetCamera()
-        // {
-        //     // Ensure the NPC is present before setting the camera
-        //     if (pedHandle == 0)
-        //     {
-        //         Debug.WriteLine("NPC not found, aborting camera setup.");
-        //         return;
-        //     }
-
-        //     if (API.HasCollisionLoadedAroundEntity(pedHandle))
-        //     { Debug.WriteLine("Mugshot 6"); }
-
-
-        //     // Create the custom camera
-        //     customCamera = API.CreateCam("DEFAULT_SCRIPTED_CAMERA", true);
-        //     API.AttachCamToPedBone(customCamera, pedHandle, 31086, 0.3f, 2.6f, 0.0f, true);
-        //     API.SetCamRot(customCamera, cameraRotation.X, cameraRotation.Y, cameraRotation.Z, 2);
-        //     API.SetCamFov(customCamera, cameraFov);
-        //     API.RenderScriptCams(true, true, 1, true, false);
-        //     TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"camera's pedHeadBoneIndex{pedHeadBoneIndex}" } });
-        //     // Wait for a short duration before resetting
-        //     await Delay(4000);
-
-        //     // Reset the camera after the delay
-        //     ResetCamera();
-        // }
-
-        // Reset the camera back to normal
-        // public void ResetCamera()
-        // {
-        //     API.RenderScriptCams(false, false, 0, true, false);
-
-        //     if (customCamera != 0)
-        //     {
-        //         API.DestroyCam(customCamera, false);
-        //         customCamera = 0;
-        //     }
-        // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // Force loading the mugshot area
-        // private async Task ForceLoadMugshotArea()
-        // {
-        //     Debug.WriteLine("running ForceLoadMugshotArea");
-        //     while (pedHandle == 0)
-        //     {
-        //         Debug.WriteLine("No ped to load collision for. Retrying in 10ms.");
-        //         await Delay(10);
-        //     }
-        //     API.RequestCollisionForModel((uint)pedHandle);
-        //     while (!API.HasCollisionLoadedAroundEntity(pedHandle))
-        //     {
-        //         Debug.WriteLine("Collision hasn't loaded around ped. Retrying in 10ms.");
-        //         await Delay(10);
-        //     }
-        // }
-
-        // Spawn an NPC with the given model name
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// //      public class NotificationClient : BaseScript
-// // {
-// //     public NotificationClient()
-// //     {
-// //         EventHandlers["showNotification"] += new Action<string>(ShowNotification);
-// //     }
-
-// //     private void ShowNotification(string message)
-// //     {
-// //         API.SetNotificationTextEntry("STRING");
-// //         API.AddTextComponentString(message);
-// //         API.DrawNotification(false, true);
-// //     }
-// // }

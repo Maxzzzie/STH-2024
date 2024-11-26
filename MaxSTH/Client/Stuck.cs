@@ -16,10 +16,10 @@ namespace STHMaxzzzie.Client
         public List<int> allowedClassIdForStuckVeh = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 17, 18, 19, 20 };
         public StuckScript()
         {
-            RegisterCommand("stuck", new Action(StuckCommand), false);
-            RegisterKeyMapping("+Stuck", "Vehicle stuck recovery", "keyboard", "n"); // Change "n" to your desired key.
+            RegisterKeyMapping("+Stuck", "Vehicle stuck nudge", "keyboard", "n"); // Change "n" to your desired key.
         }
 
+        [EventHandler("StuckCommand")]
         private async void StuckCommand()
         {
             if (isRunning)
@@ -152,14 +152,11 @@ namespace STHMaxzzzie.Client
         [Command("+Stuck")]
         private void StuckKeyPress()
         {
-            if (IsPauseMenuActive())
+            if (Game.PlayerPed.IsAlive == false || IsPauseMenuActive())
             {
                 return;
-            }
-            if (Game.PlayerPed.IsAlive == true)
-            {
+            }       
                 StuckCommand();
-            }
         }
 
         [Command("-Stuck")]

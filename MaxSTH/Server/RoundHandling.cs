@@ -17,7 +17,7 @@ namespace STHMaxzzzie.Server
         public static List<string> runnerList = new List<string>();
         public static int runnerThisGame = -1;
 
-        [Command("startgame", Restricted = false)] //normal restriction true 
+        [Command("startgame", Restricted = true)] //normal restriction true 
         [EventHandler("startGameMode")]
         public void startGameMode(int source, List<object> args, string raw)
         {

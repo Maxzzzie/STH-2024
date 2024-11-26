@@ -16,10 +16,13 @@ namespace STHMaxzzzie.Client
         bool isShootingFromVehicleAllowed = false;
 
         [EventHandler("Stamina")]
-        private void Stamina()
+        public static void Stamina()
         {
             bool worked = API.SetPlayerMaxStamina(Game.Player.Handle, 100);
-            Debug.WriteLine($"set stamina to 100, true if it worked. {worked} ");
+            SetPlayerHealthRechargeLimit(Game.Player.Handle, 1);
+            // int health = GetPedMaxHealth(GetPlayerPed(Game.Player.Handle));
+            // Debug.WriteLine($"set stamina and health {health}");
+            // SetPedArmour(GetPlayerPed(Game.Player.Handle), 100);
         }
 
         [EventHandler("clear_vehicles")]

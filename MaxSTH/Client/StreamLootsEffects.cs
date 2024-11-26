@@ -23,10 +23,26 @@ namespace STHMaxzzzie.Client
 
         public StreamLootsEffects()
         {
-            Tick += OnTick;
+            Tick += Spotlight;
+            Tick += MonitorWeaponAndShooting;
+            Tick += UpdatePedTasks;
+            Tick += Gta1Cam;
+            //loopThroughSlowly();
+
         }
 
-        [EventHandler("StreamLootsEffect")]
+        //     int x = 1;
+
+        // async void loopThroughSlowly()
+        // {
+        //     while (x == 1)
+        //     {
+        //     MonitorWeaponAndShooting();
+        //     await Delay(500);
+        //     }
+        // }
+
+        [EventHandler("StreamLootsEffect")] 
         void DoStreamLootsEvent(string type)
         {
             if (type == "cleartires")
@@ -79,7 +95,9 @@ namespace STHMaxzzzie.Client
             }
             if (type == "gunjam")
             {
-                GunJamEffect();
+                canGunJam = true;
+                isGunJammed = false;
+                maxShots = rand.Next(1, 15);
             }
             if (type == "fame")
             {
@@ -103,7 +121,7 @@ namespace STHMaxzzzie.Client
             {
                 PaintAllNearbyVehicles();
             }
-            if (type == "pebble")
+            if (type == "crack")
             {
                 BreakAllVehicleWindows();
             }
@@ -131,6 +149,10 @@ namespace STHMaxzzzie.Client
             if (type == "carswap")
             {
                 SwapCarsWithAnotherPlayer();
+            }
+            if (type == "shake")
+            {
+                shakeCam();
             }
         }
 
@@ -234,14 +256,13 @@ namespace STHMaxzzzie.Client
             if (Game.PlayerPed.IsInVehicle())
             {
                 Vehicle veh = Game.PlayerPed.CurrentVehicle;
-                API.ApplyForceToEntity(veh.Handle, 1, 0.0f, 0.0f, 80.0f, 0.0f, 0.0f, 0.0f, 0, true, true, true, false, true);
+                API.ApplyForceToEntity(veh.Handle, 1, 0.0f, 0.0f, 40.0f, 0.0f, 0.0f, 0.0f, 0, true, true, true, false, true);
             }
         }
 
-        private async Task OnTick() //spotlight
+        private async Task Spotlight() //spotlight
         {
-            UpdatePedTasks(); // Update NPC tasks regularly
-            CheckReload();    // Check for reload to unjam gun
+
             if (isSpotlightOn)
             // Get the player's current position
             {
@@ -252,60 +273,216 @@ namespace STHMaxzzzie.Client
                 Vector3 direction = new Vector3(0, 0, -1); // Pointing straight down
                 float distance = 100.0f; // Maximum distance the light reaches
                 int r = 255, g = 255, b = 255; // White light color
-                float brightness = 5.0f; // Intensity of the light
+                float brightness = 4.0f; // Intensity of the light
                 float roundness = 1.0f; // Spot size and softness
                 float radius = 25.0f; // Radius of the spotlight
-                float fadeout = 5.0f; // How the light fades out at the edges
+                float fadeout = 8.0f; // How the light fades out at the edges
 
                 // Draw the spotlight
                 API.DrawSpotLightWithShadow(lightPosition.X, lightPosition.Y, lightPosition.Z, direction.X, direction.Y, direction.Z,
                                   r, g, b, distance, brightness, roundness, radius, fadeout, 1);
-
             }
-            if (isGta1CamOn)
-            {
-                Vector3 playerPosition = Game.PlayerPed.Position;
-                Vector3 cameraPosition = playerPosition + new Vector3(0, 0, 50.0f); // Camera above the player
-
-                API.SetCamCoord(API.GetRenderingCam(), cameraPosition.X, cameraPosition.Y, cameraPosition.Z);
-                API.PointCamAtEntity(API.GetRenderingCam(), Game.PlayerPed.Handle, 0, 0, 0, true);
-            }
-            await Task.FromResult(0); // Yield control back to FiveM runtime
+            await Task.FromResult(0);
         }
 
-        private bool isCameraLocked = false;
-        private DateTime cameraLockEndTime;
-        private void SetReverseCam()
+
+        public Vector3 playerPreviousPosition = new Vector3(0, 0, 0);
+        public float dynamicCamHeight = 2;
+        private int gta1CamHandle = -1;
+
+        private const float MovementLVL0 = 0.1f;
+        private const float MovementLVL1 = 0.3f;
+        private const float MovementLVL2 = 0.6f;
+        private const float MovementLVL3 = 0.8f;
+
+        private float CurrentCamHeight = 10f;
+        private float smoothingFactor = 0.1f; // Lerp factor for smoother transitions
+        private int tickBuffer = 0; // Buffer for threshold changes
+        private int requiredTicks = 30; // Ticks required to commit to a height change
+
+        private int obstructedTicks = 0; // Counter for obstruction
+        private const int maxObstructedTicks = 30; // Threshold for lowering the camera
+        private bool goBackUp = true;
+        private async Task Gta1Cam()
         {
+            var playerPed = Game.PlayerPed;
 
-            if (isGta1CamOn)
+            if (isGta1CamOn && ((Game.PlayerPed.Weapons.Current.Hash == WeaponHash.Unarmed && Game.PlayerPed.IsOnFoot) || Game.PlayerPed.IsInVehicle()))
             {
-                Vector3 playerPosition = Game.PlayerPed.Position;
-                Vector3 cameraPosition = playerPosition + new Vector3(0, 0, 50.0f); // Camera above the player
+                // Create the camera if it doesn't already exist
+                if (gta1CamHandle == -1)
+                {
+                    gta1CamHandle = API.CreateCam("DEFAULT_SCRIPTED_CAMERA", true);
+                    API.SetCamActive(gta1CamHandle, true);
+                    API.RenderScriptCams(true, false, 0, true, false);
+                    API.SetCamFov(gta1CamHandle, 50);
+                }
 
-                // Create a new camera if it doesn't exist
-                int camHandle = API.CreateCam("DEFAULT_SCRIPTED_CAMERA", true);
-                API.SetCamCoord(camHandle, cameraPosition.X, cameraPosition.Y, cameraPosition.Z);
-                API.PointCamAtEntity(camHandle, Game.PlayerPed.Handle, 0, 0, 0, true);
+                // Get the player's position and speed
+                Vector3 playerPosition = playerPed.Position;
+                float maxCamHeight = CheckForRoof(playerPosition);
+                float playerSpeed = Vector3.Distance(playerPosition, playerPreviousPosition);
+                playerPreviousPosition = playerPosition;
 
-                API.RenderScriptCams(true, false, 0, true, false); // Activate the new camera
-                API.DestroyCam(API.GetRenderingCam(), false); // Destroy the previous camera to avoid conflicts
+                // Determine the target height based on speed with hysteresis
+                float nextCamHeight = CurrentCamHeight;
 
-                isCameraLocked = true;
-                cameraLockEndTime = DateTime.Now.AddSeconds(15);
-            }
+                //Debug.WriteLine($"{CurrentCamHeight} - {maxCamHeight} - {goBackUp} - {obstructedTicks}");
 
-            // Prevent camera switching for 15 seconds
-            if (isCameraLocked && DateTime.Now < cameraLockEndTime)
-            {
-                API.DisableControlAction(0, 0x3C, true); // Disable camera switching input
+                if (maxCamHeight > CurrentCamHeight + 3f && !goBackUp)
+                {
+                    obstructedTicks--; // Reset the counter if the player is visible
+                    if (obstructedTicks == 20)
+                    {
+                        goBackUp = true;
+                        //Debug.WriteLine($"{goBackUp}");
+                        obstructedTicks = 0;
+                    }
+                }
+                else if (maxCamHeight < CurrentCamHeight)
+                {
+                    if (obstructedTicks >= maxObstructedTicks)
+                    {
+                        nextCamHeight = maxCamHeight - 1; // Lower the camera if obstructed
+                        goBackUp = false;
+                        tickBuffer = requiredTicks;
+                    }
+                    else
+                    {
+                        obstructedTicks++; // Increment obstruction counter
+                    }
+                }
+                else if (!goBackUp)
+                {
+                    //ends the setting height here if the cam isn't supposed to go higher yet.
+                }
+                else if (goBackUp && obstructedTicks != 0)
+                {
+                    obstructedTicks = 0;
+                }
+                else if (Game.PlayerPed.IsOnFoot || Game.PlayerPed.IsGettingIntoAVehicle || Game.PlayerPed.IsJumpingOutOfVehicle)
+                {
+                    nextCamHeight = 20f;
+                }
+                else if (playerSpeed < MovementLVL0 - 0.02f) // Adding hysteresis buffer
+                {
+                    nextCamHeight = 50f;
+                }
+                else if (playerSpeed >= MovementLVL0 && playerSpeed < MovementLVL1 - 0.05f)
+                {
+                    nextCamHeight = 65f;
+                }
+                else if (playerSpeed >= MovementLVL1 && playerSpeed < MovementLVL2 - 0.05f)
+                {
+                    nextCamHeight = 80f;
+                }
+                else if (playerSpeed >= MovementLVL2)
+                {
+                    nextCamHeight = 90f;
+                }
+
+                // Adjust target height only if it's been consistent for a few ticks
+                if (Math.Abs(nextCamHeight - CurrentCamHeight) > 0.1f)
+                {
+                    tickBuffer++; // Increment buffer when there's a difference
+                    if (tickBuffer >= requiredTicks)
+                    {
+                        CurrentCamHeight = nextCamHeight; // Commit to the new height
+                        tickBuffer = 0; // Reset the buffer
+                    }
+                }
+                else
+                {
+                    tickBuffer = 0; // Reset the buffer if speeds stay consistent
+                }
+
+
+                // Smoothly interpolate the camera height
+                dynamicCamHeight = Lerp(dynamicCamHeight, CurrentCamHeight, smoothingFactor);
+
+                // Update camera position and lock orientation to north
+                Vector3 cameraPosition = playerPosition + new Vector3(0, 0, dynamicCamHeight);
+                API.SetCamCoord(gta1CamHandle, cameraPosition.X, cameraPosition.Y, cameraPosition.Z);
+                API.SetCamRot(gta1CamHandle, -90f, -90f, Game.PlayerPed.Heading - 90f, 2); // North-bound orientation
+                API.LockMinimapAngle((int)Math.Round(Game.PlayerPed.Heading)); // Sets the map to player heading. Make 0 for north-bound orientation.
             }
             else
             {
-                isCameraLocked = false;
-                API.EnableControlAction(0, 0x3C, true); // Enable camera switching after lock period
+                // Turn off the GTA1 Camera and return to the default view
+                if (gta1CamHandle != -1)
+                {
+                    API.UnlockMinimapAngle();
+                    API.RenderScriptCams(false, true, 100, true, false);
+                    API.DestroyCam(gta1CamHandle, false);
+                    gta1CamHandle = -1;
+                }
             }
 
+            await Task.FromResult(0); // Yield control back to FiveM runtime
+        }
+
+        private float CheckForRoof(Vector3 playerPosition)
+        {
+            // Perform a raycast upward from the player's position
+            Vector3 rayStart = playerPosition + new Vector3(0, 0, 1); // Starting just above the player's head
+            Vector3 rayEnd = playerPosition + new Vector3(0, 0, 100f); // Ray cast upwards
+
+            int rayHandle = API.StartShapeTestRay(rayStart.X, rayStart.Y, rayStart.Z, rayEnd.X, rayEnd.Y, rayEnd.Z, (int)IntersectOptions.Everything, Game.PlayerPed.Handle, 7);
+
+            bool hit = false;
+            Vector3 hitCoords = Vector3.Zero;
+            Vector3 surfaceNormal = Vector3.Zero;
+            int entityHit = 0;
+
+            API.GetShapeTestResult(rayHandle, ref hit, ref hitCoords, ref surfaceNormal, ref entityHit);
+
+            if (hit == true)
+            {
+                float maxCamHeight = hitCoords.Z - playerPosition.Z;
+                // If a roof/obstruction is detected, return the hit height (roof height)
+                return maxCamHeight;
+            }
+
+            // If no roof is detected, return a very high value (no roof)
+            return 1000;
+        }
+        private float Lerp(float start, float end, float percent)
+        {
+            return start + (end - start) * percent;
+        }
+
+
+
+        private DateTime reverseCamLockEndTime;
+        int previousCam;
+
+        private void SetReverseCam()
+        {
+            if (!isReverseCamOn)
+            {
+                previousCam = API.GetFollowPedCamViewMode();
+                API.SetFollowVehicleCamViewMode(4); // 4 = 'Cinematic-like' rear view in most cases
+                isReverseCamOn = true;
+                reverseCamLockEndTime = DateTime.Now.AddSeconds(15);
+                API.DisableControlAction(0, 0x3C, true); // Disable camera switching
+            }
+            else
+            {
+                API.SetFollowVehicleCamViewMode(previousCam); // Resets to a normal view
+                isReverseCamOn = false;
+                API.EnableControlAction(0, 0x3C, true); // Re-enable camera controls
+            }
+        }
+
+        private async void unlockReverseCam()
+        {
+            while (DateTime.Now < reverseCamLockEndTime)
+            {
+                await Delay(500);
+            }
+            isReverseCamOn = false;
+            API.SetFollowVehicleCamViewMode(previousCam);
+            API.EnableControlAction(0, 0x3C, true); // Re-enable camera controls
         }
 
         private void BounceVehicle()
@@ -342,43 +519,72 @@ namespace STHMaxzzzie.Client
             }
         }
 
-        private int shotsFired = 0;
-        private int jamShotLimit = 0;
-        private bool isGunJammed = false;
+private int shotsFired = 0;
+private int maxShots = 10;
+public bool canGunJam = false;
+private bool isGunJammed = false;
 
-        void GunJamEffect()
+private async Task MonitorWeaponAndShooting()
+{
+    var playerPed = Game.PlayerPed;
+
+    // If the weapon is jammed, disable firing
+    if (isGunJammed)
+    { 
+        //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"isjammed"}});
+        API.DisablePlayerFiring(playerPed.Handle, true);
+
+        // Allow unjamming by reloading
+        if (API.IsPedReloading(playerPed.Handle)) // Check for reload key press
         {
-            if (!isGunJammed)
-            {
-                jamShotLimit = rand.Next(1, 7); // Set random shot limit
-                shotsFired = 0; // Reset the shot counter
-            }
-
-            if (shotsFired < jamShotLimit)
-            {
-                API.TaskShootAtCoord(Game.PlayerPed.Handle,
-                                     Game.PlayerPed.Position.X + rand.Next(-5, 5),
-                                     Game.PlayerPed.Position.Y + rand.Next(-5, 5),
-                                     Game.PlayerPed.Position.Z,
-                                     1000,
-                                     (uint)WeaponHash.Pistol);
-                shotsFired++;
-            }
-
-            if (shotsFired >= jamShotLimit)
-            {
-                isGunJammed = true;
-                API.SetAmmoInClip(Game.PlayerPed.Handle, (uint)WeaponHash.Pistol, 0); // Jam the gun
-            }
+            isGunJammed = false;
+            shotsFired = 0; // Reset shots fired
+            canGunJam = false;
+            NotificationScript.ShowNotification("~h~~g~Weapon unjammed!~h~");
         }
 
-        void CheckReload()
+        await Task.FromResult(0);
+        return; // Exit early, gun is jammed
+    }
+
+    // Ensure firing is enabled if the gun is not jammed
+    //API.DisablePlayerFiring(playerPed.Handle, true);
+
+    // If gun jamming is disabled, return early
+    if (!canGunJam)
+    {
+        //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"can't jam."}});
+        return;
+    }
+
+    // Check if the player has a weapon equipped and is on foot
+    if (Game.PlayerPed.Weapons.Current.Hash != WeaponHash.Unarmed && playerPed.IsOnFoot)
+    {
+        //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"holds weapon."}});
+        // Monitor for shooting
+        if (API.IsPedShooting(Game.PlayerPed.Handle))
         {
-            if (isGunJammed && API.IsControlJustPressed(0, (int)Control.Reload)) // Check for reload key press
-            {
-                isGunJammed = false;
-            }
+           //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"shot"}});
+            shotsFired++;
         }
+
+        // Jam the weapon if shots exceed the allowed limit
+        if (shotsFired >= maxShots)
+        {
+            isGunJammed = true;
+            NotificationScript.ShowNotification("~h~~r~Weapon jammed!~h~~n~~s~Press R to reload.");
+        }
+    }
+    else
+    {
+        //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"else."}});
+        // Reset state when switching weapons or unequipping
+        shotsFired = 0; // Reset the shot counter
+        isGunJammed = false;
+    }
+
+    await Task.FromResult(0);
+}
 
 
 
@@ -401,7 +607,7 @@ namespace STHMaxzzzie.Client
             }
         }
 
-        void UpdatePedTasks()
+        private async Task UpdatePedTasks()
         {
             Vector3 playerPos = Game.PlayerPed.Position;
 
@@ -419,6 +625,7 @@ namespace STHMaxzzzie.Client
                     pedTaskEndTimes.Remove(npc); // Remove from dictionary after 20 seconds or if the ped is dead
                 }
             }
+            await Task.FromResult(0); // Yield control back to FiveM runtime
         }
 
         void StartCarsDrivingIntoPlayer()
@@ -654,20 +861,44 @@ namespace STHMaxzzzie.Client
             Vehicle veh = Game.PlayerPed.CurrentVehicle;
             if (veh != null)
             {
+                int value = rand.Next(0, 7);
+                string compacts = "panto,issi2,prairie,dilettante2,rhapsody,brioso,dilettante";
+                string[] compactNames = compacts.Split(',');
+                Vector3 playerSpeed = Game.PlayerPed.Velocity;
                 Vector3 currentPosition = veh.Position;
+                float heading = Game.PlayerPed.Heading;
                 veh.Delete();
-                Vehicle compactCar = await World.CreateVehicle(VehicleHash.Panto, currentPosition);
+                var model = new Model(max_Vehicle.VehicleNameToHash[compactNames[value]]);
+                Vehicle compactCar = await World.CreateVehicle(model, currentPosition, heading);
+                API.SetVehicleEngineOn(compactCar.Handle, true, true, false);
                 Game.PlayerPed.Task.WarpIntoVehicle(compactCar, VehicleSeat.Driver);
+                bool temp = false;
+
+                compactCar.Velocity = playerSpeed;
+                //NotificationScript.ShowNotification($"spawned a " + compactNames[value]);
             }
         }
 
+        bool isMaxSpeedReduced = false;
+        Vehicle oldVehicle;
         void ApplySpeedLimiter()
         {
-            Vehicle veh = Game.PlayerPed.CurrentVehicle;
-            if (veh != null)
-            {
-                veh.MaxSpeed = 20f; // Limit speed to 20 units
-            }
+            // Vehicle veh = Game.PlayerPed.CurrentVehicle;
+            // if (veh == null)
+            // {
+            //     isMaxSpeedReduced = false;
+            // }
+            // else if (oldVehicle == veh && isMaxSpeedReduced)
+            // {
+            //    veh.MaxSpeed = 200;
+            // }
+            // else 
+            // {
+            // isMaxSpeedReduced = true;
+            // oldVehicle = veh;
+            // veh.MaxSpeed = 0.1f;
+            // }
+
         }
 
         void SwapCarsWithAnotherPlayer()
@@ -690,5 +921,27 @@ namespace STHMaxzzzie.Client
                 }
             }
         }
+
+        public static async void shakeCam() //currently does nothing
+        {
+            // Possible shake types (updated b617d):  
+            // DEATH_FAIL_IN_EFFECT_SHAKE  
+            // DRUNK_SHAKE  
+            // FAMILY5_DRUG_TRIP_SHAKE  
+            // HAND_SHAKE  
+            // JOLT_SHAKE  
+            // LARGE_EXPLOSION_SHAKE  
+            // MEDIUM_EXPLOSION_SHAKE  
+            // SMALL_EXPLOSION_SHAKE  
+            // ROAD_VIBRATION_SHAKE  
+            // SKY_DIVING_SHAKE  
+            // VIBRATE_SHAKE  
+            int cam = API.GetRenderingCam();
+
+            API.ShakeCam(cam, "VIBRATE_SHAKE", 1);
+            await Delay(5000);
+            API.StopCamShaking(cam, true);
+        }
+
     }
 }

@@ -482,7 +482,8 @@ Jamestown, 327.9052, -2035.027, 20.50116
 Vagos metal art installation, 364.8126, -2120.51, 16.1904
 Large bridges crossing, 251.6074, -2667.165, 17.95217
 Large bridges connecting road, 195.2982, -2815.198, 12.2355
-You are not supposed to be here*firewolf, -2880.731, -1768.14, 132.537Church Great chapparal, -320.287, 2804.291, 71.44028
+You are not supposed to be here*firewolf, -2880.731, -1768.14, 132.537
+Church Great chapparal, -320.287, 2804.291, 71.44028
 Xero grand senora desert, 51.28518, 2778.051, 62.55007
 Stoner cement plant, 315.8188, 2868.164, 55.61139
 Suburban grand senora desert, 618.7587, 2730.875, 41.60465

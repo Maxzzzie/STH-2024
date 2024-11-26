@@ -6,7 +6,7 @@ namespace STHMaxzzzie.Server
 {
     public class Playerlist : BaseScript
     {
-        public Dictionary<int, string> playerModels = new Dictionary<int, string>();
+        public static Dictionary<int, string> playerModels = new Dictionary<int, string>();
 
         [EventHandler("updateServerModel")]
         void UpdateServerModel(int source, string model)
@@ -37,32 +37,6 @@ namespace STHMaxzzzie.Server
                    TriggerClientEvent(Players[source], "ShowNotification",  $"{player.Name}({player.Handle}) Model:default Ping:{player.Ping}");
                     //TriggerClientEvent(Players[source], "showDebugMessage", $"{player.Name}({player.Handle}) Model:default Ping:{player.Ping}");
                 }
-            }
-        }
-
-        [EventHandler("sendClientModelNameForOutfit")]
-        void sendClientModelNameForOutfit(int source, int clientId)
-        {
-            //Debug.WriteLine($"Running sendCLientModelNameForOutfit.");
-            string name = "unknown";
-            if (playerModels.ContainsKey(clientId))
-            {
-                foreach (Player player in Players)
-                {
-
-                    if (int.Parse(player.Handle) == clientId)
-                    {
-                        name = player.Name;
-                        break;
-                    }
-                }
-                string chatMsg = $"This is what {name} looks like now.";
-                TriggerClientEvent(Players[source], "MugShotEvent", playerModels[clientId], chatMsg);
-            }
-            else 
-            {
-                string chatMsg = $"This player's skin isn't registered with the server. It's probably Michael.";
-                TriggerClientEvent(Players[source], "MugShotEvent", "player_zero", chatMsg);
             }
         }
     }
