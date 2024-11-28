@@ -1,19 +1,19 @@
 Known issues -----
-Endgame hunt twice crashes the server.
 
 To fix ------
+DelayMode at speed is hard to find the runner. Add 2nd blip always at 400m. Maybe change blip colour depending on speed. Maybe add markers on map like shotsfiredmarker
 GameHandler doesn't deal with wrong commands right.
 Commands are visible and availible for non moderators like /heartbeat
-dogleg to add
-strawberry callouts to add
 blaine county callouts to add
-Add toggle'able blips.
 Increase health?
+/startgame with less then all args doesn't work
+/sl starmode doesn't go back to original colour
+Add m for mugshot and fix N activating while in chat
 
 
 To upgrade -------
-Upgrade callouts dict to filter out a number with a seperator. Think of having 2 main road callouts both showing "West coastal highway" saved as "West coastal highway =1, x,y,z" and "West coastal highway =2" for example.
-Change death msg to notification (SetNotificationTextEntry, AddTextComponentSubstringPlayerName, DrawNotification) (better is textcommand natives)
+Notify runner clothes change
+Particle effects for /fix and /model
 Fix pri spawner neons etc. (https://docs.fivem.net/natives/?_0x57F24253)
 Give player invincibility at spawn (https://docs.fivem.net/natives/?_0xDFB9A2A2)
 Fix teleport to teleport with vehicle if personal teleport
@@ -21,19 +21,18 @@ Add tpall to host sending the request.
 make legal vehicles more versatile. class/runner/hunter playerbased etc.
 Toggle pvp per person
 mechanics sound while repairing
-make display player online list visual instead of in chat
 Fire extinghuishers or location based fire prevention
-vehcle colour include neon and lisence plate
+make display player online list visual instead of in notifications
+
 
 To add ------
+Execution style finishing of a runner. /final stand mode.
+PlayerBlips
 change runner ragdol physics when out of the car for a while to prevent running over loads
 disable firetruck water
-disable peds have weapons
 /heal command with delay for health and armour. Make toggleable. wait instant locationspecific.
-Make /nudge or /stuck ( https://docs.fivem.net/natives/?_0xFF5A1988 https://docs.fivem.net/natives/?_0xA345EFE )
 Heading indicator
-Make expanded map
-Speed indicator
+Speed indicators
 Vehicle name/type warning or speed limiter
 Display all commands
 Display time ( https://docs.fivem.net/natives/?_0xA4EA0691 )
@@ -41,7 +40,6 @@ Implement a menu
 add ped that gets in player car https://docs.fivem.net/natives/?_0x374827C2
 Remove weapons from npcs/ fix getting weapons from npcs and gangmembers. https://docs.fivem.net/natives/?_0xA44CE817
 Add a good vehiclespawner
-Add vehiclecolorerererrer.
 Add an option for traffic density
 add karma system kill log of sorts
 Make a archive log.
@@ -50,6 +48,7 @@ force 1st person possibility
 Add pma voice (proximity chat) Increase range and add a radio frequency
 Spectator mode
 Out of bounds notification
+Found death teammate notification
 
 
 
@@ -86,6 +85,14 @@ Tracer mode
 
 //finished
 
+completed pre 27-11-2024
+Change death msg to notification (SetNotificationTextEntry, AddTextComponentSubstringPlayerName, DrawNotification) (better is textcommand natives)
+Add vehiclecolorerererrer.
+Add toggle'able blips.
+Upgrade callouts dict to filter out a number with a seperator. Think of having 2 main road callouts both showing "West coastal highway" saved as "West coastal highway =1, x,y,z" and "West coastal highway =2" for example.
+Make /nudge or /stuck ( https://docs.fivem.net/natives/?_0xFF5A1988 https://docs.fivem.net/natives/?_0xA345EFE )
+Make expanded map
+vehcle colour include neon and lisence plate
 
 
 30-10-2024

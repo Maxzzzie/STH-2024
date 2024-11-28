@@ -6,16 +6,17 @@ using static CitizenFX.Core.Native.API;
 using System.Collections.Generic;
 using STHMaxzzzie.Server;
 
-
 namespace STHMaxzzzie.Client
 {
     public class max_Vehicle : BaseScript
     {
+        Random rand = new Random();
         string allowedToFixStatus = "wait"; //can be on/off/wait/lsc.
         int timeStationairBeforeFix = 10;
         bool isVehSpawningRestricted = true;
         static Dictionary<string, string> vehicleinfoDict = new Dictionary<string, string>();
         public static Dictionary<string, VehicleHash> VehicleNameToHash = null;
+        bool CarChangesColourInLscForRunner = true;
         public max_Vehicle()
         {
             //make a dictionary mapping vehicle name => hash
@@ -360,6 +361,9 @@ namespace STHMaxzzzie.Client
 
         }
 
+
+
+
         //fix help/on/off/wait/lsc
         [Command("fix")]
         //add blips on the map.
@@ -421,7 +425,6 @@ namespace STHMaxzzzie.Client
                             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Your vehicle is fixed." } });
                         }
                     }
-
                 }
                 //fix where vehicle repair is set to Los santos customs. "lsc"
                 else if (allowedToFixStatus == "lsc")
@@ -456,6 +459,19 @@ namespace STHMaxzzzie.Client
                         Game.PlayerPed.CurrentVehicle.Repair();
                         //API.PlaySoundFrontend(-1, "MECHANIC_TOOL_RATTLE", "DEFAULT", false);
                         TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"The mechanic repaired your vehicle." } });
+                        if (RoundHandling.thisClientIsTeam == 1 && CarChangesColourInLscForRunner)
+                        {
+                            Vehicle veh = Game.PlayerPed.CurrentVehicle;
+                            if (veh != null)
+                            {
+                                //int[] colorIndices = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 31, 32, 30, 34, 35, 36,38,  };
+                                //int randomColor = colorIndices[rand.Next(colorIndices.Length)];
+                                int randomColor = rand.Next(160);
+                                veh.Mods.PrimaryColor = (VehicleColor)randomColor;
+                                veh.Mods.SecondaryColor = (VehicleColor)randomColor;
+                                //add particle effects at some point?
+                            }
+                        }
                     }
                     else
                     {
@@ -502,7 +518,7 @@ namespace STHMaxzzzie.Client
         private int? primaryColour = null;
         private int? secondaryColour = null;
         private int pearlescentColour = -1;
-        private Vector3 rgbLightsColour; 
+        private Vector3 rgbLightsColour;
         public static Vehicle lastVehicle = null;
 
         [EventHandler("updateClientColourAndDespawn")]
@@ -585,7 +601,7 @@ namespace STHMaxzzzie.Client
                 }
                 else
                 {
-                   ApplyVehicleColor(vehicle.Handle);
+                    ApplyVehicleColor(vehicle.Handle);
                 }
             }
 
@@ -617,15 +633,15 @@ namespace STHMaxzzzie.Client
             if (primaryColour.HasValue && secondaryColour.HasValue && RoundHandling.thisClientIsTeam != 1 && !StreamLootsEffects.isStarmodeOn)
             {
                 // Debug.WriteLine($"Setting vehicle colors to Primary: {primaryColor.Value}, Secondary: {secondaryColor.Value}");
-                    API.SetVehicleColours(vehicleHandle, primaryColour.Value, secondaryColour.Value);
-                    API.SetVehicleExtraColours(vehicleHandle, pearlescentColour, pearlescentColour);
-                    API.SetVehicleNeonLightEnabled(vehicleHandle, 0, true);
-                    API.SetVehicleNeonLightEnabled(vehicleHandle, 1, true);
-                    API.SetVehicleNeonLightEnabled(vehicleHandle, 2, true);
-                    API.SetVehicleNeonLightEnabled(vehicleHandle, 3, true);
-                    API.SetVehicleNeonLightsColour(vehicleHandle, (int)rgbLightsColour.X, (int)rgbLightsColour.Y, (int)rgbLightsColour.Z);
-                    API.ToggleVehicleMod(vehicleHandle, 22, true); //turns on neons
-                    API.SetVehicleXenonLightsCustomColor(vehicleHandle, (int)rgbLightsColour.X, (int)rgbLightsColour.Y, (int)rgbLightsColour.Z);
+                API.SetVehicleColours(vehicleHandle, primaryColour.Value, secondaryColour.Value);
+                API.SetVehicleExtraColours(vehicleHandle, pearlescentColour, pearlescentColour);
+                API.SetVehicleNeonLightEnabled(vehicleHandle, 0, true);
+                API.SetVehicleNeonLightEnabled(vehicleHandle, 1, true);
+                API.SetVehicleNeonLightEnabled(vehicleHandle, 2, true);
+                API.SetVehicleNeonLightEnabled(vehicleHandle, 3, true);
+                API.SetVehicleNeonLightsColour(vehicleHandle, (int)rgbLightsColour.X, (int)rgbLightsColour.Y, (int)rgbLightsColour.Z);
+                API.ToggleVehicleMod(vehicleHandle, 22, true); //turns on neons
+                API.SetVehicleXenonLightsCustomColor(vehicleHandle, (int)rgbLightsColour.X, (int)rgbLightsColour.Y, (int)rgbLightsColour.Z);
             }
         }
     }

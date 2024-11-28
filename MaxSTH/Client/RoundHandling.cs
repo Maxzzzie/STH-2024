@@ -49,6 +49,7 @@ namespace STHMaxzzzie.Server
             {
                 startDelayMode();
             }
+            Health.SetPlayerStats();
         }
 
         [EventHandler("clientEndGame")]

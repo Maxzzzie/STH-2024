@@ -10,20 +10,9 @@ using Mono.CSharp;
 
 namespace STHMaxzzzie.Client
 {
-    //start
     public class Misc : BaseScript
     {
         bool isShootingFromVehicleAllowed = false;
-
-        [EventHandler("Stamina")]
-        public static void Stamina()
-        {
-            bool worked = API.SetPlayerMaxStamina(Game.Player.Handle, 100);
-            SetPlayerHealthRechargeLimit(Game.Player.Handle, 1);
-            // int health = GetPedMaxHealth(GetPlayerPed(Game.Player.Handle));
-            // Debug.WriteLine($"set stamina and health {health}");
-            // SetPedArmour(GetPlayerPed(Game.Player.Handle), 100);
-        }
 
         [EventHandler("clear_vehicles")]
         void RemoveAllVehicles(bool shouldRemoveProps)

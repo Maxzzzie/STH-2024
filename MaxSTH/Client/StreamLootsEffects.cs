@@ -839,6 +839,7 @@ private async Task MonitorWeaponAndShooting()
                 API.SetVehicleNeonLightEnabled(veh.Handle, 3, false);
                 API.ToggleVehicleMod(veh.Handle, 22, false); //turns off xenons
                 API.ClearVehicleCustomPrimaryColour(veh.Handle);
+                API.ClearVehicleCustomSecondaryColour(veh.Handle);
                 //API.SetVehicleColours(veh.Handle, primary, secondary);
                 isStarmodeOn = false;
                 VehiclePersistenceClient.lastVehicle = null;

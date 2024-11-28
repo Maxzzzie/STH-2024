@@ -8,7 +8,7 @@ namespace STHMaxzzzie.Client
     public class MugShot : BaseScript
     {
         private Vector3 mugshotModelPosition = new Vector3(402.848f, -996.826f, -99.900f);
-        private float cameraFov = 5.0f; // Zoom in for a close-up
+        private float cameraFov = 4.1f; // Zoom in for a close-up
         private int customCamera = 0; // Camera handle
         private int pedHandle = 0; // NPC handle
         private bool isRunning = false;
@@ -24,7 +24,9 @@ namespace STHMaxzzzie.Client
             if (!Game.PlayerPed.IsAlive || API.IsPauseMenuActive() || isRunning)
                 return;
 
-            TriggerServerEvent("mugShot");
+            Debug.WriteLine("mugshot");
+            TriggerServerEvent("mugShot", Game.Player.ServerId, 0);
+
         }
 
         [Command("-MugShotKey")]
@@ -117,7 +119,7 @@ namespace STHMaxzzzie.Client
             // Attach the camera to the ped's head/neck (bone index 31086 = head)
             API.AttachCamToPedBone(customCamera, pedHandle, 31086, 0.0f, 4.8f, 0.0f, true); // Adjust offset as needed
             API.SetCamFov(customCamera, cameraFov);
-            API.PointCamAtPedBone(customCamera, pedHandle, 31086, 0.0f, 0.0f, 0.09f, true);
+            API.PointCamAtPedBone(customCamera, pedHandle, 31086, 0.0f, 0.0f, 0.075f, true);
 
             // Enable the custom camera
             API.RenderScriptCams(true, false, 0, true, false);

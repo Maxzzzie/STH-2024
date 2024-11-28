@@ -111,6 +111,7 @@ namespace STHMaxzzzie.Client
                     lastRespawnPoint = "null";
                     secondToLastRespawnPoint = "null";
                 }
+            Health.SetPlayerStats();
 
                 // await Delay(5000);
                 // SetPlayerInvincible(Game.PlayerPed.Handle, false);

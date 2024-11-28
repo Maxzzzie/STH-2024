@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using CitizenFX.Core;
-using static CitizenFX.Core.Native.API;
 using System.Collections.Generic;
 using STHMaxzzzie.Server;
+using CitizenFX.Core.Native;
 
 namespace STHMaxzzzie.Client
 {
@@ -16,7 +16,7 @@ namespace STHMaxzzzie.Client
         public List<int> allowedClassIdForStuckVeh = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 17, 18, 19, 20 };
         public StuckScript()
         {
-            RegisterKeyMapping("+Stuck", "Vehicle stuck nudge", "keyboard", "n"); // Change "n" to your desired key.
+            API.RegisterKeyMapping("+Stuck", "Vehicle stuck nudge", "keyboard", "u"); // Change "n" to your desired key.
         }
 
         [EventHandler("StuckCommand")]
@@ -50,14 +50,14 @@ namespace STHMaxzzzie.Client
                 return;
             }
 
-            var VehClass = GetVehicleClass(vehicle.Handle);
+            var VehClass = API.GetVehicleClass(vehicle.Handle);
             if (!allowedClassIdForStuckVeh.Contains(VehClass))
             {
                 TriggerEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "You need to be in a car to use /stuck." } });
                 isRunning = false;
                 return;
             }
-            Vector3 speed = GetEntityVelocity(vehicle.Handle);
+            Vector3 speed = API.GetEntityVelocity(vehicle.Handle);
             if (speed.X > 0.2f || speed.Y > 0.2f || speed.Z > 0.2f)
             {
                 TriggerEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "You need to be standing still to use /stuck." } });
@@ -138,7 +138,7 @@ namespace STHMaxzzzie.Client
                 return;
             }
             if (isUpsideDown) vehicle.Rotation = new Vector3(rotation.X, 0, rotation.Z);
-            SetEntityVelocity(vehicle.Handle, force.X, force.Y, force.Z);
+            API.SetEntityVelocity(vehicle.Handle, force.X, force.Y, force.Z);
             //TriggerEvent("chat:addMessage", new { color = new[] { 0, 255, 0 }, args = new[] { $"/stuck used {usageCount} time(s)." } });
             isRunning = false;
             // Reset after 60 seconds of inactivity
@@ -152,7 +152,7 @@ namespace STHMaxzzzie.Client
         [Command("+Stuck")]
         private void StuckKeyPress()
         {
-            if (Game.PlayerPed.IsAlive == false || IsPauseMenuActive())
+            if (API.IsPauseMenuActive() || !Game.PlayerPed.IsAlive)
             {
                 return;
             }       

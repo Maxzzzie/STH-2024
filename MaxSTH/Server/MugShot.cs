@@ -4,26 +4,29 @@ using CitizenFX.Core;
 
 namespace STHMaxzzzie.Server
 {
-public class MugShot : BaseScript
+    public class MugShot : BaseScript
     {
         [Command("mugshot", Restricted = false)]
-        [EventHandler("mugShot")]
         async void mugShot(int source, List<object> args, string raw)
         {
             if (args.Count == 1)
             {
-                int temp;
-                bool isArgs0Int = Int32.TryParse(args[0].ToString(), out temp);
+                int target;
+                bool isArgs0Int = Int32.TryParse(args[0].ToString(), out target);
                 if (isArgs0Int)
                 {
-                    //Debug.WriteLine($"Test 1");
-                    sendClientModelNameForOutfit(source, int.Parse(args[0].ToString()));
+                  mugShot(source, target);
                 }
-                else
-                {
-                    //Debug.WriteLine($"test 2");
-                                    sendClientModelNameForOutfit(source, source);
-                }
+            }
+        }
+
+            [EventHandler("mugShot")]
+            async void mugShot(int source, int target)
+            {
+                Debug.WriteLine("Mugshot received by server.");
+            if (target != 0) 
+            {
+                    sendClientModelNameForOutfit(source, target);
             }
             else
             {
@@ -34,7 +37,7 @@ public class MugShot : BaseScript
                 }
                 else sendClientModelNameForOutfit(source, source);
 
-            }    
+            }
         }
 
         void sendClientModelNameForOutfit(int source, int clientIdToSendModelOf)
@@ -55,7 +58,7 @@ public class MugShot : BaseScript
                 TriggerClientEvent(Players[source], "ShowNotification", $"This is what {name} looks like now.");
                 TriggerClientEvent(Players[source], "MugShotEvent", Playerlist.playerModels[clientIdToSendModelOf]);
             }
-            else 
+            else
             {
                 TriggerClientEvent(Players[source], "ShowNotification", $"This player's skin isn't registered with the server. It's probably Michael. Or the player isn't online.");
                 TriggerClientEvent(Players[source], "MugShotEvent", "player_zero");

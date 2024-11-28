@@ -13,8 +13,8 @@ namespace STHMaxzzzie.Server
         public static Player runPlayer;
         public static bool delayModeOn = false;
         public static int distanceToBlip = 400;
-        public static bool runnerSeesDelayBlip = true;
-        static int highSpeedSpeed = 10;
+        public static bool runnerSeesDelayBlip = false;
+        static int highSpeedSpeed = 20;
         static int highSpeedBlipDistanceSubtraction = 10;
         static int highSpeedBlipDistanceAddition = 10;
         static int highSpeedBlipTimeSubtractTrigger = 60;
@@ -68,35 +68,34 @@ namespace STHMaxzzzie.Server
         public static void delayMode(Player sourceHost, Player runPlayer, List<object> args)
         {
             // Debug.WriteLine($"server delayMode {sourceHost.Name} {runPlayer.Name} {args.Count} ");
-            int temp = 0;
-            if (args.Count == 2 && int.TryParse(args[1].ToString(), out temp) == true)
+                int runner;
+                int distance;
+                bool runnerSeesBlip;
+            if (args.Count == 2 && int.TryParse(args[1].ToString(), out runner))
             {
                 // Debug.WriteLine($"server delayMode 2args ");
                 delayModeOn = true;
-                runnerSeesDelayBlip = false;
-                TriggerEvent("startGame", "delay", int.Parse(args[1].ToString()));
+                TriggerEvent("startGame", "delay", runner);
                 TriggerClientEvent(runPlayer, "getBlipLocationForDelayMode", delayModeOn, distanceToBlip);
             }
-            else if (args.Count == 3 && int.TryParse(args[1].ToString(), out temp) == true && int.TryParse(args[2].ToString(), out temp) == true)
+            else if (args.Count == 3 && int.TryParse(args[1].ToString(), out runner) && int.TryParse(args[2].ToString(), out distance) )
             {
                 // Debug.WriteLine($"server delayMode 3args ");
-                distanceToBlip = int.Parse(args[2].ToString());
-                runnerSeesDelayBlip = false;
+                distanceToBlip = distance;
                 delayModeOn = true;
-                TriggerEvent("startGame", "delay", int.Parse(args[1].ToString()));
+                TriggerEvent("startGame", "delay", runner);
                 TriggerClientEvent(runPlayer, "getBlipLocationForDelayMode", delayModeOn, distanceToBlip);
             }
-            else if (args.Count == 4)
+            else if (args.Count == 4  && int.TryParse(args[1].ToString(), out runner) && int.TryParse(args[2].ToString(), out distance) && bool.TryParse(args[3].ToString(), out runnerSeesBlip))
             {
                 // Debug.WriteLine($"server delayMode 4args ");
-                bool isBool = bool.TryParse(args[3].ToString(), out isBool);
-                if (isBool)
+                if (bool.TryParse(args[3].ToString(), out runnerSeesBlip))
                 {
                     // Debug.WriteLine($"server delayMode 4args is bool {runPlayer}");
-                    runnerSeesDelayBlip = bool.Parse(args[3].ToString());
-                    distanceToBlip = int.Parse(args[2].ToString());
+                    distanceToBlip = distance;
+                    runnerSeesDelayBlip = runnerSeesBlip;
                     delayModeOn = true;
-                    TriggerEvent("startGame", "delay", int.Parse(args[1].ToString()));
+                    TriggerEvent("startGame", "delay", runner);
                     TriggerClientEvent(runPlayer, "getBlipLocationForDelayMode", delayModeOn, distanceToBlip);
                 }
                 else

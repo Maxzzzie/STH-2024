@@ -64,8 +64,8 @@ namespace STHMaxzzzie.Client
             SetPedDefaultComponentVariation(PlayerPedId());
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You changed your model to:{model}." } });
             TriggerEvent("lastWeaponClass", true);
-            Misc.Stamina();
             TriggerServerEvent("updateServerModel", playerHandle, model);
+            Health.SetPlayerStats();
         }
 
         //gets triggered by pressing f6 and /model

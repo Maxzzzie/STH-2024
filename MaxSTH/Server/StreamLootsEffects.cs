@@ -7,8 +7,8 @@ using STHMaxzzzie;
 namespace STHMaxzzzie.Server
 {
     public class StreamLootsEffect : BaseScript
-    {   
-            private List<string> effectNames = new List<string>{
+    {
+        private List<string> effectNames = new List<string>{
               "cleartires", //removes all tires from near the client
                 "spotlight", //puts a spotlight on the client from above
                 "burstsome", //bursts a tire of the client vehicle
@@ -48,7 +48,14 @@ namespace STHMaxzzzie.Server
                 bool isArgs1Int = Int32.TryParse(args[1].ToString(), out int playerid);
                 if (isArgs1Int)
                 {
-                    TriggerClientEvent(Players[playerid], "StreamLootsEffect", args[0]);
+                    if (playerid == 0)
+                    {
+                        TriggerClientEvent(Players[source], "StreamLootsEffect", args[0]);
+                    }
+                    else
+                    {
+                        TriggerClientEvent(Players[playerid], "StreamLootsEffect", args[0]);
+                    }
                 }
             }
 

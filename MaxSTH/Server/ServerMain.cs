@@ -14,8 +14,6 @@ namespace STHMaxzzzie.Server
 {
     public class ServerMain : BaseScript
     {
-        // this is a constructor because it has same name as class
-        // its a function that runs when gamemode starts
         static List<string> allowed_discord_ids = new List<string>();
         public static Dictionary<string, Vector4> respawnLocationsDict;
         public static Dictionary<string, Vector3> maxzzzieCalloutsDict;
