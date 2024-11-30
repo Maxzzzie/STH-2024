@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using System.Collections.Generic;
 using static CitizenFX.Core.Native.API;
-using STHMaxzzzie.Server;
+using STHMaxzzzie.Client;
 
 namespace STHMaxzzzie.Client
 {
@@ -14,7 +14,7 @@ namespace STHMaxzzzie.Client
         int delayBlipHandle = 0;
 
         
-        static int highSpeedSpeed = 10;
+        static int highSpeedSpeed = 30;
         static int highSpeedBlipDistanceSubtraction = 10;
         static int highSpeedBlipDistanceAddition = 10;
         static int highSpeedBlipTimeSubtractTrigger = 60;

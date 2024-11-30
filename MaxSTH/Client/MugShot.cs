@@ -11,7 +11,9 @@ namespace STHMaxzzzie.Client
         private float cameraFov = 4.1f; // Zoom in for a close-up
         private int customCamera = 0; // Camera handle
         private int pedHandle = 0; // NPC handle
-        private bool isRunning = false;
+        private bool isRunning = false; //this one checks if the function is running to prevent it from running twice.
+        private bool mugshotIsRunning = false; //this one will see if the key is unpressed and stop the mugshot. OR it gets set to false after a sertain amount of time.
+        DateTime mugshotEndTime;
 
         public MugShot()
         {
@@ -31,7 +33,19 @@ namespace STHMaxzzzie.Client
 
         [Command("-MugShotKey")]
         private void MugShotKeyIsUnpressed()
-        { } // Empty to prevent chat message spam
+        {  
+            mugshotIsRunning = false;
+         } // If unused keep empty to prevent chat message spam
+
+        private async void AutoTurnOffMugshotIfButtonReleaseGetsMissed()
+        {
+            mugshotEndTime = DateTime.Now.AddSeconds(15);
+            while (DateTime.Now < mugshotEndTime && mugshotIsRunning)
+                {
+                    await Delay(2);
+                }
+            mugshotIsRunning = false;
+        }
 
         [EventHandler("MugShotEvent")]
         private async void MugShotEvent(string modelName)
@@ -46,8 +60,14 @@ namespace STHMaxzzzie.Client
                 await SpawnNPC(modelName); // Spawn the NPC model
                 FocusMugshotArea(); // Ensure the area is visually loaded
                 SetupCamera(); // Set up the camera
-                await Delay(4000); // Wait for 4 seconds
+                mugshotIsRunning = true;
+                AutoTurnOffMugshotIfButtonReleaseGetsMissed();
+                while(mugshotIsRunning)
+                {
+                await Delay(10);
+                }
             }
+            
             finally
             {
                 ResetCamera(); // Reset the camera to default

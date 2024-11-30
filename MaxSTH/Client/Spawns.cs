@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using Mono.CSharp;
+using STHMaxzzzie.Client;
 
 namespace STHMaxzzzie.Client
 {
@@ -107,11 +108,11 @@ namespace STHMaxzzzie.Client
                 {
                     Debug.WriteLine($"respawnLocationsDict not found. Default respawn.");
                     Spawn.SpawnPlayer(-1610f, -1055f, 13f, 318f);
-                    //SetPlayerInvincible(Game.PlayerPed.Handle, true);
+                    SetPlayerInvincible(Game.PlayerPed.Handle, true);
                     lastRespawnPoint = "null";
                     secondToLastRespawnPoint = "null";
                 }
-            Health.SetPlayerStats();
+                
 
                 // await Delay(5000);
                 // SetPlayerInvincible(Game.PlayerPed.Handle, false);

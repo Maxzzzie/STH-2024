@@ -58,6 +58,8 @@ namespace STHMaxzzzie.Client
         [EventHandler("changingModel")]
         public async void changingModel(string getModel)
         {
+            int HealthBeforeChange =  API.GetEntityHealth(API.PlayerPedId());
+            int ArmourBeforeChange = API.GetPedArmour(API.PlayerPedId());
             int playerHandle = Game.Player.ServerId;
             model = getModel;
             await Game.Player.ChangeModel(new Model(model));
@@ -65,7 +67,7 @@ namespace STHMaxzzzie.Client
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You changed your model to:{model}." } });
             TriggerEvent("lastWeaponClass", true);
             TriggerServerEvent("updateServerModel", playerHandle, model);
-            Health.SetPlayerStats();
+            Health.SetPlayerStats(HealthBeforeChange, ArmourBeforeChange);
         }
 
         //gets triggered by pressing f6 and /model
@@ -184,7 +186,6 @@ namespace STHMaxzzzie.Client
             {
                 TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Oh no. Something went wrong!\nYou should do /model (\"modelname\"/ ems/ story/ special/ or keep it empty for a random model)" } });
             }
-            API.SetPlayerMaxStamina(Game.Player.Handle, 100);
             // Debug.WriteLine("model change updated stamina.");
         }
     }

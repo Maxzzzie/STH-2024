@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using System.Collections.Generic;
 using CitizenFX.Core.Native;
-using STHMaxzzzie.Server;
+using STHMaxzzzie.Client;
 
 namespace STHMaxzzzie.Client
 {

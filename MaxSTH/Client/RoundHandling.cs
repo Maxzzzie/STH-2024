@@ -4,12 +4,10 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using System.Collections.Generic;
 using System.Reflection;
-
-using STHMaxzzzie.Server;
 using STHMaxzzzie.Client;
 using System.Linq;
 
-namespace STHMaxzzzie.Server
+namespace STHMaxzzzie.Client
 {
     public class RoundHandling : BaseScript
     {
@@ -44,12 +42,13 @@ namespace STHMaxzzzie.Server
             {
                 //Debug.WriteLine($"client startGame was Hunt");
                 startHuntMode();
+                Health.SetPlayerStats(300, 0);
             }
             if (gameMode == "delay")
             {
                 startDelayMode();
             }
-            Health.SetPlayerStats();
+            Health.SetPlayerStats(300, 0);
         }
 
         [EventHandler("clientEndGame")]

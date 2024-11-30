@@ -83,6 +83,10 @@ Infected
 Tracer mode
 
 
+
+
+
+
 //finished
 
 completed pre 27-11-2024
@@ -179,5 +183,51 @@ Added custom requesting of model /model (modelname)
 
 
 
-Notes of things to research
-Ray casting
+
+
+                        -----StreamLoots-----
+Ideas
+
+Set task for player to complete before being punsihed. (roll car upside down)
+Set task for player to complete before being punsihed. (get more than 10 meter airtime)
+Set task for player to complete before being punsihed. (visit a position before time runs out)
+Set task for player to complete before being punsihed. (keep speed)
+Self destruct timer. Car explodes after x seconds. (15 sec?)
+
+
+
+Needs an update
+
+"compacted" - (semi functional but stops clients speed) sets the client into a compact
+"burstsome" - bursts a tire of the client vehicle (can sometimes be no tires as it selects a tire the client doesn't have. And add more than one tire possibility too)
+
+Functional
+
+"cleartires" - removes all tires from vehicles near the client
+"burstall" - bursts all the clients tires
+"drunk" - shows a drunk effect on the client
+"stop" - stops player dead in his tracks
+"speed" - gives the player lots of forward momentum
+"launch" - launches the player up
+"gta1cam" - clients looks through a top down camera
+"bounce" - reverses the clients direction and heading
+"kickflip" - jumps the client vehicle up a little and gives it a rolling force
+"gunjam" - After a few shots the gun stops working until the client reloads
+"paint" - paints the clients car a bright colour
+"paintall" - paints all cars in the area a bright colour
+"electricalglitch" - flashes the lights and horn and doors of the clients car
+"starmode" - sets the clients car to rgb mode and resets it when its done
+
+
+Broken
+
+"reversecam" - (broken goes in 1st person) clients look through the reverse camera
+"fame" - (broken npcs don't all get targeted) npc's run towards the client
+"carfame" - (broken npcs don't all get targeted) npc's drive their car into the client
+"imponent" - (broken spawns a few times but goes to old cords and doesn't get in car) imponent rage steals your car
+"spotlight" - (doesn't sync) puts a spotlight on the client from above
+"pebble" - (works at times but doesn't sync!) breaks all windows around the client
+"carborrow" -  (broken does nothing) sets the client into an npc's car
+"speedlimiter" - (broken) limits the speed of the client
+"carswap" - (broken does nothing) swaps the clients car with a different players vehicle
+"shake" - (broken does nothing) shakes player cam for 5 secs

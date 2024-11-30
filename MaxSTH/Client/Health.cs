@@ -17,52 +17,60 @@ namespace STHMaxzzzie.Client
             RefillStamina();
         }
 
-        // // Function 1: Hurt player for 10% of their current health
-        // [EventHandler("HurtPlayer")]
-        // private void HurtPlayer()
-        // {
-        //     int playerPed = API.PlayerPedId();
-        //     int currentHealth = API.GetEntityHealth(playerPed);
-        //     API.SetEntityHealth(playerPed, currentHealth - 10);
-        //     Debug.WriteLine($"Player hurt by 10. Current health: {API.GetEntityHealth(playerPed)}");
-        // }
+        // Function 1: Hurt player for 10% of their current health
+        [EventHandler("HurtPlayer")]
+        private void HurtPlayer()
+        {
+            int playerPed = API.PlayerPedId();
+            int currentHealth = API.GetEntityHealth(playerPed);
+            API.SetEntityHealth(playerPed, Math.Max(5, currentHealth - 10));
+            //Debug.WriteLine($"Player hurt by 10. Current health: {API.GetEntityHealth(playerPed)}");
+        }
 
-        // [EventHandler("CheckHealthStats")]
-        // private void CheckHealthStats()
-        // {
-        //     int playerPed = API.PlayerPedId();
-
-        //     // Retrieve health, armor, and stamina details
-        //     float maxHealth = API.GetEntityMaxHealth(playerPed);
-        //     float currentHealth = API.GetEntityHealth(playerPed);
-        //     int maxArmor = 100; // Standard max armor in FiveM
-        //     int currentArmor = API.GetPedArmour(playerPed); // Get current armor value
-        //     float maxStamina = 100f; // Stamina in FiveM ranges between 0-100
-        //     float currentStamina = API.GetPlayerSprintStaminaRemaining(API.PlayerId()); // Current stamina value
-
-        //     // Log or display the retrieved stats
-        //     Debug.WriteLine($"Player Stats:");
-        //     Debug.WriteLine($"- Max Health: {maxHealth}. Current Health: {currentHealth}");
-        //     Debug.WriteLine($"- Max Armor: {maxArmor}. Current Armor: {currentArmor}");
-        //     Debug.WriteLine($"- Max Stamina: {maxStamina}");
-        //     Debug.WriteLine($"- Current Stamina: {currentStamina}");
-        // }
-
-
-        // Function 3: Set health, armor, and stamina to specified values
-        [EventHandler("SetPlayerStats")]
-        public static void SetPlayerStats()
+        [EventHandler("CheckHealthStats")]
+        private void CheckHealthStats()
         {
             int playerPed = API.PlayerPedId();
 
-            API.SetEntityMaxHealth(playerPed, 225); // Set maximum health
-            API.SetEntityHealth(playerPed, 200);    // Set current health
-            API.SetPedArmour(playerPed, 100);        // Set armor
-            API.SetPlayerMaxStamina(playerPed, 100);
+            // Retrieve health, armor, and stamina details
+            float maxHealth = API.GetEntityMaxHealth(playerPed);
+            float currentHealth = API.GetEntityHealth(playerPed);
+            int maxArmor = 100; // Standard max armor in FiveM
+            int currentArmor = API.GetPedArmour(playerPed); // Get current armor value
+            float maxStamina = 100f; // Stamina in FiveM ranges between 0-100
+            float currentStamina = API.GetPlayerSprintStaminaRemaining(API.PlayerId()); // Current stamina value
 
-            // Stamina is handled automatically by the game, but you can manage it here for control
-            // There's no direct "set stamina" function in FiveM, but you can simulate full stamina management
-            Debug.WriteLine($"Player health and armor added.");
+            // Log or display the retrieved stats
+            Debug.WriteLine($"Player Stats:");
+            Debug.WriteLine($"- Max Health: {maxHealth}. Current Health: {currentHealth}");
+            Debug.WriteLine($"- Max Armor: {maxArmor}. Current Armor: {currentArmor}");
+            Debug.WriteLine($"- Max Stamina: {maxStamina}");
+            Debug.WriteLine($"- Current Stamina: {currentStamina}. Heal%: {API.GetPlayerHealthRechargeLimit(Game.Player.Handle) * 100}");
+        }
+
+        [EventHandler("HealCompletely")]
+        private void HealCompletely()
+        {
+            API.SetPlayerHealthRechargeLimit(Game.Player.Handle, 1);
+        }
+
+        [EventHandler("HealHalf")]
+        private void HealHalf()
+        {
+            API.SetPlayerHealthRechargeLimit(Game.Player.Handle, 0.33f);
+        }
+
+        // Function 3: Set health, armor, and stamina to specified values
+        [EventHandler("SetPlayerStats")]
+        public static void SetPlayerStats(int setHealthTo, int setArmourTo)
+        {
+            int playerPed = API.PlayerPedId();
+
+            API.SetPedMaxHealth(playerPed, 300); // Set maximum health
+            API.SetPlayerMaxStamina(playerPed, 100);
+            API.SetEntityHealth(playerPed, setHealthTo);    // Set current health
+            API.SetPedArmour(playerPed, setArmourTo);        // Set armor
+            Debug.WriteLine($"Player health and armour updated. {setHealthTo}, {setArmourTo}");
         }
 
         [EventHandler("RefillStamina")]
@@ -75,9 +83,9 @@ namespace STHMaxzzzie.Client
                 await Delay(1000); // Check every 1000ms
                 float currentStamina = API.GetPlayerSprintStaminaRemaining(playerId);
 
-                if (currentStamina > 60f) // Threshold to refill stamina
+                if (currentStamina > 70f) // Threshold to refill stamina
                 {
-                    API.ResetPlayerStamina(playerId);
+                    API.SetPlayerStamina(playerId, 30);
                     //Debug.WriteLine("Stamina refilled!");
                 }
             }

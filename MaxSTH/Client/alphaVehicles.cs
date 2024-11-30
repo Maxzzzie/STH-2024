@@ -4,7 +4,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using static CitizenFX.Core.Native.API;
 using System.Collections.Generic;
-using STHMaxzzzie.Server;
+using STHMaxzzzie.Client;
 
 namespace STHMaxzzzie.Client
 {

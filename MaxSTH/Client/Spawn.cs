@@ -76,11 +76,11 @@ namespace STHMaxzzzie.Client
 			NetworkSetInSpectatorMode(false, 0);
 			ResetPedVisibleDamage(ped);
 
-			Debug.WriteLine("running respawn action");
+			//Debug.WriteLine("running respawn action");
 			if(!(action is null)){
 				await action();
 			}
-			Debug.WriteLine("respawn action complete :)");
+			//Debug.WriteLine("respawn action complete :)");
 			while (!HasCollisionLoadedAroundEntity(ped))
 			{
 				await Delay(1);
@@ -95,7 +95,8 @@ namespace STHMaxzzzie.Client
 			}
 
 			FreezePlayer(PlayerId(), false);
-
+			if (RoundHandling.gameMode == "none") Health.SetPlayerStats(300, 100);
+			else Health.SetPlayerStats(300, 0);
 			//TriggerEvent("playerSpawned", PlayerId());
 
 			_spawnLock = false;

@@ -4,7 +4,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using System.Collections.Generic;
 using System.Linq;
-using STHMaxzzzie.Server;
+using STHMaxzzzie.Client;
 
 namespace STHMaxzzzie.Client
 {
@@ -523,6 +523,7 @@ private int shotsFired = 0;
 private int maxShots = 10;
 public bool canGunJam = false;
 private bool isGunJammed = false;
+private dynamic jammedWeapon = null;
 
 private async Task MonitorWeaponAndShooting()
 {
@@ -534,8 +535,8 @@ private async Task MonitorWeaponAndShooting()
         //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"isjammed"}});
         API.DisablePlayerFiring(playerPed.Handle, true);
 
-        // Allow unjamming by reloading
-        if (API.IsPedReloading(playerPed.Handle)) // Check for reload key press
+        // Allow unjamming by reloading, switching weapon, or getting in vehicle
+        if (API.IsPedReloading(playerPed.Handle) || API.IsControlJustPressed(0, 24) || !Game.PlayerPed.IsOnFoot || Game.PlayerPed.Weapons.Current.Hash != jammedWeapon) // Check for reload key press
         {
             isGunJammed = false;
             shotsFired = 0; // Reset shots fired
@@ -572,6 +573,7 @@ private async Task MonitorWeaponAndShooting()
         if (shotsFired >= maxShots)
         {
             isGunJammed = true;
+            jammedWeapon = Game.PlayerPed.Weapons.Current.Hash;
             NotificationScript.ShowNotification("~h~~r~Weapon jammed!~h~~n~~s~Press R to reload.");
         }
     }
