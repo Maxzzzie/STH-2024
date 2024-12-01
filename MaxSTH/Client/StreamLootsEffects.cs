@@ -154,6 +154,10 @@ namespace STHMaxzzzie.Client
             {
                 shakeCam();
             }
+            if (type == "locationchat")
+            {
+                rightLocationChat();
+            }
         }
 
         void ClearAllTires()
@@ -534,7 +538,10 @@ private async Task MonitorWeaponAndShooting()
     { 
         //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"isjammed"}});
         API.DisablePlayerFiring(playerPed.Handle, true);
-
+        // if (API.IsControlJustPressed(0, (int)Control.Attack)) // Check for attack key press
+        // {
+        //     API.PlaySoundFrontend(-1, "WEAPON_EMPTY", "HUD_LIQUOR_STORE_SOUNDSET", false);
+        // }
         // Allow unjamming by reloading, switching weapon, or getting in vehicle
         if (API.IsPedReloading(playerPed.Handle) || API.IsControlJustPressed(0, 24) || !Game.PlayerPed.IsOnFoot || Game.PlayerPed.Weapons.Current.Hash != jammedWeapon) // Check for reload key press
         {
@@ -767,9 +774,9 @@ private async Task MonitorWeaponAndShooting()
             if (veh != null && !isStarmodeOn)
             {
                 isStarmodeOn = true;
-                // int primary = -1;
-                // int secondary = -1;
-                // API.GetVehicleColours(veh.Handle, ref primary, ref secondary);
+                int primary = -1;
+                int secondary = -1;
+                API.GetVehicleColours(veh.Handle, ref primary, ref secondary);
 
                 int r = 0;
                 int g = 0;
@@ -842,7 +849,7 @@ private async Task MonitorWeaponAndShooting()
                 API.ToggleVehicleMod(veh.Handle, 22, false); //turns off xenons
                 API.ClearVehicleCustomPrimaryColour(veh.Handle);
                 API.ClearVehicleCustomSecondaryColour(veh.Handle);
-                //API.SetVehicleColours(veh.Handle, primary, secondary);
+                API.SetVehicleColours(veh.Handle, primary, secondary);
                 isStarmodeOn = false;
                 VehiclePersistenceClient.lastVehicle = null;
             }
@@ -939,11 +946,18 @@ private async Task MonitorWeaponAndShooting()
             // ROAD_VIBRATION_SHAKE  
             // SKY_DIVING_SHAKE  
             // VIBRATE_SHAKE  
-            int cam = API.GetRenderingCam();
+            for (int i = 0; i < 4; i++)
+            {
+            API.ShakeGameplayCam("LARGE_EXPLOSION_SHAKE", 1);
+            await Delay(1000);
+            }
+            API.StopGameplayCamShaking(false);
+        }
 
-            API.ShakeCam(cam, "VIBRATE_SHAKE", 1);
-            await Delay(5000);
-            API.StopCamShaking(cam, true);
+        public static void rightLocationChat()
+        {
+            string[] trimmedClosestCalloutName = Callouts.closestCalloutName.Split('*');
+            TriggerServerEvent("SendSLChat", Game.Player.ServerId, $"Come get me, I'm at {trimmedClosestCalloutName[0]}.");
         }
 
     }

@@ -1,3 +1,61 @@
+// using System;
+// using System.Threading.Tasks;
+// using CitizenFX.Core;
+// using CitizenFX.Core.Native;
+// using static CitizenFX.Core.Native.API;
+// using System.Collections.Generic;
+// using STHMaxzzzie.Client;
+
+// namespace STHMaxzzzie.Client
+// {
+//     public class max_Vehicle : BaseScript
+//     {
+//         Random rand = new Random();
+//         string allowedToFixStatus = "wait"; //can be on/off/wait/lsc.
+//         int timeStationairBeforeFix = 10;
+//         bool isVehSpawningRestricted = true;
+//         static Dictionary<string, string> vehicleinfoDict = new Dictionary<string, string>();
+//         public static Dictionary<string, VehicleHash> VehicleNameToHash = null;
+//         bool CarChangesColourInLscForRunner = true;
+//         public max_Vehicle()
+//         {
+//             //make a dictionary mapping vehicle name => hash
+//             //https://stackoverflow.com/a/5583817
+//             VehicleNameToHash = new Dictionary<string, VehicleHash>();
+//             foreach (var veh_hash in Enum.GetValues(typeof(VehicleHash)))
+//             {
+//                 VehicleNameToHash.Add(veh_hash.ToString().ToLower(), (VehicleHash)veh_hash);
+//                 Debug.WriteLine($"{veh_hash.ToString().ToLower()} , {(VehicleHash)veh_hash}");
+//             }
+//             TriggerServerEvent("sendVehicleinfoDict");
+//         }
+
+//         [EventHandler("getVehicleinfoDict")]
+//         void getVehicleinfoDict(string vehicleName, string vehicleInfo)
+//         {
+//             vehicleinfoDict[vehicleName] = vehicleInfo;
+
+//             //vehicle dict formatting --> Key= Tug || value= -2100640717,Boats,true || Value is vehiclehash, vehicle class, allowed to spawn or not bool.
+//             //use these formats to access the vehicleInfo components.
+//             // long vehicleHash = long.Parse(vehicleInfo.Split(',')[0]);           
+//             // string vehicleClass = vehicleInfo.Split(',')[1];
+//             // bool allowedVehicle = bool.Parse(vehicleInfo.Split(',')[2]);
+//             // Debug.WriteLine($"clientVehicleInfoDict = {vehicleName} {vehicleInfo} -- {vehicleHash} {vehicleClass} allowed ?{allowedVehicle}");
+//         }
+
+//         [EventHandler("whatIsVehAllowed")]
+//         void whatIsVehicleAllowed(bool vehicleSpawningRestricted)
+//         {
+//             isVehSpawningRestricted = vehicleSpawningRestricted;
+//         }
+
+//         [EventHandler("VehicleFixStatus")]
+//         void whatIsVehicleFixStatus(string vehicleFixStatus, int fixWaitTime)
+//         {
+//             allowedToFixStatus = vehicleFixStatus;
+//             timeStationairBeforeFix = fixWaitTime;
+//         }
+
 using System;
 using System.Threading.Tasks;
 using CitizenFX.Core;
@@ -15,20 +73,40 @@ namespace STHMaxzzzie.Client
         int timeStationairBeforeFix = 10;
         bool isVehSpawningRestricted = true;
         static Dictionary<string, string> vehicleinfoDict = new Dictionary<string, string>();
-        public static Dictionary<string, VehicleHash> VehicleNameToHash = null;
         bool CarChangesColourInLscForRunner = true;
+        public static Dictionary<string, VehicleHash> VehicleNameToHash { get; private set; }
         public max_Vehicle()
         {
-            //make a dictionary mapping vehicle name => hash
-            //https://stackoverflow.com/a/5583817
             VehicleNameToHash = new Dictionary<string, VehicleHash>();
-            foreach (var veh_hash in Enum.GetValues(typeof(VehicleHash)))
-            {
-                VehicleNameToHash.Add(veh_hash.ToString().ToLower(), (VehicleHash)veh_hash);
-                //Debug.WriteLine($"{veh_hash.ToString().ToLower()} , {(VehicleHash)veh_hash}");
-            }
+        PopulateVehicleDictionary();
             TriggerServerEvent("sendVehicleinfoDict");
         }
+
+        private void PopulateVehicleDictionary()
+    {
+        // Call GetAllVehicleModels to get all vehicle names
+        var vehicleModels = GetAllVehicleModels();
+
+        foreach (var vehicleName in vehicleModels)
+        {
+            string lowerCaseName = vehicleName.ToLower();
+
+            // Convert the vehicle name to a VehicleHash
+            if (Enum.TryParse(lowerCaseName, true, out VehicleHash hashValue))
+            {
+                Debug.WriteLine($"lowerCaseName: {lowerCaseName}, VehicleHash: {hashValue}");
+                if (!VehicleNameToHash.ContainsKey(lowerCaseName))
+                {
+                    VehicleNameToHash.Add(lowerCaseName, hashValue);
+                }
+            }
+            else
+            {
+                // Log or handle cases where the model name doesn't map to an enum
+                Console.WriteLine($"Warning: Vehicle name '{vehicleName}' could not be mapped to a VehicleHash.");
+            }
+        }
+    }
 
         [EventHandler("getVehicleinfoDict")]
         void getVehicleinfoDict(string vehicleName, string vehicleInfo)
@@ -464,9 +542,9 @@ namespace STHMaxzzzie.Client
                             Vehicle veh = Game.PlayerPed.CurrentVehicle;
                             if (veh != null)
                             {
-                                //int[] colorIndices = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 31, 32, 30, 34, 35, 36,38,  };
-                                //int randomColor = colorIndices[rand.Next(colorIndices.Length)];
-                                int randomColor = rand.Next(160);
+                                int[] colorIndices = { 0, 1, 2, 3, 4, 8, 9, 11, 27, 34, 49, 50, 62, 63, 74, 94, 95, 96, 97, 103, 147, 120  };
+                                int randomColor = colorIndices[rand.Next(colorIndices.Length)];
+                                //int randomColor = rand.Next(160);
                                 veh.Mods.PrimaryColor = (VehicleColor)randomColor;
                                 veh.Mods.SecondaryColor = (VehicleColor)randomColor;
                                 //add particle effects at some point?

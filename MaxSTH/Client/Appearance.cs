@@ -40,12 +40,12 @@ namespace STHMaxzzzie.Client
             }
             if (!Game.PlayerPed.IsOnFoot)
             {
-                TriggerEvent("chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"You have to be on foot to change your appearance."}});
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"You have to be on foot to change your appearance." } });
                 return;
             }
-            if (speed.X >= 0.2f || speed.Y >= 0.2f || speed.Z >= 0.2f )
+            if (speed.X >= 0.2f || speed.Y >= 0.2f || speed.Z >= 0.2f)
             {
-                TriggerEvent("chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"Stand still to change your appearance."}});
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"Stand still to change your appearance." } });
                 return;
             }
             TriggerEvent("changeRandomModel");
@@ -58,13 +58,18 @@ namespace STHMaxzzzie.Client
         [EventHandler("changingModel")]
         public async void changingModel(string getModel)
         {
-            int HealthBeforeChange =  API.GetEntityHealth(API.PlayerPedId());
+            int HealthBeforeChange = API.GetEntityHealth(API.PlayerPedId());
             int ArmourBeforeChange = API.GetPedArmour(API.PlayerPedId());
             int playerHandle = Game.Player.ServerId;
             model = getModel;
-            await Game.Player.ChangeModel(new Model(model));
+            bool didChange = false;
+            while (!didChange)
+            {
+                didChange = await Game.Player.ChangeModel(new Model(model));
+                await Delay(20);
+            }
             SetPedDefaultComponentVariation(PlayerPedId());
-            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You changed your model to:{model}." } });
+            NotificationScript.ShowNotification($"You changed your player model to: {model}.");
             TriggerEvent("lastWeaponClass", true);
             TriggerServerEvent("updateServerModel", playerHandle, model);
             Health.SetPlayerStats(HealthBeforeChange, ArmourBeforeChange);
@@ -72,7 +77,7 @@ namespace STHMaxzzzie.Client
 
         //gets triggered by pressing f6 and /model
         [EventHandler("changeRandomModel")]
-        void changeRandomModel()
+        public static void changeRandomModel()
         {
             if (nonAnimalModel.Count != 0)
             {
@@ -86,19 +91,19 @@ namespace STHMaxzzzie.Client
         [Command("model")]
         public void requestModel(int source, List<object> args, string raw)
         {
-             Vector3 speed = Game.PlayerPed.Velocity;
+            Vector3 speed = Game.PlayerPed.Velocity;
             if (Game.PlayerPed.IsAlive == false)
             {
                 return;
             }
             if (!Game.PlayerPed.IsOnFoot)
             {
-                TriggerEvent("chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"You have to be on foot to change your appearance."}});
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"You have to be on foot to change your appearance." } });
                 return;
             }
-            if (speed.X >= 0.2f || speed.Y >= 0.2f || speed.Z >= 0.2f )
+            if (speed.X >= 0.2f || speed.Y >= 0.2f || speed.Z >= 0.2f)
             {
-                TriggerEvent("chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"Stand still to change your appearance."}});
+                TriggerEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"Stand still to change your appearance." } });
                 return;
             }
             if (args.Count == 0)

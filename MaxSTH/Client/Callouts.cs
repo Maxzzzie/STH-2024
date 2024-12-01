@@ -13,7 +13,7 @@ namespace STHMaxzzzie.Client
         private Dictionary<string, Vector3> maxzzzieCalloutsDict = new Dictionary<string, Vector3>();
         private Dictionary<string, Vector3> nearbyCallouts = new Dictionary<string, Vector3>();
         private Vector3 lastPlayerPosition = Vector3.Zero;
-        private string closestCalloutName = string.Empty;
+        public static string closestCalloutName = string.Empty;
         private bool isProcessing = false; // Flag to check if OnTick is already running
         private int calloutRange = 750; // Distance to store callouts in a temp dict.
         private int reloadRange = 500;  // Distance to move before the temp callouts dict gets remade.
@@ -76,7 +76,8 @@ namespace STHMaxzzzie.Client
         }
 
         private async Task DisplayCalloutOnTick()
-        {   string[] trimmedClosestCalloutName = closestCalloutName.Split('*');
+        {   
+            string[] trimmedClosestCalloutName = closestCalloutName.Split('*');
             if (!string.IsNullOrEmpty(closestCalloutName))
             {
                 SetTextFont(4); // Set font type

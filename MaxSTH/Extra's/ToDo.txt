@@ -1,8 +1,11 @@
 Known issues -----
+Killed msgs are broken somehow
+Game msg's overlap atm if called quickly after one another
+
+
 
 To fix ------
 DelayMode at speed is hard to find the runner. Add 2nd blip always at 400m. Maybe change blip colour depending on speed. Maybe add markers on map like shotsfiredmarker
-GameHandler doesn't deal with wrong commands right.
 Commands are visible and availible for non moderators like /heartbeat
 blaine county callouts to add
 Increase health?
@@ -12,6 +15,7 @@ Add m for mugshot and fix N activating while in chat
 
 
 To upgrade -------
+On death the player doesn't get a wasted screen and i want to point the camera at the killer entity.
 Notify runner clothes change
 Particle effects for /fix and /model
 Fix pri spawner neons etc. (https://docs.fivem.net/natives/?_0x57F24253)
@@ -88,6 +92,13 @@ Tracer mode
 
 
 //finished
+
+completed pre 30-11-2024
+GameHandler doesn't deal with wrong commands right.
+Health armour and stamina added to work.
+Mugshot now triggers on button press, ends on button release or 15secs and shows the mugshotroom again. Although it doesn't always load it.
+/fix lsc now changes colour of runner vehicle
+Added streamloots features
 
 completed pre 27-11-2024
 Change death msg to notification (SetNotificationTextEntry, AddTextComponentSubstringPlayerName, DrawNotification) (better is textcommand natives)
@@ -186,21 +197,6 @@ Added custom requesting of model /model (modelname)
 
 
                         -----StreamLoots-----
-Ideas
-
-Set task for player to complete before being punsihed. (roll car upside down)
-Set task for player to complete before being punsihed. (get more than 10 meter airtime)
-Set task for player to complete before being punsihed. (visit a position before time runs out)
-Set task for player to complete before being punsihed. (keep speed)
-Self destruct timer. Car explodes after x seconds. (15 sec?)
-
-
-
-Needs an update
-
-"compacted" - (semi functional but stops clients speed) sets the client into a compact
-"burstsome" - bursts a tire of the client vehicle (can sometimes be no tires as it selects a tire the client doesn't have. And add more than one tire possibility too)
-
 Functional
 
 "cleartires" - removes all tires from vehicles near the client
@@ -217,6 +213,14 @@ Functional
 "paintall" - paints all cars in the area a bright colour
 "electricalglitch" - flashes the lights and horn and doors of the clients car
 "starmode" - sets the clients car to rgb mode and resets it when its done
+"shake" - shakes player cam for 5 secs
+"locationchat" - sends location of player in chat for everyone but player
+
+
+Needs an update
+
+"compacted" - (semi functional but stops clients speed) sets the client into a compact
+"burstsome" - bursts a tire of the client vehicle (can sometimes be no tires as it selects a tire the client doesn't have. And add more than one tire possibility too)
 
 
 Broken
@@ -230,4 +234,58 @@ Broken
 "carborrow" -  (broken does nothing) sets the client into an npc's car
 "speedlimiter" - (broken) limits the speed of the client
 "carswap" - (broken does nothing) swaps the clients car with a different players vehicle
-"shake" - (broken does nothing) shakes player cam for 5 secs
+
+
+Ideas - Bad effects for runner
+
+Set task for player to complete before being punsihed. (roll car upside down)
+Set task for player to complete before being punsihed. (get more than 10 meter airtime)
+Set task for player to complete before being punsihed. (visit a position before time runs out)
+Set task for player to complete before being punsihed. (keep speed)
+Self destruct timer. Car explodes after x seconds. (15 sec?)
+Slick tires
+Make player tired, swerve/ impair vision
+Out of fuel
+Mimic chat msg, location in chat
+Broken engine (starts smoking and catches fire)
+Ouch, a Lego brick (Ragdolls)
+Whelp, I forgot my glasses (blurry vision)
+Brake check! (slams on brakes)
+Freeze player’s position
+Oil on the windscreen
+Disco flash multiple spotlights with colours and sweaping motions
+Broken doors (All doors open and can't be closed)
+Doors fall off
+Oh no, a dog on the road! (Swerves franctically)
+No gravity
+The cameara is upside-down
+Oops, ripped my pants! (loses trousers)             what? xD
+I'm a cowboy babe (gains a cowboy hat)
+City blackout
+Reversed controls
+Pacifist (yeet your guns out)
+Stage fever (A spotlight from the sky illuminates you)
+PD intel (Hunters see your current location for 10 seconds)
+Spawns road blocks
+Road rage (NPC's get incredibly mad at you)
+Extremely loud engine (all surrounding car windows break when you drive past)
+Thunder storm
+Out of blinker fluid (Blinking hazard lights until fixed at a garage)
+Stole my steering wheel (deactivates vehicle steering for 10 seconds)
+LSPD gets better cars
+
+
+Ideas - good effects for runner
+
+LSPD intel (gain access to the hunters radio)
+Engine upgrade!
+Car bomb (one of the hunter's vehicles explodes)
+Spiking PD (drugs in drinks)
+Drunk officers
+Dropping nails (behind the car James Bond style)
+Fake PD intel (callout of runner's location is fake)
+Bodyguards
+Leaking oil (oil mines)
+Radio noise (turns radio into noise, making people barely hearable)
+LSPD gets vehicle downgrade
+

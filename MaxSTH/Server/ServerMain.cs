@@ -218,7 +218,7 @@ namespace STHMaxzzzie.Server
         public static bool isPodOn = true;
 
         [Command("togglepod", Restricted = true)]
-        void toggleweapon(int source, List<object> args, string raw)
+        void togglepod(int source, List<object> args, string raw)
         {
             if (args.Count == 0)
             {

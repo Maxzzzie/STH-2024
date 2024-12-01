@@ -8,6 +8,7 @@ namespace STHMaxzzzie.Server
 {
     public class StreamLootsEffect : BaseScript
     {
+        public static bool isSLOn = false;
         private List<string> effectNames = new List<string>{
               "cleartires", //removes all tires from near the client
                 "spotlight", //puts a spotlight on the client from above
@@ -34,14 +35,55 @@ namespace STHMaxzzzie.Server
                 "compacted", //(broken does only panto) sets the client into a compact
                 "speedlimiter", //limits the speed of the client
                 "carswap", //(broken does nothing) swaps the clients car with a different players vehicle
-                "shake" // (broken does nothing) shakes player cam for 5 secs
+                "shake", // (broken does nothing) shakes player cam for 5 secs
+                "locationchat" // sends location of player in chat for everyone but player.
              };
 
-        [Command("sl", Restricted = false)]
+         [Command("togglesl", Restricted = true)]
+        void ToggleStreamLootsCommand(int source, List<object> args, string raw)
+        {
+    if (args.Count == 0)
+            {
+                if (!isSLOn)
+                {
+                    isSLOn = true;
+                    
+                TriggerClientEvent(Players[source], "ShowNotification", "StreamLoots command is now on.");
+
+                }
+                else
+                {
+                    isSLOn = false;
+                                    TriggerClientEvent(Players[source], "ShowNotification", "StreamLoots command is now off.");
+
+                }
+            }
+            else if (args.Count == 1 && args[0].ToString() == "true")
+            {
+                isSLOn = true;
+                                TriggerClientEvent(Players[source], "ShowNotification", "StreamLoots command is now on.");
+
+            }
+            else if (args.Count == 1 && args[0].ToString() == "false")
+            {
+                isSLOn = false;
+                TriggerClientEvent(Players[source], "ShowNotification", "StreamLoots command is now off.");
+            }
+            else
+            {
+                TriggerClientEvent(Players[source], "ShowNotification", "Oh no. Something went wrong!\nYou should do /togglesl (true/false)");
+            }
+        }
+
+        [Command("sl", Restricted = true)]
         void StreamLootsCommand(int source, List<object> args, string raw)
         {
             //TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"StreamLoots command." } });
-
+            if (!isSLOn)
+            {
+                TriggerClientEvent(Players[source], "ShowNotification", "StreamLoots command is off.");
+                return;
+            }
             if (args.Count == 2 && effectNames.Contains(args[0].ToString()))
             {
                 TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"StreamLoots command received, {args[0]} for player {args[1]}." } });
@@ -68,6 +110,16 @@ namespace STHMaxzzzie.Server
             else
             {
                 TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"/sl burstsome/spotlight/burstall/" } });
+            }
+        }
+
+        [EventHandler("SendSLChat")]
+        private void SendSLChat(int source, string text)
+        {
+            foreach (Player player in Players)
+            {
+                if (int.Parse(player.Handle) != source)
+                    TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { player.Handle, text } });
             }
         }
     }

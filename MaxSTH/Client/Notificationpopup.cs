@@ -14,6 +14,7 @@ public class NotificationScript : BaseScript
         AddTextComponentSubstringPlayerName(text);
         DrawNotification(false, false);
         PlaySoundFrontend(-1, "ATM_WINDOW", "HUD_FRONTEND_DEFAULT_SOUNDSET", false); //make little sound when it pops up.
+        
         // Call the method to strip formatting tags
         string DebugString = StripFormattingTags(text);
 

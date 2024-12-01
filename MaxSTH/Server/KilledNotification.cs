@@ -8,275 +8,185 @@ namespace STHMaxzzzie.Server
 {
     public class DeathMessages : BaseScript
     {
-        // Dictionary<string, VehicleHash> VehicleNameToHash = null;
-        // public deathVehicleType()
-        // {
-        //     //make a dictionary mapping vehicle name => hash
-        //     //https://stackoverflow.com/a/5583817 / https://gtahash.ru/car/
-        //     VehicleNameToHash = new Dictionary<string, VehicleHash>();
-        //     foreach (var veh_hash in Enum.GetValues(typeof(VehicleHash)))
-        //     {
-        //         VehicleNameToHash.Add((VehicleHash)veh_hash, veh_hash.ToString().ToLower());
-        //     }
-        // }
+        string[] OnPlayerKilledRandMsg = new string[] {
+        "{Killer.Name} killed {Victim.Name}.",
+        "{Victim.Name} ended up at the hands of {Killer.Name}.",
+        "A conflict happened between {Victim.Name} and {Killer.Name}. {Victim.Name} came out worse.",
+        "{Killer.Name} dealt the final blow to {Victim.Name}.",
+        "{Killer.Name} has taken out {Victim.Name}.",
+        "{Killer.Name} has killed {Victim.Name}.",
+"{Killer.Name} has ended {Victim.Name}.",
+"{Victim.Name} was taken down by {Killer.Name}.",
+"{Victim.Name} met their end at the hands of {Killer.Name}.",
+"A conflict happened between {Victim.Name} and {Killer.Name}. {Victim.Name} came out worse.",
+"{Killer.Name} emerged victorious over {Victim.Name}.",
+"{Victim.Name} was defeated by {Killer.Name}.",
+"{Killer.Name} put an end to {Victim.Name}.",
+"{Killer.Name} proved to be too much for {Victim.Name}.",
+"{Killer.Name} took out {Victim.Name}.",
+"{Killer.Name} got the best of {Victim.Name}.",
+"{Killer.Name} claimed the life of {Victim.Name}.",
+"{Victim.Name} was slain by {Killer.Name}.",
+"{Killer.Name} dealt the fatal blow to {Victim.Name}.",
+"{Killer.Name} overpowered {Victim.Name}.",
+"{Killer.Name} executed {Victim.Name}.",
+"{Killer.Name} ended {Victim.Name}'s life.",
+"{Killer.Name} triumphed over {Victim.Name}.",
+"{Killer.Name} was the last one standing after the fight with {Victim.Name}.",
+"{Killer.Name} emerged as the victor in the battle with {Victim.Name}.",
+"{Victim.Name} fell to {Killer.Name}'s might.",
+"{Killer.Name} delivered the killing blow to {Victim.Name}.",
+"{Killer.Name} defeated {Victim.Name} in combat.",
+"{Killer.Name} put an end to {Victim.Name}'s reign of terror.",
+"{Killer.Name} took down {Victim.Name} in a fierce struggle.",
+"{Killer.Name} vanquished {Victim.Name} in battle.",
+"{Killer.Name} dispatched {Victim.Name} with ease.",
+"{Killer.Name} eliminated {Victim.Name} with lethal force.",
+"{Killer.Name} ended {Victim.Name}'s time in this world.",
+"{Killer.Name} sent {Victim.Name} to meet their maker.",
+"{Killer.Name} took {Victim.Name} out of the picture.",
+"{Victim.Name} was no match for {Killer.Name}'s strength.",
+"{Killer.Name} made quick work of {Victim.Name}.",
+"{Killer.Name} outmatched {Victim.Name} in the fight.",
+"{Killer.Name} emerged victorious against {Victim.Name}'s onslaught.",
+"{Killer.Name} put an end to {Victim.Name}'s plans for domination.",
+"{Victim.Name} fell before {Killer.Name}'s relentless assault.",
+"{Killer.Name} came out on top in the battle with {Victim.Name}.",
+"{Killer.Name} proved to be too much for {Victim.Name} to handle.",
+"{Killer.Name} emerged as the conqueror over {Victim.Name}.",
+"{Killer.Name} delivered the final blow to {Victim.Name}.",
+"{Killer.Name} proved their superiority by defeating {Victim.Name}.",
+"{Killer.Name} put a stop to {Victim.Name}'s rampage.",
+"{Killer.Name} sent {Victim.Name} to the afterlife.",
+"{Killer.Name} triumphed over {Victim.Name} in battle.",
+"{Killer.Name} prevailed over {Victim.Name}'s resistance.",
+"{Killer.Name} emerged victorious in the fight with {Victim.Name}.",
+"{Killer.Name} stood tall after defeating {Victim.Name}.",
+"{Killer.Name} struck down {Victim.Name} with deadly precision.",
+"{Killer.Name} dominated {Victim.Name} in combat.",
+"{Killer.Name} has taken down {Victim.Name}.",
+    "{Victim.Name} has fallen at the hands of {Killer.Name}.",
+    "{Killer.Name} has claimed {Victim.Name}.",
+    "{Killer.Name} has emerged victorious over {Victim.Name}.",
+    "{Killer.Name} has dispatched {Victim.Name}.",
+    "{Victim.Name} has been slain by {Killer.Name}.",
+    "{Killer.Name} has brought down {Victim.Name}.",
+    "{Victim.Name} has met their end at the hands of {Killer.Name}.",
+    "{Killer.Name} has proven too much for {Victim.Name}.",
+    "{Killer.Name} has bested {Victim.Name}.",
+    "{Victim.Name} has been eliminated by {Killer.Name}.",
+    "{Killer.Name} has vanquished {Victim.Name}.",
+    "{Victim.Name} has been taken out by {Killer.Name}.",
+    "{Killer.Name} has outplayed {Victim.Name}.",
+    "{Victim.Name} has fallen to {Killer.Name}.",
+    "{Killer.Name} has triumphed over {Victim.Name}."};
+
+        string[] OnPlayerDiedRandMsg = new string[] {
+        "{Victim.Name} has died.",
+        "Rest in peace {Victim.Name}.",
+        "{Victim.Name} passed away.",
+        "{Victim.Name} has left us.",
+        "{Victim.Name} has gone to a better place.",
+        "{Victim.Name} has passed away.",
+    "{Victim.Name} has kicked the bucket.",
+    "{Victim.Name} has gone to meet their maker.",
+    "{Victim.Name} has shuffled off this mortal coil.",
+    "{Victim.Name} has departed.",
+    "{Victim.Name} has left us.",
+    "{Victim.Name} has gone on to the next life.",
+    "{Victim.Name} has met their end.",
+    "{Victim.Name} has ceased to be.",
+    "{Victim.Name} has left this world.",
+    "{Victim.Name} has gone to a better place.",
+    "{Victim.Name} has gone to the great beyond.",
+    "{Victim.Name} has been taken from us.",
+    "{Victim.Name} has gone to the other side.",
+    "{Victim.Name} has gone to be with the angels.",
+    "{Victim.Name} has gone to the light.",
+    "{Victim.Name} has gone to the afterlife.",
+    "{Victim.Name} has joined the choir invisible.",
+    "{Victim.Name} has gone to their eternal rest.",
+    "{Victim.Name} has left this mortal realm.",
+    "{Victim.Name} has been called home.",
+    "{Victim.Name} has transcended.",
+    "{Victim.Name} has crossed over.",
+    "{Victim.Name} has passed into the beyond.",
+    "{Victim.Name} has gone to a higher plane.",
+    "{Victim.Name} has gone to meet their ancestors.",
+    "{Victim.Name} has returned to the dust from whence they came.",
+    "{Victim.Name} has gone to their final resting place.",
+    "{Victim.Name} has gone to the land of the dead.",
+    "{Victim.Name} has gone to the great mystery.",
+    "{Victim.Name} has left their mortal coil behind.",
+    "{Victim.Name} has journeyed to the next life.",
+    "{Victim.Name} has taken their final breath.",
+    "{Victim.Name} has gone to the big sleep.",
+    "{Victim.Name} has gone to the silent land.",
+    "{Victim.Name} has gone to the undiscovered country.",
+    "{Victim.Name} has gone to their ultimate fate.",
+    "{Victim.Name} has gone to the next world.",
+    "{Victim.Name} has gone to the great unknown.",
+    "{Victim.Name} has gone to the eternal hunting grounds.",
+    "{Victim.Name} has gone to the happy hunting ground.",
+    "{Victim.Name} has gone to Valhalla.",
+    "{Victim.Name} has gone to Fólkvangr.",
+    "{Victim.Name} has gone to the realm of the dead.",
+    "{Victim.Name} has gone to the underworld.",
+    "{Victim.Name} has gone to the afterworld.",
+    "{Victim.Name} has gone to the spirit world.",
+    "{Victim.Name} has gone to the netherworld.",
+    "{Victim.Name} has gone to the shadow realm."};
+        Random rand = new Random();
         public DeathMessages()
         {
-            Debug.WriteLine($"DeathMessages has started.");
-            EventHandlers["baseevents:onPlayerDied"] += new Action<Player, int, List<object>>(OnPlayerDied);
-            EventHandlers["baseevents:onPlayerKilled"] += new Action<Player, int, dynamic>(OnPlayerKilled);
+            // Debug.WriteLine($"DeathMessages has started.");
         }
 
-        string latestKillerName = "null";
-        [EventHandler("sendKillerIDToServer")]
-        public async void sendKillerIDToServer([FromSource] Player source, int killerID, dynamic data)
-        {
-            int latestKillerID = killerID;
 
-            if (latestKillerID == -1)
-            {
-                Debug.WriteLine($"No killer known");
-            }
-            else foreach (Player i in Players)
-                {
-                    Debug.WriteLine($"playerhandles = {i.Handle} Players = {i} Name = {i.Name}");
-                    if (int.Parse(i.Handle) == latestKillerID)
-                    {
-                        Debug.WriteLine($"killerhandle ={i.Handle}\nkillername = {i.Name}");
-                        latestKillerName = i.Name;
-                    }
-                }
-            await Delay(600);
-            latestKillerName = "null";
-        }
-
+        [EventHandler("OnPlayerKilled")]
         //onplayerkilled will trigger when a player is killed by another player.
-        public async void OnPlayerKilled([FromSource] Player victim, int deathCause, dynamic killerData)
+        public void OnPlayerKilled(int VictimId, int KillerId, Vector3 VictimLocation, Vector3 KillerLocation, int weaponHash, bool KillerInVehicle, int VehicleHash)
         {
-            var killerDataDictionary = (IDictionary<string, object>)killerData;
+            Debug.WriteLine($"onPlayerKilled server {VictimId}, {KillerId}");
+            Player Victim = Players[VictimId];
+            Player Killer = Players[KillerId];
+            string message = FormatMessage(OnPlayerKilledRandMsg[rand.Next(0, OnPlayerKilledRandMsg.Length)], Victim, Killer);
+            Debug.WriteLine(message);
+            //TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"{Victim.Name} was killed by {Killer.Name}." } });
+            TriggerClientEvent("ShowNotification", $"~h~~o~{Victim.Name}~s~~h~ was killed by ~h~~r~{Killer.Name}~h~~w~");
+        }
 
-            foreach (KeyValuePair<string, object> property in killerDataDictionary)
-            {
-                //Debug.WriteLine($"foreach --> {property.Key} - {property.Value}");
-            }
-
-            if (killerDataDictionary.ContainsKey("killerpos"))
-            {
-                // Get the 'killerpos' value and cast it to List<object>
-                var killerPosList = killerDataDictionary["killerpos"] as List<object>;
-
-                if (killerPosList != null && killerPosList.Count >= 3)
-                {
-                    // Assuming it represents a position (X, Y, Z)
-                    float x = Convert.ToSingle(killerPosList[0]);
-                    float y = Convert.ToSingle(killerPosList[1]);
-                    float z = Convert.ToSingle(killerPosList[2]);
-
-                    Debug.WriteLine($"Killer ({deathCause}) position: X={x}, Y={y}, Z={z}");
-                }
-                else
-                {
-                    Debug.WriteLine("Killer position data is missing or incomplete from onPlayerKilled.");
-                }
-            }
-            //Debug.WriteLine($"killed {victim.Name}.");
-
-            await BaseScript.Delay(500);
-            if (latestKillerName == "null")
-            {
-                TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"{victim.Name} was killed." } });
-                TriggerClientEvent("ShowNotification", $"~h~~o~{victim.Name}~s~~h~ was killed.");
-            }
-            else TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"{victim.Name} was killed by {latestKillerName}." } });
+        //onplayersuicide will trigger when a player is killed by himself.
+        [EventHandler("OnPlayerSuicide")]
+        private void OnPlayerSuicide(int VictimId, Vector3 VictimLocation)
+        {
+            Player Victim = Players[VictimId];
+            Debug.WriteLine($"OnPlayerSuicide server: Victim: {Victim.Name}, Coords = {VictimLocation.X}, {VictimLocation.Y}, {VictimLocation.Z}.");
+            Debug.WriteLine($"{Victim.Name} chose the easy way out.");
+            //TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{Victim.Name} died." } });
+            TriggerClientEvent("ShowNotification", $"~o~~h~{Victim.Name}~h~~s~ commited suicide.");
         }
 
         //onplayerdied will trigger when a player isn't killed by another player
-        private void OnPlayerDied([FromSource] Player player, int killerType, List<object> deathCoords)
+        [EventHandler("OnPlayerDied")]
+        private void OnPlayerDied(int VictimId, Vector3 VictimLocation)
         {
-            // Extract the death coordinates from the deathCoords array
-            float deathX = Convert.ToSingle(deathCoords[0]);
-            float deathY = Convert.ToSingle(deathCoords[1]);
-            float deathZ = Convert.ToSingle(deathCoords[2]);
-            Vector3 deathPosition = new Vector3(deathX, deathY, deathZ);
+            Player Victim = Players[VictimId];
+            Debug.WriteLine($"onPlayerDied server: Victim: {Victim.Name}, Coords = {VictimLocation.X}, {VictimLocation.Y}, {VictimLocation.Z}.");
+            string message = FormatMessage(OnPlayerDiedRandMsg[rand.Next(0, OnPlayerDiedRandMsg.Length)], Victim, Victim);
+            Debug.WriteLine(message);
+            //TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{Victim.Name} died." } });
+            TriggerClientEvent("ShowNotification", $"~o~~h~{Victim.Name}~h~~s~ died");
+        }
 
-            Debug.WriteLine($"SERVER DeathMessages: Player: {player.Name}, killerType = {killerType} Coords = {deathPosition}.");
-            //killerType is an and in this case linked to the model.
-            //find info here https://docs.fivem.net/docs/resources/baseevents/events/onPlayerDied/
-            //the following code makes no sence then.
-            string cause = "null";
-
-            if (killerType == -1)
+        private string FormatMessage(string template, Player Victim, Player Killer)
+        {
+            string message = template.Replace("{Victim.Name}", Victim.Name);
+            if (Killer != Victim)
             {
-                cause = "law enforcement"; //gets triggered a lot.
+                message = message.Replace("{Killer.Name}", Killer.Name);
             }
-            else if (killerType == 0)
-            {
-                cause = "suicide";
-            }
-            else if (killerType == 1)
-            {
-                cause = "a player";//not right because for player killed its onPlayerKilled event.
-            }
-            else if (killerType == 2)
-            {
-                cause = "falldamage";
-            }
-            else if (killerType == 3)
-            {
-                cause = "3. a colision with an object";//have never been able to get this.
-            }
-            else if (killerType == 4)
-            {
-                cause = "4. a big boom";//never managed to get this.
-            }
-            else if (killerType == 5)
-            {
-                cause = "5. something hot";//never managed to get this.
-            }
-            else if (killerType == 6)
-            {
-                cause = "6, unknown reason";//never managed to get this.
-            }
-            else if (killerType == 7)
-            {
-                cause = "7. a cougar perhaps";//never managed to get this. Also never tried to get killed by wildlife.
-            }
-            else if (killerType == 8)
-            {
-                cause = "8. NPC's, what a loser";//never managed to get this. Usually it will be 1 if killed by an npc like angry ped or gangster.
-            }
-            else
-            {
-                cause = "reasons unknown";
-            }
-            Debug.WriteLine($"Player {player.Name} died. Wrong: {cause}. Debug info: {killerType}");
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"{player.Name} died." } });
-            TriggerClientEvent("ShowNotification", $"~o~~h~{player.Name}~h~~s~ died.");
+            return message;
         }
     }
 }
-//         "{1} killed {0}.",
-//         "{0} ended up at the hands of {1}.",
-//         "A conflict happened between {0} and {1}. {0} came out worse.",
-//         "{1} dealt the final blow to {0}.",
-//         "{1} has taken out {0}.",
-//         "{1} has killed {0}.",
-// "{1} has ended {0}.",
-// "{0} was taken down by {1}.",
-// "{0} met their end at the hands of {1}.",
-// "A conflict happened between {0} and {1}. {0} came out worse.",
-// "{1} emerged victorious over {0}.",
-// "{0} was defeated by {1}.",
-// "{1} put an end to {0}.",
-// "{1} proved to be too much for {0}.",
-// "{1} took out {0}.",
-// "{1} got the best of {0}.",
-// "{1} claimed the life of {0}.",
-// "{0} was slain by {1}.",
-// "{1} dealt the fatal blow to {0}.",
-// "{1} overpowered {0}.",
-// "{1} executed {0}.",
-// "{1} ended {0}'s life.",
-// "{1} triumphed over {0}.",
-// "{1} was the last one standing after the fight with {0}.",
-// "{1} emerged as the victor in the battle with {0}.",
-// "{0} fell to {1}'s might.",
-// "{1} delivered the killing blow to {0}.",
-// "{1} defeated {0} in combat.",
-// "{1} put an end to {0}'s reign of terror.",
-// "{1} took down {0} in a fierce struggle.",
-// "{1} vanquished {0} in battle.",
-// "{1} dispatched {0} with ease.",
-// "{1} eliminated {0} with lethal force.",
-// "{1} ended {0}'s time in this world.",
-// "{1} sent {0} to meet their maker.",
-// "{1} took {0} out of the picture.",
-// "{0} was no match for {1}'s strength.",
-// "{1} made quick work of {0}.",
-// "{1} outmatched {0} in the fight.",
-// "{1} emerged victorious against {0}'s onslaught.",
-// "{1} put an end to {0}'s plans for domination.",
-// "{0} fell before {1}'s relentless assault.",
-// "{1} came out on top in the battle with {0}.",
-// "{1} proved to be too much for {0} to handle.",
-// "{1} emerged as the conqueror over {0}.",
-// "{1} delivered the final blow to {0}.",
-// "{1} proved their superiority by defeating {0}.",
-// "{1} put a stop to {0}'s rampage.",
-// "{1} sent {0} to the afterlife.",
-// "{1} triumphed over {0} in battle.",
-// "{1} prevailed over {0}'s resistance.",
-// "{1} emerged victorious in the fight with {0}.",
-// "{1} stood tall after defeating {0}.",
-// "{1} struck down {0} with deadly precision.",
-// "{1} dominated {0} in combat."
-
-//         "{0} has died.",
-//         "Rest in peace {0}.",
-//         "{0} passed away.",
-//         "{0} has left us.",
-//         "{0} has gone to a better place.",
-//         "{0} has passed away.",
-//     "{0} has kicked the bucket.",
-//     "{0} has gone to meet their maker.",
-//     "{0} has shuffled off this mortal coil.",
-//     "{0} has departed.",
-//     "{0} has left us.",
-//     "{0} has gone on to the next life.",
-//     "{0} has met their end.",
-//     "{0} has ceased to be.",
-//     "{0} has left this world.",
-//     "{0} has gone to a better place.",
-//     "{0} has gone to the great beyond.",
-//     "{0} has been taken from us.",
-//     "{0} has gone to the other side.",
-//     "{0} has gone to be with the angels.",
-//     "{0} has gone to the light.",
-//     "{0} has gone to the afterlife.",
-//     "{0} has joined the choir invisible.",
-//     "{0} has gone to their eternal rest.",
-//     "{0} has left this mortal realm.",
-//     "{0} has been called home.",
-//     "{0} has transcended.",
-//     "{0} has crossed over.",
-//     "{0} has passed into the beyond.",
-//     "{0} has gone to a higher plane.",
-//     "{0} has gone to meet their ancestors.",
-//     "{0} has returned to the dust from whence they came.",
-//     "{0} has gone to their final resting place.",
-//     "{0} has gone to the land of the dead.",
-//     "{0} has gone to the great mystery.",
-//     "{0} has left their mortal coil behind.",
-//     "{0} has journeyed to the next life.",
-//     "{0} has taken their final breath.",
-//     "{0} has gone to the big sleep.",
-//     "{0} has gone to the silent land.",
-//     "{0} has gone to the undiscovered country.",
-//     "{0} has gone to their ultimate fate.",
-//     "{0} has gone to the next world.",
-//     "{0} has gone to the great unknown.",
-//     "{0} has gone to the eternal hunting grounds.",
-//     "{0} has gone to the happy hunting ground.",
-//     "{0} has gone to Valhalla.",
-//     "{0} has gone to Fólkvangr.",
-//     "{0} has gone to the realm of the dead.",
-//     "{0} has gone to the underworld.",
-//     "{0} has gone to the afterworld.",
-//     "{0} has gone to the spirit world.",
-//     "{0} has gone to the netherworld.",
-//     "{0} has gone to the shadow realm.",
-//         "{1} has taken down {0}.",
-//     "{0} has fallen at the hands of {1}.",
-//     "{1} has claimed {0}.",
-//     "{1} has emerged victorious over {0}.",
-//     "{1} has dispatched {0}.",
-//     "{0} has been slain by {1}.",
-//     "{1} has brought down {0}.",
-//     "{0} has met their end at the hands of {1}.",
-//     "{1} has proven too much for {0}.",
-//     "{1} has bested {0}.",
-//     "{0} has been eliminated by {1}.",
-//     "{1} has vanquished {0}.",
-//     "{0} has been taken out by {1}.",
-//     "{1} has outplayed {0}.",
-//     "{0} has fallen to {1}.",
-//     "{1} has triumphed over {0}."
