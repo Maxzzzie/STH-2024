@@ -159,6 +159,7 @@ namespace STHMaxzzzie.Client
             AnimpostfxStop("DeathFailMPDark");
             await Spawn.SpawnPlayer(SpawnPos.X, SpawnPos.Y, SpawnPos.Z, SpawnPos.W);
 
+            TriggerServerEvent("updatePlayerBlips");
             isRespawnRunning = false;
 
         }

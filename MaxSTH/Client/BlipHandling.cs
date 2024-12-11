@@ -14,10 +14,12 @@ namespace STHMaxzzzie.Client
 {
     public class BlipManager : BaseScript
     {
+            static int Me;
 
         private static Dictionary<string, int> blips = new Dictionary<string, int>();
         public BlipManager()
         {
+            Me = Game.Player.ServerId;
             API.DisplayPlayerNameTagsOnBlips(true);
         }
 
@@ -67,7 +69,7 @@ namespace STHMaxzzzie.Client
             HandleBlips(unpackedBlips);
         }
 
-        // Helper method to parse Vector3 from a string like "(x, y, z)"
+
         private static void HandleBlips(List<BlipData> updateBlipData)
         {
             DeleteAllBlips();
@@ -95,7 +97,6 @@ namespace STHMaxzzzie.Client
         {
             //Debug.WriteLine($"CreateBlip 1");
 
-            int Me = Game.Player.ServerId;
             if (blip.Visibility.VisibilityType != VisibilityType.All)
             {
                 if (blip.Visibility.VisibilityType == VisibilityType.Except && blip.Visibility.Players.Contains(Me))
@@ -116,15 +117,31 @@ namespace STHMaxzzzie.Client
             }
                 else if (blip.Type == "player")
                 {
+                                        if (RoundHandling.gameMode != "none" && RoundHandling.thisClientIsTeam == 1)
+                    {
+                        Debug.WriteLine($"Player is runner. Blip \"{blip.Name}\" not added.");
+                       return;
+                    }
                     string[] splitName = blip.Name.Split('-');
+                    if (RoundHandling.gameMode != "none" && RoundHandling.teamAssignment[int.Parse(splitName[1])] == 1)
+                {
+                    Debug.WriteLine($"Target player is runner. Blip \"{blip.Name}\" not added.");
+                    return;
+                }
+                else if (int.Parse(splitName[1]) == Me)
+                {
+                    Debug.WriteLine($"My blip. Blip \"{blip.Name}\" not added.");
+                    return;
+                    //NotificationScript.ShowNotification($"Me!");
+                }
                     Debug.WriteLine($"{splitName[1]} and {splitName[0]}");
                     int entityId = API.GetPlayerPed(API.GetPlayerFromServerId(int.Parse(splitName[1])));
                     blipHandle = API.AddBlipForEntity(entityId);
                 }
-
             else if (blip.Type == "entity")
             {
-                blipHandle = API.AddBlipForEntity(blip.EntityId);
+                int entityHandle = API.NetworkGetEntityFromNetworkId(blip.EntityId);
+                blipHandle = API.AddBlipForEntity(entityHandle);
             }
             else
             {
@@ -134,7 +151,7 @@ namespace STHMaxzzzie.Client
 
             blips.Add(blip.Name, blipHandle);
 
-            API.SetBlipSprite(blipHandle, blip.Sprite);
+            if (blip.Sprite != 0 ) API.SetBlipSprite(blipHandle, blip.Sprite);
             API.SetBlipColour(blipHandle, blip.Colour);
             API.SetBlipAlpha(blipHandle, blip.Alpha);
             API.SetBlipFlashes(blipHandle, blip.IsFlashing);

@@ -595,11 +595,7 @@ ig_trafficwarden
 ig_tylerdix
 ig_tylerdix_02
 ig_vagspeak
-ig_wade
 ig_zimbor
-player_one
-player_two
-player_zero
 ig_agatha
 ig_avery
 ig_brucie2

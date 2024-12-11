@@ -1,6 +1,6 @@
 Known issues -----
-Killed msgs are broken somehow
 Game msg's overlap atm if called quickly after one another
+/mugshot does full 15 seconds.
 
 
 
@@ -92,6 +92,16 @@ Tracer mode
 
 
 //finished
+completed 3-12-2024
+Streamloots bug where number instead of name is shown in locationchat sl effect.
+Added and patched a toggle for streamloots.
+
+
+
+completed 1-12-2024
+Added death camera and delay. Including sound and visual effect.
+Fixed camera shake from /sl shake
+added text msg.
 
 completed pre 30-11-2024
 GameHandler doesn't deal with wrong commands right.
@@ -208,7 +218,6 @@ Functional
 "gta1cam" - clients looks through a top down camera
 "bounce" - reverses the clients direction and heading
 "kickflip" - jumps the client vehicle up a little and gives it a rolling force
-"gunjam" - After a few shots the gun stops working until the client reloads
 "paint" - paints the clients car a bright colour
 "paintall" - paints all cars in the area a bright colour
 "electricalglitch" - flashes the lights and horn and doors of the clients car
@@ -219,6 +228,7 @@ Functional
 
 Needs an update
 
+"gunjam" - After a few shots the gun stops working until the client reloads (prevent last shot trigger and one shot weapons trigger)
 "compacted" - (semi functional but stops clients speed) sets the client into a compact
 "burstsome" - bursts a tire of the client vehicle (can sometimes be no tires as it selects a tire the client doesn't have. And add more than one tire possibility too)
 
@@ -238,6 +248,7 @@ Broken
 
 Ideas - Bad effects for runner
 
+pacifist (take away weapons. 2mins.)
 Set task for player to complete before being punsihed. (roll car upside down)
 Set task for player to complete before being punsihed. (get more than 10 meter airtime)
 Set task for player to complete before being punsihed. (visit a position before time runs out)
@@ -277,6 +288,7 @@ LSPD gets better cars
 
 Ideas - good effects for runner
 
+Get in new vehicle (even if you don't yet have one)
 LSPD intel (gain access to the hunters radio)
 Engine upgrade!
 Car bomb (one of the hunter's vehicles explodes)

@@ -39,7 +39,6 @@ namespace STHMaxzzzie.Server
             maxzzzieCalloutsDict = LoadResources.calloutsList();
             vehicleinfoDict = LoadResources.allowedVehicles();
 
-
         }
 
         [EventHandler("reloadResources")]
@@ -98,7 +97,7 @@ namespace STHMaxzzzie.Server
             source.TriggerEvent("whatIsVehAllowed", isVehRestricted);
             BlipHandler.UpdateClientBlips();
             TriggerEvent("playerJoinedWhileGameIsActive", source.Handle);
-
+            TriggerEvent("updatePlayerBlips");
         }
 
         [EventHandler("playerDropped")]
@@ -115,6 +114,7 @@ namespace STHMaxzzzie.Server
                 request.BlipsToRemove.Add($"pri{source.Name}");
                 BlipHandler.AddBlips(request);
             }
+            TriggerEvent("updatePlayerBlips");
         }
 
         [Command("togglevehres", Restricted = true)] //restriction default = true
@@ -186,36 +186,18 @@ namespace STHMaxzzzie.Server
     }
 
 
-
-    // public class Notifications : BaseScript
-    // {
-    //     public Notifications()
-    //     {
-    //         EventHandlers["notification"] += new Action<string, string>(ShowNotification);
-    //     }
-
-    //     private void ShowNotification(string message, string type)
-    //     {
-    //         API.SetNotificationTextEntry("STRING");
-    //         API.AddTextComponentString(message);
-    //         API.SetNotificationMessage(type, type, true, 0, false, "");
-    //         API.DrawNotification(false, true);
-    //     }
-
-    //     public static void DisplayNotification(string message)
-    //     {
-    //         TriggerClientEvent("notification", message, "success");
-    //     }
-    // }
-
-
-
     public class Misc : BaseScript
 
     {
-        public static string AllowedToFixStatus = "wait";
+        public static string AllowedToFixStatus = "lsc";
         public static int fixWaitTime = 10;
         public static bool isPodOn = true;
+
+        public Misc()
+        {
+            UpdateLSCustomsBlips();
+        }
+
 
         [Command("togglepod", Restricted = true)]
         void togglepod(int source, List<object> args, string raw)
@@ -254,10 +236,11 @@ namespace STHMaxzzzie.Server
             }
         }
 
+        string lastFixStatus = "none";
         [Command("togglefix", Restricted = true)]
-        async void toggleFix(int source, List<object> args, string raw)
+        void toggleFix(int source, List<object> args, string raw)
         {
-            string lastFixStatus = AllowedToFixStatus;
+            lastFixStatus = AllowedToFixStatus;
             if (args.Count == 1)
             {
                 if (args[0].ToString() == "on" || args[0].ToString() == "off" || args[0].ToString() == "lsc" || args[0].ToString() == "wait")
@@ -304,8 +287,11 @@ namespace STHMaxzzzie.Server
             {
                 CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/lsc/wait(and a value)/)");
             }
+            UpdateLSCustomsBlips();
+        }
 
-
+        public void UpdateLSCustomsBlips()
+        {
             BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
             if (lastFixStatus != "lsc" && AllowedToFixStatus == "lsc")
             {
@@ -1063,7 +1049,7 @@ namespace STHMaxzzzie.Server
                     TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "Something went wrong. Do /togglepvc \"true/false\" or \"playerID, primary colour id, secondary, pearlescent, lights r, g, b\"\nValue can be \"x\" as well to keep the existing colour." } });
                 }
             }
-            else 
+            else
             {
                 TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { "Something went wrong. Do /togglepvc \"true/false\" or \"playerID, primary colour id, secondary, pearlescent, lights r, g, b\"" } });
             }

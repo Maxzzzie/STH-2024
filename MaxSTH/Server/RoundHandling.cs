@@ -22,9 +22,9 @@ namespace STHMaxzzzie.Server
         public void startGameMode(int source, List<object> args, string raw)
         {
             // Debug.WriteLine($"server startGameMode");
-            if  (gameMode != "none")
+            if (gameMode != "none")
             {
-                TriggerClientEvent(Players[source], "chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"There is a game of {gameMode} running with {Players[runnerThisGame].Handle} as the runner."}});
+                TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"There is a game of {gameMode} running with {Players[runnerThisGame].Handle} as the runner." } });
                 return;
             }
             if (args[0].ToString() == "delay")
@@ -47,12 +47,12 @@ namespace STHMaxzzzie.Server
             // Debug.WriteLine($"server endGameMode");
             if (gameMode != "none")
             {
-            endGame("end");
-                TriggerClientEvent("chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"{Players[source].Name} ended the game early."}});
+                endGame("end");
+                TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"{Players[source].Name} ended the game early." } });
             }
-            else 
+            else
             {
-                TriggerClientEvent(Players[source], "chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"No game is running."}});
+                TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"No game is running." } });
             }
         }
 
@@ -105,6 +105,7 @@ namespace STHMaxzzzie.Server
             TriggerClientEvent("startGame", teamAssignmentForClient, gameMode);
             TriggerClientEvent("gameStartNotification", runnerList);
             DelayMode.setOrRemoveDistanceBlipsForDelayMode();
+            TriggerEvent("updatePlayerBlips");
         }
 
         [EventHandler("thisClientDiedForGameStateCheck")]
@@ -159,6 +160,7 @@ namespace STHMaxzzzie.Server
             gameMode = "none";
             runnerThisGame = -1;
             API.StartResource("playernames");
+            TriggerEvent("updatePlayerBlips");
         }
 
         [EventHandler("playerJoinedWhileGameIsActive")]
@@ -191,45 +193,45 @@ namespace STHMaxzzzie.Server
         }
 
         public void endGameMessages(string winningTeam)
-        { 
+        {
             // Debug.WriteLine($"server endGameMessages");
             //TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"EndGameMessages {winningTeam}" } });
             List<int> winners = new List<int>();
             List<int> losers = new List<int>();
             List<int> neutral = new List<int>();
-           foreach (var kvp in teamAssignment)
-    {
-        if (winningTeam == "end")
-        {   
-            // Debug.WriteLine($"server endGameMessages end");
-            neutral.Add(kvp.Key);
-            continue;
-        }
-        if (teamNumberDict.ContainsKey(winningTeam))
-        { 
-            // Debug.WriteLine($"server endGameMessages {winningTeam}");
-            if (kvp.Value == teamNumberDict[winningTeam])
+            foreach (var kvp in teamAssignment)
             {
-                winners.Add(kvp.Key); 
-                // Debug.WriteLine($"server endGameMessages winner {kvp.Key}");
+                if (winningTeam == "end")
+                {
+                    // Debug.WriteLine($"server endGameMessages end");
+                    neutral.Add(kvp.Key);
+                    continue;
+                }
+                if (teamNumberDict.ContainsKey(winningTeam))
+                {
+                    // Debug.WriteLine($"server endGameMessages {winningTeam}");
+                    if (kvp.Value == teamNumberDict[winningTeam])
+                    {
+                        winners.Add(kvp.Key);
+                        // Debug.WriteLine($"server endGameMessages winner {kvp.Key}");
+                    }
+                    else if (kvp.Value != 0)
+                    {
+                        // Debug.WriteLine($"server endGameMessages loser {kvp.Key}");
+                        losers.Add(kvp.Key);
+                    }
+                    else
+                    {
+                        // Debug.WriteLine($"server endGameMessages neutral {kvp.Key}");
+                        neutral.Add(kvp.Key);
+                    }
+                }
+                else
+                {
+                    // Log an error or handle the case where winningTeam is not valid
+                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"Invalid winning team: {winningTeam}" } });
+                }
             }
-            else if (kvp.Value != 0)
-            {   
-                // Debug.WriteLine($"server endGameMessages loser {kvp.Key}");
-                losers.Add(kvp.Key);
-            }
-            else
-            {
-                // Debug.WriteLine($"server endGameMessages neutral {kvp.Key}");
-                neutral.Add(kvp.Key);
-            }
-        }
-        else
-        {
-            // Log an error or handle the case where winningTeam is not valid
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"Invalid winning team: {winningTeam}" } });
-        }
-    }
             if (winners.Count == 0)
             {
                 // Debug.WriteLine($"server endGameMessages winner count 0");
@@ -258,18 +260,18 @@ namespace STHMaxzzzie.Server
                 }
             }
         }
-     [Command("gamestatus", Restricted = true)] //normal restriction true 
+        [Command("gamestatus", Restricted = true)] //normal restriction true 
         public void gameStatus(int source, List<object> args, string raw)
         {
             // Debug.WriteLine($"server gameStatus");
-            if  (gameMode != "none")
+            if (gameMode != "none")
             {
-                TriggerClientEvent(Players[source], "chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"There is a game of {gameMode} running with {Players[runnerThisGame].Name} as the runner."}});
+                TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"There is a game of {gameMode} running with {Players[runnerThisGame].Name} as the runner." } });
             }
             else
             {
-                TriggerClientEvent(Players[source], "chat:addMessage", new{color=new[]{255,0,0},args=new[]{$"There is no game running."}});
+                TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { $"There is no game running." } });
             }
-            }
-}
+        }
+    }
 }

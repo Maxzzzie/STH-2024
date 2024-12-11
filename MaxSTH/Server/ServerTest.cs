@@ -6,30 +6,34 @@ namespace STHMaxzzzie.Server
 {
         public class Test : BaseScript
         {
-                [Command("test", Restricted = true)]
+                [Command("test", Restricted = false)]
                 void TestCommand(int source, List<object> args, string raw)
                 {
-                        // if (args.Count == 1 && (args[0].ToString() == "check" || args[0].ToString() == "set" || args[0].ToString() == "hurt" || args[0].ToString() == "half" || args[0].ToString() == "full" ))
+                        // BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
+                        // if (args[0].ToString() == "add")
+                        //         foreach (Player player in Players)
+                        //         {
+
+                        //                 BlipHandler.BlipData playerblip = new BlipHandler.BlipData($"{player.Name}-{player.Handle}")
+                        //                 {
+                        //                         Type = "player",
+                        //                         Colour = 6,
+                        //                         Shrink = false,
+                        //                         MapName = player.Name,
+                        //                         Sprite = 64
+                        //                 };
+                        //                 request.BlipsToAdd.Add(playerblip);
+
+                        //         }
+                        // else if (args[0].ToString() == "del")
                         // {
-                        //         if (args[0].ToString() == "check") TriggerClientEvent(Players[source], "CheckHealthStats");
-                        //         else if (args[0].ToString() == "set") TriggerClientEvent(Players[source], "SetPlayerStats", true, true);
-                        //         else if (args[0].ToString() == "hurt") TriggerClientEvent(Players[source], "HurtPlayer");
-                        //         else if (args[0].ToString() == "half") TriggerClientEvent(Players[source], "HealHalf");
-                        //         else if (args[0].ToString() == "full") TriggerClientEvent(Players[source], "HealCompletely");
+                        //         foreach (Player player in Players)
+                        //         {
+                        //                 request.BlipsToRemove.Add($"{player.Name}-{player.Handle}");
+                        //         }
                         // }
-                        // else if (args.Count == 2 && (args[0].ToString() == "check" || args[0].ToString() == "set" || args[0].ToString() == "hurt" || args[0].ToString() == "half" || args[0].ToString() == "full" ))
-                        // {
-                        //         if (args[0].ToString() == "check") TriggerClientEvent(Players[int.Parse(args[1].ToString())], "CheckHealthStats");
-                        //         else if (args[0].ToString() == "set") TriggerClientEvent(Players[int.Parse(args[1].ToString())], "SetPlayerStats", true, true);
-                        //         else if (args[0].ToString() == "hurt") TriggerClientEvent(Players[int.Parse(args[1].ToString())], "HurtPlayer");
-                        //         else if (args[0].ToString() == "half") TriggerClientEvent(Players[int.Parse(args[1].ToString())], "HealHalf");
-                        //         else if (args[0].ToString() == "full") TriggerClientEvent(Players[int.Parse(args[1].ToString())], "HealCompletely");
-                                
-                        // }
-                        // else TriggerClientEvent(Players[source], "ShowNotification", "do /test check/set/hurt/half/full (optional player ID)");
+                        //         BlipHandler.AddBlips(request);
                 }
-
-
                 [Command("rpi", Restricted = true)]
                 void rpi(int source, List<object> args, string raw)
                 {

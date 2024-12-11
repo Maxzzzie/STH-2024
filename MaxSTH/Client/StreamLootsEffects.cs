@@ -946,10 +946,10 @@ private async Task MonitorWeaponAndShooting()
             // ROAD_VIBRATION_SHAKE  
             // SKY_DIVING_SHAKE  
             // VIBRATE_SHAKE  
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 7; i++)
             {
             API.ShakeGameplayCam("LARGE_EXPLOSION_SHAKE", 1);
-            await Delay(1000);
+            await Delay(900);
             }
             API.StopGameplayCamShaking(false);
         }
@@ -957,7 +957,7 @@ private async Task MonitorWeaponAndShooting()
         public static void rightLocationChat()
         {
             string[] trimmedClosestCalloutName = Callouts.closestCalloutName.Split('*');
-            TriggerServerEvent("SendSLChat", Game.Player.ServerId, $"Come get me, I'm at {trimmedClosestCalloutName[0]}.");
+            TriggerServerEvent("SendSLChat", Game.Player.ServerId, $"Let me give you a hint. I'm at {trimmedClosestCalloutName[0]}.");
         }
 
     }

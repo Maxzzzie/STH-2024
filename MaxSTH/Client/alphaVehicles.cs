@@ -94,7 +94,7 @@ namespace STHMaxzzzie.Client
             // Convert the vehicle name to a VehicleHash
             if (Enum.TryParse(lowerCaseName, true, out VehicleHash hashValue))
             {
-                Debug.WriteLine($"lowerCaseName: {lowerCaseName}, VehicleHash: {hashValue}");
+                //Debug.WriteLine($"lowerCaseName: {lowerCaseName}, VehicleHash: {hashValue}");
                 if (!VehicleNameToHash.ContainsKey(lowerCaseName))
                 {
                     VehicleNameToHash.Add(lowerCaseName, hashValue);

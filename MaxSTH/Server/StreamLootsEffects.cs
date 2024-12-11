@@ -8,7 +8,7 @@ namespace STHMaxzzzie.Server
 {
     public class StreamLootsEffect : BaseScript
     {
-        public static bool isSLOn = false;
+        public static bool isSLOn = true;
         private List<string> effectNames = new List<string>{
               "cleartires", //removes all tires from near the client
                 "spotlight", //puts a spotlight on the client from above
@@ -39,7 +39,7 @@ namespace STHMaxzzzie.Server
                 "locationchat" // sends location of player in chat for everyone but player.
              };
 
-         [Command("togglesl", Restricted = true)]
+         [Command("togglesl", Restricted = false)]
         void ToggleStreamLootsCommand(int source, List<object> args, string raw)
         {
     if (args.Count == 0)
@@ -75,7 +75,7 @@ namespace STHMaxzzzie.Server
             }
         }
 
-        [Command("sl", Restricted = true)]
+        [Command("sl", Restricted = false)]
         void StreamLootsCommand(int source, List<object> args, string raw)
         {
             //TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"StreamLoots command." } });
@@ -119,7 +119,7 @@ namespace STHMaxzzzie.Server
             foreach (Player player in Players)
             {
                 if (int.Parse(player.Handle) != source)
-                    TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { player.Handle, text } });
+                    TriggerClientEvent(player, "chat:addMessage", new { color = new[] { 255, 255, 255 }, args = new[] { Players[source].Name, text } });
             }
         }
     }

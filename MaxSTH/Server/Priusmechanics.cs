@@ -41,6 +41,8 @@ namespace STHMaxzzzie.Server
             }
 
             int vehicle = API.CreateVehicle(vehicleHash, position.X, position.Y, position.Z, heading, true, true); // Vehicle Hash gotten from VehicleHash on client, for some reason not available on server?
+            //await Delay(10);
+            //int networkId = API.NetworkGetNetworkIdFromEntity(vehicle);
 
             string[] trimmedClosestCalloutName = closestCalloutToPri.Split('*');
             TriggerClientEvent("chat:addMessage", new { color = new[] { 204, 0, 204 }, multiline = true, args = new[] { "Server", $"{player.Name} is spawning a Prius near {trimmedClosestCalloutName[0]}!" } });
@@ -49,18 +51,18 @@ namespace STHMaxzzzie.Server
             API.SetVehicleColours(vehicle, 135, 135);
             API.SetVehicleNumberPlateText(vehicle, $"{player.Name}");
             playerPris.Add(player, vehicle);
-            //TriggerEvent("addBlip", false, $"pri{player.Name}", "coord", new Vector3(position.X, position.Y, position.Z), vehicle, 119, 48, true, false, true);
             BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
             BlipHandler.BlipData pri = new BlipHandler.BlipData($"pri{player.Name}")
             {
                 Coords = new Vector3(position.X, position.Y, position.Z),
+                //Type = "entity",
+                //EntityId = networkId,
                 Sprite = 119,
                 Colour = 48,
                 MapName = $"Pri of {player.Name}"
             };
             request.BlipsToAdd.Add(pri);
             BlipHandler.AddBlips(request);
-            //TriggerClientEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"Trying to spawn a pri blip. with {pri.MapName}"}});
         }
 
 

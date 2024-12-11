@@ -13,6 +13,7 @@ namespace STHMaxzzzie.Client
     {
         string model = "null";
         static List<string> nonAnimalModel = new List<string>();
+        bool isModelChanging = false;
 
         //List<PedHash> PedModels = Enum.GetValues(typeof(PedHash)).Cast<PedHash>().ToList();
 
@@ -34,7 +35,7 @@ namespace STHMaxzzzie.Client
         void randmodelHandler()
         {
             Vector3 speed = Game.PlayerPed.Velocity;
-            if (Game.PlayerPed.IsAlive == false || IsPauseMenuActive())
+            if (Game.PlayerPed.IsAlive == false || IsPauseMenuActive() || isModelChanging)
             {
                 return;
             }
@@ -58,6 +59,7 @@ namespace STHMaxzzzie.Client
         [EventHandler("changingModel")]
         public async void changingModel(string getModel)
         {
+            isModelChanging = true;
             int HealthBeforeChange = API.GetEntityHealth(API.PlayerPedId());
             int ArmourBeforeChange = API.GetPedArmour(API.PlayerPedId());
             int playerHandle = Game.Player.ServerId;
@@ -73,6 +75,10 @@ namespace STHMaxzzzie.Client
             TriggerEvent("lastWeaponClass", true);
             TriggerServerEvent("updateServerModel", playerHandle, model);
             Health.SetPlayerStats(HealthBeforeChange, ArmourBeforeChange);
+            await Delay(200);
+            TriggerServerEvent("updatePlayerBlips");
+            isModelChanging = false;
+
         }
 
         //gets triggered by pressing f6 and /model
@@ -92,7 +98,7 @@ namespace STHMaxzzzie.Client
         public void requestModel(int source, List<object> args, string raw)
         {
             Vector3 speed = Game.PlayerPed.Velocity;
-            if (Game.PlayerPed.IsAlive == false)
+            if (Game.PlayerPed.IsAlive == false || isModelChanging)
             {
                 return;
             }
@@ -178,6 +184,13 @@ namespace STHMaxzzzie.Client
                 else if (input == "fw")
                 {
                     string[] fwModel = new string[] { "ig_johnnyklebitz" };
+                    var rand = new Random();
+                    int modelIndex = rand.Next(0, fwModel.Length);
+                    TriggerEvent("changingModel", fwModel[modelIndex]);
+                }
+                else if (input == "oltl") //one lemon two limes
+                {
+                    string[] fwModel = new string[] { "a_m_y_acult_01" };
                     var rand = new Random();
                     int modelIndex = rand.Next(0, fwModel.Length);
                     TriggerEvent("changingModel", fwModel[modelIndex]);
