@@ -189,7 +189,7 @@ namespace STHMaxzzzie.Server
     public class Misc : BaseScript
 
     {
-        public static string AllowedToFixStatus = "lsc";
+        public static string AllowedToFixStatus = "on";
         public static int fixWaitTime = 10;
         public static bool isPodOn = true;
 

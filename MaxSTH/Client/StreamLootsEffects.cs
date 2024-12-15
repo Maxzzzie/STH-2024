@@ -18,7 +18,6 @@ namespace STHMaxzzzie.Client
         DateTime fameStartTime;
         DateTime carFameStartTime;
         DateTime electricalGlitchStartTime;
-        DateTime starmodeEndTime;
         Random rand = new Random();
 
         public StreamLootsEffects()
@@ -41,8 +40,21 @@ namespace STHMaxzzzie.Client
         //     await Delay(500);
         //     }
         // }
+        
+        
+            // //
+            // server zegt doe cleartire
+            // kan ik niet doen want ik ben niet met een spel bezig
+            // voeg cleartire toe aan het lijstje
 
-        [EventHandler("StreamLootsEffect")] 
+
+            // //
+            // elke 5 seconden
+            // check de lijst eerstvolgende, kan je het doen doe het. 
+            // zo niet probeer de volgende
+
+
+        [EventHandler("StreamLootsEffect")]
         void DoStreamLootsEvent(string type)
         {
             if (type == "cleartires")
@@ -177,16 +189,94 @@ namespace STHMaxzzzie.Client
             }
         }
 
-        void BreakSomePlayerTires()
+        public List<int> vehiclesWith2Tires = new List<int> { 8, 13 };
+        public List<int> vehiclesWith4Tires = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 17, 18, 19 };
+
+        //eturns an int Vehicle Classes: 0: Compacts 1: Sedans 2: SUVs 3: Coupes 4: Muscle 5: Sports Classics 6: Sports 7: Super 8: Motorcycles 
+        //9: Off-road 10: Industrial 11: Utility 12: Vans 13: Cycles 14: Boats 15: Helicopters 16: Planes 17: Service 18: Emergency 19: Military 
+        //20: Commercial 21: Trains 22: Open Wheel char buffer[128]
+
+        bool BreakSomePlayerTires()
         {
-            if (Game.PlayerPed.IsInVehicle())
+            bool didIBurstOne = false;
+            if (!Game.PlayerPed.IsInVehicle())
             {
-                Vehicle veh = Game.PlayerPed.CurrentVehicle;
-                var rand = new Random();
-                var index = rand.Next(0, 7);
-                API.SetVehicleTyreBurst(veh.Handle, index, true, 1000);
+                return didIBurstOne;
             }
+            Vehicle veh = Game.PlayerPed.CurrentVehicle;
+            var VehClass = API.GetVehicleClass(veh.Handle);
+            if (!vehiclesWith2Tires.Contains(VehClass) && !vehiclesWith4Tires.Contains(VehClass) && VehClass != 20)
+            {
+                return didIBurstOne;
+            }
+
+            //0 = wheel_lf / bike, plane or jet front 
+            //1 = wheel_rf 
+            //2 = wheel_lm / in 6 wheels trailer, plane or jet is first one on left 
+            //3 = wheel_rm / in 6 wheels trailer, plane or jet is first one on right 
+            //4 = wheel_lr / bike rear / in 6 wheels trailer, plane or jet is last one on left 
+            //5 = wheel_rr / in 6 wheels trailer, plane or jet is last one on right 
+            //45 = 6 wheels trailer mid wheel left 
+            //47 = 6 wheels trailer mid wheel right
+
+            int again = 0;
+            List<int> alreadyPopped = new List<int>();
+            if (vehiclesWith2Tires.Contains(VehClass)) //2 tired vehicles
+            {
+                int index = rand.Next(0, 2);
+                if (index == 1) 
+                {
+                    index = 4;
+                }
+                if ( !API.IsVehicleTyreBurst(veh.Handle, index, false))
+                {
+                API.SetVehicleTyreBurst(veh.Handle, index, true, 1000);
+                didIBurstOne = true;
+                }
+                else
+                {
+
+                }
+            }
+            else if (vehiclesWith4Tires.Contains(VehClass)) //4 tired vehicles (mostly)
+            {
+                Debug.WriteLine($"4 tires");
+                while (again == 0 && alreadyPopped.Count < 3)
+                {
+                    int index = rand.Next(0, 4);
+                    if (index == 2 || index == 3)
+                    {
+                        index = index + 2; //tire 2 and 3 are 6 vehicle tires. 4 and 5 are rear left and rear right. Thats why i add it by 2.
+                    }
+                    if (alreadyPopped.Contains(index))
+                    {
+                        Debug.WriteLine($"skipping {index}");
+                        continue;
+                    }
+                    Debug.WriteLine($"popping {index}");
+                    API.SetVehicleTyreBurst(veh.Handle, index, true, 1000);
+                    again = rand.Next(0, 3); //33% chance to pop another tire.
+                    alreadyPopped.Add(index);
+                    Debug.WriteLine($"count {alreadyPopped.Count}, again = {again} ");
+                }
+            }
+            else if (VehClass == 20) //more tired vehicles
+            {
+                while (again == 0 || again == 1)
+                {
+                    var index = rand.Next(0, 6);
+                    if (alreadyPopped.Contains(index))
+                    {
+                        continue;
+                    }
+                    API.SetVehicleTyreBurst(veh.Handle, index, true, 1000);
+                    again = rand.Next(0, 3); //66% chance to pop another tire.
+                    alreadyPopped.Add(index);
+                }
+            }
+            return didIBurstOne;
         }
+
 
         void BreakAllPlayersTires()
         {
@@ -261,6 +351,11 @@ namespace STHMaxzzzie.Client
             {
                 Vehicle veh = Game.PlayerPed.CurrentVehicle;
                 API.ApplyForceToEntity(veh.Handle, 1, 0.0f, 0.0f, 40.0f, 0.0f, 0.0f, 0.0f, 0, true, true, true, false, true);
+            }
+            else 
+            {
+               API.ApplyForceToEntity(Game.PlayerPed.Handle, 1, 0.0f, 0.0f, 100.0f, 0.0f, 0.0f, 0.0f, 0, true, true, true, false, true); 
+               Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, true, false);
             }
         }
 
@@ -523,77 +618,77 @@ namespace STHMaxzzzie.Client
             }
         }
 
-private int shotsFired = 0;
-private int maxShots = 10;
-public bool canGunJam = false;
-private bool isGunJammed = false;
-private dynamic jammedWeapon = null;
+        private int shotsFired = 0;
+        private int maxShots = 10;
+        public bool canGunJam = false;
+        private bool isGunJammed = false;
+        private dynamic jammedWeapon = null;
 
-private async Task MonitorWeaponAndShooting()
-{
-    var playerPed = Game.PlayerPed;
-
-    // If the weapon is jammed, disable firing
-    if (isGunJammed)
-    { 
-        //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"isjammed"}});
-        API.DisablePlayerFiring(playerPed.Handle, true);
-        // if (API.IsControlJustPressed(0, (int)Control.Attack)) // Check for attack key press
-        // {
-        //     API.PlaySoundFrontend(-1, "WEAPON_EMPTY", "HUD_LIQUOR_STORE_SOUNDSET", false);
-        // }
-        // Allow unjamming by reloading, switching weapon, or getting in vehicle
-        if (API.IsPedReloading(playerPed.Handle) || API.IsControlJustPressed(0, 24) || !Game.PlayerPed.IsOnFoot || Game.PlayerPed.Weapons.Current.Hash != jammedWeapon) // Check for reload key press
+        private async Task MonitorWeaponAndShooting()
         {
-            isGunJammed = false;
-            shotsFired = 0; // Reset shots fired
-            canGunJam = false;
-            NotificationScript.ShowNotification("~h~~g~Weapon unjammed!~h~");
+            var playerPed = Game.PlayerPed;
+
+            // If the weapon is jammed, disable firing
+            if (isGunJammed)
+            {
+                //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"isjammed"}});
+                API.DisablePlayerFiring(playerPed.Handle, true);
+                // if (API.IsControlJustPressed(0, (int)Control.Attack)) // Check for attack key press
+                // {
+                //     API.PlaySoundFrontend(-1, "WEAPON_EMPTY", "HUD_LIQUOR_STORE_SOUNDSET", false);
+                // }
+                // Allow unjamming by reloading, switching weapon, or getting in vehicle
+                if (API.IsPedReloading(playerPed.Handle) || API.IsControlJustPressed(0, 24) || !Game.PlayerPed.IsOnFoot || Game.PlayerPed.Weapons.Current.Hash != jammedWeapon) // Check for reload key press
+                {
+                    isGunJammed = false;
+                    shotsFired = 0; // Reset shots fired
+                    canGunJam = false;
+                    NotificationScript.ShowNotification("~h~~g~Weapon unjammed!~h~");
+                }
+
+                await Task.FromResult(0);
+                return; // Exit early, gun is jammed
+            }
+
+            // Ensure firing is enabled if the gun is not jammed
+            //API.DisablePlayerFiring(playerPed.Handle, true);
+
+            // If gun jamming is disabled, return early
+            if (!canGunJam)
+            {
+                //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"can't jam."}});
+                return;
+            }
+
+            // Check if the player has a weapon equipped and is on foot
+            if (Game.PlayerPed.Weapons.Current.Hash != WeaponHash.Unarmed && playerPed.IsOnFoot)
+            {
+                //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"holds weapon."}});
+                // Monitor for shooting
+                if (API.IsPedShooting(Game.PlayerPed.Handle))
+                {
+                    //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"shot"}});
+                    shotsFired++;
+                }
+
+                // Jam the weapon if shots exceed the allowed limit
+                if (shotsFired >= maxShots)
+                {
+                    isGunJammed = true;
+                    jammedWeapon = Game.PlayerPed.Weapons.Current.Hash;
+                    NotificationScript.ShowNotification("~h~~r~Weapon jammed!~h~~n~~s~Press R to reload.");
+                }
+            }
+            else
+            {
+                //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"else."}});
+                // Reset state when switching weapons or unequipping
+                shotsFired = 0; // Reset the shot counter
+                isGunJammed = false;
+            }
+
+            await Task.FromResult(0);
         }
-
-        await Task.FromResult(0);
-        return; // Exit early, gun is jammed
-    }
-
-    // Ensure firing is enabled if the gun is not jammed
-    //API.DisablePlayerFiring(playerPed.Handle, true);
-
-    // If gun jamming is disabled, return early
-    if (!canGunJam)
-    {
-        //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"can't jam."}});
-        return;
-    }
-
-    // Check if the player has a weapon equipped and is on foot
-    if (Game.PlayerPed.Weapons.Current.Hash != WeaponHash.Unarmed && playerPed.IsOnFoot)
-    {
-        //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"holds weapon."}});
-        // Monitor for shooting
-        if (API.IsPedShooting(Game.PlayerPed.Handle))
-        {
-           //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"shot"}});
-            shotsFired++;
-        }
-
-        // Jam the weapon if shots exceed the allowed limit
-        if (shotsFired >= maxShots)
-        {
-            isGunJammed = true;
-            jammedWeapon = Game.PlayerPed.Weapons.Current.Hash;
-            NotificationScript.ShowNotification("~h~~r~Weapon jammed!~h~~n~~s~Press R to reload.");
-        }
-    }
-    else
-    {
-        //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"else."}});
-        // Reset state when switching weapons or unequipping
-        shotsFired = 0; // Reset the shot counter
-        isGunJammed = false;
-    }
-
-    await Task.FromResult(0);
-}
 
 
 
@@ -751,8 +846,8 @@ private async Task MonitorWeaponAndShooting()
             {
                 for (int i = 0; i < 200; i++)
                 {
-                    var horn = rand.Next(0, 2);
-                    var dooropen = rand.Next(0, 2);
+                    var horn = rand.Next(0, 5);
+                    var dooropen = rand.Next(0, 15);
                     API.SetVehicleLights(veh.Handle, rand.Next(0, 3));
 
                     if (dooropen == 0)
@@ -782,9 +877,9 @@ private async Task MonitorWeaponAndShooting()
                 int g = 0;
                 int b = 0;
                 int state = 0; //state: 0 r increases. 1 b decreases. 2 g increases. 3 r decreases. 4 b increases. 5 g decreases. repeat
-                starmodeEndTime = DateTime.Now.AddSeconds(rand.Next(10, 20));
+                DateTime starmodeEndTime;
+                starmodeEndTime = DateTime.Now.AddSeconds(rand.Next(15, 40));
                 Debug.WriteLine($"starmodeEndTime: {starmodeEndTime}, {DateTime.Now}");
-
 
                 int rgb = rand.Next(0, 4); //sets a random start colour
                 if (rgb == 0) { r = 240; b = 255; state = 0; }
@@ -948,8 +1043,8 @@ private async Task MonitorWeaponAndShooting()
             // VIBRATE_SHAKE  
             for (int i = 0; i < 7; i++)
             {
-            API.ShakeGameplayCam("LARGE_EXPLOSION_SHAKE", 1);
-            await Delay(900);
+                API.ShakeGameplayCam("LARGE_EXPLOSION_SHAKE", 1);
+                await Delay(900);
             }
             API.StopGameplayCamShaking(false);
         }
