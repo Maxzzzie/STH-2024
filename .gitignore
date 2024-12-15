@@ -209,4 +209,4 @@ privates_config.lua
 .fxdk/fxserver/cache/files/MaxSTH/resource.rpf
 .fxdk/fxserver/cache/files/MaxSTH/resource.rpf
 .fxdk
-*.MaxSTH\Server\Twitch\Commands\TwitchHandler.cs
+.MaxSTH\Server\Twitch\Commands\TwitchHandler.cs

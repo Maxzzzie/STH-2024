@@ -12,7 +12,7 @@ namespace TwitchTestClient.Server.Twitch.Commands
         public static event Action<ChatMessage> OnChatMessageReceived;
 
         /* TODO: read this from file */
-        private const string USERNAME = "";
+        private const string USERNAME = "xx";
         private const string CHANNEL = "";
         private const string ACCESS_TOKEN = "";
 
