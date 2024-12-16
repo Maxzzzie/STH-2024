@@ -194,19 +194,6 @@ privates_config.lua
 
 # python files
 *.pyc
-.fxdk/fxserver/db/default/001407.sst
-.fxdk/fxserver/db/default/MANIFEST-001404
-.fxdk/fxserver/db/default/OPTIONS-001411
-.fxdk/fxserver/db/default/OPTIONS-001401
-.fxdk/fxserver/db/default/MANIFEST-001409
-.fxdk/fxserver/db/default/LOG.old.1731002464442839
-.fxdk/fxserver/db/default/LOG
-.fxdk/fxserver/db/default/CURRENT
-.fxdk/fxserver/cache/files/STHmap_SurviveTheHunt_Maxzzzie_fxworld/resource.rpf.db
-.fxdk/fxserver/cache/files/STHmap_SurviveTheHunt_Maxzzzie_fxworld/resource.rpf
-.fxdk/fxserver/cache/files/MaxSTH/resource.rpf
-.gitignore
-.fxdk/fxserver/cache/files/MaxSTH/resource.rpf
-.fxdk/fxserver/cache/files/MaxSTH/resource.rpf
+
 .fxdk
-.MaxSTH\Server\Twitch\Commands\TwitchHandler.cs
+MaxSTH\Server\Twitch\Commands\TwitchHandler.cs

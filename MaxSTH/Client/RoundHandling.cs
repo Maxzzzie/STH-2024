@@ -31,7 +31,7 @@ namespace STHMaxzzzie.Client
                     int playerId = (int)vector.X;
                     int team = (int)vector.Y;
                     teamAssignment.Add(playerId, team);
-                    TriggerEvent("pma-voice:SetPlayerRadioChannel", playerId, team);
+                    //TriggerEvent("pma-voice:SetPlayerRadioChannel", playerId, team);
                     if (playerId == serverId)
                     {
                         thisClientIsTeam = team;
@@ -42,13 +42,23 @@ namespace STHMaxzzzie.Client
             {
                 //Debug.WriteLine($"client startGame was Hunt");
                 startHuntMode();
-                Health.SetPlayerStats(300, 0);
+                
             }
-            if (gameMode == "delay")
+            else if (gameMode == "delay")
             {
                 startDelayMode();
             }
+
+            if (thisClientIsTeam == 1)
+                {
+                    Health.SetPlayerStats(300, 100);
+                    TriggerEvent("HealCompletely");
+                }
+            else
+            {
             Health.SetPlayerStats(300, 0);
+            }
+
         }
 
         [EventHandler("clientEndGame")]
@@ -56,6 +66,7 @@ namespace STHMaxzzzie.Client
         {
             Debug.WriteLine($"client clientEndGame");
             gameMode = "none";
+            TriggerEvent("HealHalf");
 
             teamAssignment.Clear();
             foreach (var obj in playerIdAndTeamAssignment)
