@@ -396,4 +396,47 @@ public static class LoadResources
 
         //CitizenFX.Core.Debug.WriteLine("playerVehicleColour resource successfully saved.");
     }
+
+    public static Dictionary<string, string> streamLootsCardInfo()
+    {
+        Debug.WriteLine("Loading StreamLootsCardInfo");
+        var path_to_resource = API.GetResourcePath(API.GetCurrentResourceName());
+        var path_to_StreamLootsCardInfo_file = $"{path_to_resource}/Resources/StreamLootsCardInfo.txt";
+
+        if (!File.Exists(path_to_StreamLootsCardInfo_file))
+        {
+            CitizenFX.Core.Debug.WriteLine($"StreamLootsCardInfo.txt does not exist at: {path_to_StreamLootsCardInfo_file}");
+            return null;
+        }
+
+        string[] StreamLootsCardInfoLines = File.ReadAllLines(path_to_StreamLootsCardInfo_file);
+        var StreamLootsCardInfoDict = new Dictionary<string, string>();
+
+        foreach (string line in StreamLootsCardInfoLines)
+        {
+
+            string[] parts = line.Split('*');
+            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//"))
+            {
+                continue; // Skip empty lines and any lines starting with //
+            }
+            else if (parts.Length < 4)
+            {
+                CitizenFX.Core.Debug.WriteLine($"Insufficient data in StreamLootsCardInfo.txt line: {line}");
+                continue;
+            }
+            else if (!Int32.TryParse(parts[3].ToString(), out int temp))
+            {
+                CitizenFX.Core.Debug.WriteLine($"Target isn't an int in StreamLootsCardInfo.txt line: {line}");
+                continue;
+            }
+
+            string ChatText = parts[2].Trim();
+            StreamLootsCardInfoDict.Add(ChatText, line);
+            Debug.WriteLine($"read \"{line}\" and added {parts[2]}");
+            
+        }
+        return StreamLootsCardInfoDict;
+    }
+
 }

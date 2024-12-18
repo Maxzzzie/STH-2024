@@ -26,6 +26,9 @@
     "pma-voice": {
       "enabled": false,
       "restartOnChange": true
+    },
+    "MaxSTH2.fxworld": {
+      "enabled": true
     }
   },
   "serverUpdateChannel": "latest",

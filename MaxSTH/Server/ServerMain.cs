@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Numerics;
 using STHMaxzzzie;
 using System.Drawing;
+using TwitchTestClient.Server.Features;
 
 
 namespace STHMaxzzzie.Server
@@ -48,8 +49,10 @@ namespace STHMaxzzzie.Server
             respawnLocationsDict = LoadResources.respawnLocations();
             maxzzzieCalloutsDict = LoadResources.calloutsList();
             vehicleinfoDict = LoadResources.allowedVehicles();
+            StreamlootsFeature.textToCommand = LoadResources.streamLootsCardInfo();
             Vehicles.vehicleColourForPlayer = LoadResources.playerVehicleColour();
-            foreach (Player player in Players)
+            
+            foreach (Player player in Players) 
             {
                 ServerMain.sendRespawnLocationsDict(player);
                 ServerMain.sendVehicleinfoDict(player);

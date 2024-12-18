@@ -196,4 +196,4 @@ privates_config.lua
 *.pyc
 
 .fxdk
-MaxSTH\Server\Twitch\Commands\TwitchHandler.cs
+/MaxSTH/Server/Twitch/Commands/TwitchHandler.cs

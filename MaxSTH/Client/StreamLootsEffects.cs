@@ -13,11 +13,14 @@ namespace STHMaxzzzie.Client
         bool isSpotlightOn = false;
         bool isPlayerDrunk = false;
         bool isGta1CamOn = false;
+        bool didGta1CamStartOnce = false;
+        DateTime Gta1camEndTime;
         bool isReverseCamOn = false;
         public static bool isStarmodeOn = false; //to not automatically update player colours
+        static bool isElectricalGlitchRunning = false;
         DateTime fameStartTime;
         DateTime carFameStartTime;
-        DateTime electricalGlitchStartTime;
+        static bool isShakeCamOn = false;
         Random rand = new Random();
 
         public StreamLootsEffects()
@@ -40,139 +43,244 @@ namespace STHMaxzzzie.Client
         //     await Delay(500);
         //     }
         // }
-        
-        
-            // //
-            // server zegt doe cleartire
-            // kan ik niet doen want ik ben niet met een spel bezig
-            // voeg cleartire toe aan het lijstje
 
 
-            // //
-            // elke 5 seconden
-            // check de lijst eerstvolgende, kan je het doen doe het. 
-            // zo niet probeer de volgende
+        // //
+        // server zegt doe cleartire
+        // kan ik niet doen want ik ben niet met een spel bezig
+        // voeg cleartire toe aan het lijstje
 
 
+        // //
+        // elke 5 seconden
+        // check de lijst eerstvolgende, kan je het doen doe het. 
+        // zo niet probeer de volgende
+
+
+        // A list to store effects in the order they were received
+    private readonly List<string> EffectCue = new List<string>();
+
+    // A flag to prevent multiple iterations running simultaneously
+    private bool IsProcessingCue = false;
+
+    // Method to handle incoming effects
         [EventHandler("StreamLootsEffect")]
-        void DoStreamLootsEvent(string type)
+    public bool StreamLootsEffect(string effectName)
+    {
+        // Attempt to execute the effect immediately
+        if (DoStreamLootsEvent(effectName))
         {
+            return true;
+        }
+
+        // If it fails, add it to the queue
+        lock (EffectCue)
+        {
+            EffectCue.Add(effectName);
+        }
+        return false;
+    }
+
+    // Iterates over the EffectCue periodically, trying each effect
+    public async void ProcessEffectCueAsync()
+    {
+        if (IsProcessingCue) return; // Avoid reentry if already running
+
+        IsProcessingCue = true;
+
+        while (true)
+        {
+            // Wait for 30 seconds before processing the queue
+            DateTime cueItterateTime;
+            cueItterateTime = DateTime.Now.AddSeconds(rand.Next(10, 50));
+            while (DateTime.Now < cueItterateTime)
+            {
+                await Delay(50);
+            }
+
+
+            lock (EffectCue)
+            {
+                for (int i = 0; i < EffectCue.Count; i++)
+                {
+                    string effect = EffectCue[i];
+
+                    // Try to execute the effect
+                    if (DoStreamLootsEvent(effect))
+                    {
+                        // Remove it from the queue if successful
+                        EffectCue.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+        IsProcessingCue = false;
+        }
+    }
+
+        bool DoStreamLootsEvent(string type)
+        {
+            bool didWork = false;
             if (type == "cleartires")
             {
                 ClearAllTires();
+                didWork = true;
             }
-            if (type == "spotlight")
+            // else if (type == "spotlight")
+            // {
+            //     isSpotlightOn = !isSpotlightOn;
+            // }
+            else if (type == "burstsome")
             {
-                isSpotlightOn = !isSpotlightOn;
+                didWork = BreakSomePlayerTires();
             }
-            if (type == "burstsome")
+            else if (type == "burstall")
             {
-                BreakSomePlayerTires();
+                didWork = BreakAllPlayersTires();
             }
-            if (type == "burstall")
+            else if (type == "drunk")
             {
-                BreakAllPlayersTires();
+                if (!isPlayerDrunk)
+                {
+                    setPlayerDrunk();
+                    didWork = true;
+                }
             }
-            if (type == "drunk")
+            else if (type == "stop")
             {
-                setPlayerDrunk();
+                didWork = stopPlayerOnTheSpot();
             }
-            if (type == "stop")
+            else if (type == "speed")
             {
-                stopPlayerOnTheSpot();
+                didWork = givePlayerLotsOfForwardMomentum();
             }
-            if (type == "speed")
+            else if (type == "launch")
             {
-                givePlayerLotsOfForwardMomentum();
+                didWork = launchPlayerUp();
             }
-            if (type == "launch")
+            else if (type == "gta1cam")
             {
-                launchPlayerUp();
+                if (!isGta1CamOn && !isShakeCamOn)
+                {
+                    Gta1camEndTime = DateTime.Now.AddSeconds(rand.Next(20, 50));
+                    isGta1CamOn = true;
+                    didWork = true;
+                }
             }
-            if (type == "gta1cam")
+            // else if (type == "reversecam")
+            // {
+            //     SetReverseCam();
+            // }
+            else if (type == "bounce")
             {
-                isGta1CamOn = !isGta1CamOn;
+                didWork = BounceVehicle();
             }
-            if (type == "reversecam")
+            else if (type == "kickflip")
             {
-                SetReverseCam();
+                didWork = PerformKickflip();
             }
-            if (type == "bounce")
+            else if (type == "gunjam")
             {
-                BounceVehicle();
+                if (!canGunJam)
+                {
+                    canGunJam = true;
+                    maxShots = rand.Next(2, 15);
+                    didWork = true;
+                }
             }
-            if (type == "kickflip")
+            // else if (type == "fame")
+            // {
+            //     fameStartTime = DateTime.Now;
+            //     StartNPCsRunningTowardsPlayer();
+            // }
+            // else if (type == "carfame")
+            // {
+            //     carFameStartTime = DateTime.Now;
+            //     StartCarsDrivingIntoPlayer();
+            // }
+            // else if (type == "imponent")
+            // {
+            //     SpawnImponentFollower();
+            // }
+            else if (type == "paint")
             {
-                PerformKickflip();
+                didWork = ChangeCarColor();
             }
-            if (type == "gunjam")
-            {
-                canGunJam = true;
-                isGunJammed = false;
-                maxShots = rand.Next(1, 15);
-            }
-            if (type == "fame")
-            {
-                fameStartTime = DateTime.Now;
-                StartNPCsRunningTowardsPlayer();
-            }
-            if (type == "carfame")
-            {
-                carFameStartTime = DateTime.Now;
-                StartCarsDrivingIntoPlayer();
-            }
-            if (type == "imponent")
-            {
-                SpawnImponentFollower();
-            }
-            if (type == "paint")
-            {
-                ChangeCarColor();
-            }
-            if (type == "paintall")
+            else if (type == "paintall") //works best only runner does it. Otherwise you get desync issues.
             {
                 PaintAllNearbyVehicles();
+                didWork = true;
             }
-            if (type == "crack")
+            // else if (type == "crack")
+            // {
+            //     BreakAllVehicleWindows();
+            // }
+            else if (type == "electricalglitch")
             {
-                BreakAllVehicleWindows();
-            }
-            if (type == "electricalglitch")
-            {
-                electricalGlitchStartTime = DateTime.Now;
+                if (!isElectricalGlitchRunning)
+                {
                 StartElectricalGlitch();
+                didWork = true;
+                }
             }
-            if (type == "starmode")
+            else if (type == "starmode")
             {
-                StartRainbowCarEffect();
+                if (!isStarmodeOn)
+                {
+                    isStarmodeOn = true;
+                    StartRainbowCarEffect();
+                    didWork = true;
+                }
             }
-            if (type == "carborrow")
-            {
-                TeleportIntoRandomNPCVehicle();
-            }
-            if (type == "compacted")
+            // else if (type == "carborrow")
+            // {
+            //     TeleportIntoRandomNPCVehicle();
+            // }
+            else if (type == "compacted")
             {
                 ChangeToCompactCar();
             }
-            if (type == "speedlimiter")
+            else if (type == "supered")
+            {
+                ChangeToSuperCar();
+            }
+            else if (type == "couped")
+            {
+                ChangeToCoupeCar();
+            }
+            else if (type == "shitboxed")
+            {
+                ChangeToShitBoxCar();
+            }
+            else if (type == "speedlimiter")
             {
                 ApplySpeedLimiter();
             }
-            if (type == "carswap")
+            else if (type == "carswap")
             {
                 SwapCarsWithAnotherPlayer();
             }
-            if (type == "shake")
+            else if (type == "shake")
             {
-                shakeCam();
+                if (!isGta1CamOn && !isShakeCamOn)
+                {
+                    shakeCam();
+                    didWork = true;
+                }
             }
-            if (type == "locationchat")
+            else if (type == "locationchat")
             {
                 rightLocationChat();
+                didWork = true;
             }
+            else
+            {
+                Debug.WriteLine("StreamLootsEffect doesn't exist. Not cued.");
+            }
+            return didWork;
         }
 
-        void ClearAllTires()
+        void ClearAllTires() //works best when targeting everyone
         {
 
             Vehicle[] allVeh = World.GetAllVehicles();
@@ -196,18 +304,18 @@ namespace STHMaxzzzie.Client
         //9: Off-road 10: Industrial 11: Utility 12: Vans 13: Cycles 14: Boats 15: Helicopters 16: Planes 17: Service 18: Emergency 19: Military 
         //20: Commercial 21: Trains 22: Open Wheel char buffer[128]
 
-        bool BreakSomePlayerTires()
+        bool BreakSomePlayerTires() //works only when player is in a vehicle and that vehicle has some tires to pop. Is compatible with everything else. If it doesn't run it should try again later.
         {
-            bool didIBurstOne = false;
+            bool didIPopOne = false;
             if (!Game.PlayerPed.IsInVehicle())
             {
-                return didIBurstOne;
+                return didIPopOne;
             }
             Vehicle veh = Game.PlayerPed.CurrentVehicle;
             var VehClass = API.GetVehicleClass(veh.Handle);
             if (!vehiclesWith2Tires.Contains(VehClass) && !vehiclesWith4Tires.Contains(VehClass) && VehClass != 20)
             {
-                return didIBurstOne;
+                return didIPopOne;
             }
 
             //0 = wheel_lf / bike, plane or jet front 
@@ -221,79 +329,182 @@ namespace STHMaxzzzie.Client
 
             int again = 0;
             List<int> alreadyPopped = new List<int>();
+
             if (vehiclesWith2Tires.Contains(VehClass)) //2 tired vehicles
             {
-                int index = rand.Next(0, 2);
-                if (index == 1) 
+                if (API.IsVehicleTyreBurst(veh.Handle, 0, false) && API.IsVehicleTyreBurst(veh.Handle, 4, false))
                 {
-                    index = 4;
-                }
-                if ( !API.IsVehicleTyreBurst(veh.Handle, index, false))
-                {
-                API.SetVehicleTyreBurst(veh.Handle, index, true, 1000);
-                didIBurstOne = true;
+                    Debug.WriteLine($"Skipping burstsome, both tires are already popped.");
+                    return didIPopOne;
                 }
                 else
                 {
-
+                    int index = rand.Next(0, 2);
+                    Debug.WriteLine($"index = {index}");
+                    if ((!API.IsVehicleTyreBurst(veh.Handle, 0, false) && index == 0) || (API.IsVehicleTyreBurst(veh.Handle, 4, false) && index == 1)) //check for index 1 as that should burst back tire. Ingame that is tire 45
+                    {
+                        API.SetVehicleTyreBurst(veh.Handle, 0, true, 1000);
+                    }
+                    else //if rand.Next produces index 1. Or if index 0 is already popped beforehand.
+                    {
+                        API.SetVehicleTyreBurst(veh.Handle, 4, true, 1000);
+                        //index 4 targets the back wheel of a bike. Tire 0 is front wheel so doesn't neeed changing.
+                    }
+                    didIPopOne = true;
                 }
             }
+
             else if (vehiclesWith4Tires.Contains(VehClass)) //4 tired vehicles (mostly)
             {
                 Debug.WriteLine($"4 tires");
-                while (again == 0 && alreadyPopped.Count < 3)
+
+                if (API.IsVehicleTyreBurst(veh.Handle, 0, false)) alreadyPopped.Add(0);
+                if (API.IsVehicleTyreBurst(veh.Handle, 1, false)) alreadyPopped.Add(1);
+                if (API.IsVehicleTyreBurst(veh.Handle, 4, false)) alreadyPopped.Add(4);
+                if (API.IsVehicleTyreBurst(veh.Handle, 5, false)) alreadyPopped.Add(5);
+                if (alreadyPopped.Count == 4)
+                {
+                    Debug.WriteLine($"Skipping burstsome. All 4 tires are already popped.");
+                    return didIPopOne;
+                }
+
+
+                while (again == 0 && alreadyPopped.Count < 4)
                 {
                     int index = rand.Next(0, 4);
                     if (index == 2 || index == 3)
                     {
-                        index = index + 2; //tire 2 and 3 are 6 vehicle tires. 4 and 5 are rear left and rear right. Thats why i add it by 2.
+                        index = index + 2; //tire 2 and 3 are for vehicles with more tires. tire 4 and 5 are rear left and rear right of a vehicle with 4 tires. Thats why i add 2 to it.
                     }
                     if (alreadyPopped.Contains(index))
                     {
-                        Debug.WriteLine($"skipping {index}");
+                        Debug.WriteLine($"skipping {index}, is already popped.");
                         continue;
                     }
                     Debug.WriteLine($"popping {index}");
                     API.SetVehicleTyreBurst(veh.Handle, index, true, 1000);
-                    again = rand.Next(0, 3); //33% chance to pop another tire.
+                    again = rand.Next(0, 4); //25% chance to pop another tire.
                     alreadyPopped.Add(index);
                     Debug.WriteLine($"count {alreadyPopped.Count}, again = {again} ");
                 }
             }
+
+
             else if (VehClass == 20) //more tired vehicles
             {
-                while (again == 0 || again == 1)
+
+                if (API.IsVehicleTyreBurst(veh.Handle, 0, false)) alreadyPopped.Add(0);
+                if (API.IsVehicleTyreBurst(veh.Handle, 1, false)) alreadyPopped.Add(1);
+                if (API.IsVehicleTyreBurst(veh.Handle, 2, false)) alreadyPopped.Add(2);
+                if (API.IsVehicleTyreBurst(veh.Handle, 3, false)) alreadyPopped.Add(3);
+                if (API.IsVehicleTyreBurst(veh.Handle, 4, false)) alreadyPopped.Add(4);
+                if (API.IsVehicleTyreBurst(veh.Handle, 5, false)) alreadyPopped.Add(5);
+
+                if (alreadyPopped.Count == 6)
                 {
-                    var index = rand.Next(0, 6);
+                    Debug.WriteLine($"Skipping burstsome. All 6 tires are already popped.");
+                    return didIPopOne;
+                }
+
+
+                while (again == 0 && alreadyPopped.Count < 6)
+                {
+                    int index = rand.Next(0, 6);
                     if (alreadyPopped.Contains(index))
                     {
+                        Debug.WriteLine($"skipping {index}, is already popped.");
                         continue;
                     }
+                    Debug.WriteLine($"popping {index}");
                     API.SetVehicleTyreBurst(veh.Handle, index, true, 1000);
-                    again = rand.Next(0, 3); //66% chance to pop another tire.
+                    again = rand.Next(0, 2); //50% chance to pop another tire.
                     alreadyPopped.Add(index);
+                    Debug.WriteLine($"count {alreadyPopped.Count}, again = {again}");
                 }
             }
-            return didIBurstOne;
+            return didIPopOne;
+
+            // test for what tire has what id. Set the function to async void.
+            // int x = 0;
+            // Vehicle veh = Game.PlayerPed.CurrentVehicle;
+            // while (x < 100)
+            // {
+            //     API.SetVehicleTyreBurst(veh.Handle, x, true, 1000);
+            //     Debug.WriteLine($"burst {x}");
+            //     x ++;
+            //     await Delay(2000);
+            // }
         }
 
-
-        void BreakAllPlayersTires()
+        bool BreakAllPlayersTires() //only runs if player is in vehicle and has tires left to pop. Otherwise should try again later.
         {
+            bool didIBurstAll = false;
             if (Game.PlayerPed.IsInVehicle())
             {
                 Vehicle veh = Game.PlayerPed.CurrentVehicle;
+                var VehClass = API.GetVehicleClass(veh.Handle);
+
+                if (vehiclesWith2Tires.Contains(VehClass)) //2 tired vehicles (mostly)
                 {
+
+                    if (API.IsVehicleTyreBurst(veh.Handle, 0, false) &&
+                        API.IsVehicleTyreBurst(veh.Handle, 4, false))
+                    {
+                        Debug.WriteLine($"All tires are already popped. Skipping BurstAll.");
+                        return didIBurstAll;
+                    }
                     API.SetVehicleTyreBurst(veh.Handle, 0, true, 1000);
-                    API.SetVehicleTyreBurst(veh.Handle, 1, true, 1000);
-                    API.SetVehicleTyreBurst(veh.Handle, 2, true, 1000);
-                    API.SetVehicleTyreBurst(veh.Handle, 3, true, 1000);
                     API.SetVehicleTyreBurst(veh.Handle, 4, true, 1000);
-                    API.SetVehicleTyreBurst(veh.Handle, 5, true, 1000);
-                    API.SetVehicleTyreBurst(veh.Handle, 6, true, 1000);
-                    API.SetVehicleTyreBurst(veh.Handle, 7, true, 1000);
+                    didIBurstAll = true;
+                }
+                else if (vehiclesWith4Tires.Contains(VehClass)) //4 tired vehicles (mostly)
+                {
+
+                    if (API.IsVehicleTyreBurst(veh.Handle, 0, false) &&
+                        API.IsVehicleTyreBurst(veh.Handle, 1, false) &&
+                        API.IsVehicleTyreBurst(veh.Handle, 4, false) &&
+                        API.IsVehicleTyreBurst(veh.Handle, 5, false))
+                    {
+                        Debug.WriteLine($"All tires are already popped. Skipping BurstAll.");
+                        return didIBurstAll;
+                    }
+                    {
+                        API.SetVehicleTyreBurst(veh.Handle, 0, true, 1000);
+                        API.SetVehicleTyreBurst(veh.Handle, 1, true, 1000);
+                        API.SetVehicleTyreBurst(veh.Handle, 4, true, 1000);
+                        API.SetVehicleTyreBurst(veh.Handle, 5, true, 1000);
+                        didIBurstAll = true;
+                    }
+                }
+                else if (VehClass == 20)
+                {
+
+                    if (API.IsVehicleTyreBurst(veh.Handle, 0, false) &&
+                        API.IsVehicleTyreBurst(veh.Handle, 1, false) &&
+                        API.IsVehicleTyreBurst(veh.Handle, 2, false) &&
+                        API.IsVehicleTyreBurst(veh.Handle, 3, false) &&
+                        API.IsVehicleTyreBurst(veh.Handle, 4, false) &&
+                        API.IsVehicleTyreBurst(veh.Handle, 5, false) &&
+                        API.IsVehicleTyreBurst(veh.Handle, 6, false) &&
+                        API.IsVehicleTyreBurst(veh.Handle, 7, false))
+                    {
+                        Debug.WriteLine($"All tires are already popped. Skipping BurstAll.");
+                        return didIBurstAll;
+                    }
+                    {
+                        API.SetVehicleTyreBurst(veh.Handle, 0, true, 1000);
+                        API.SetVehicleTyreBurst(veh.Handle, 1, true, 1000);
+                        API.SetVehicleTyreBurst(veh.Handle, 2, true, 1000);
+                        API.SetVehicleTyreBurst(veh.Handle, 3, true, 1000);
+                        API.SetVehicleTyreBurst(veh.Handle, 4, true, 1000);
+                        API.SetVehicleTyreBurst(veh.Handle, 5, true, 1000);
+                        API.SetVehicleTyreBurst(veh.Handle, 6, true, 1000);
+                        API.SetVehicleTyreBurst(veh.Handle, 7, true, 1000);
+                        didIBurstAll = true;
+                    }
                 }
             }
+            return didIBurstAll;
         }
 
         void setPlayerDrunk()
@@ -327,36 +538,49 @@ namespace STHMaxzzzie.Client
             }
         }
 
-        private void stopPlayerOnTheSpot()
+        private bool stopPlayerOnTheSpot()
         {
-            if (Game.PlayerPed.IsInVehicle())
+            bool didStopOnTheSpot = false;
+            if (Game.PlayerPed.IsInVehicle() && (Game.PlayerPed.Velocity.X > 1 || Game.PlayerPed.Velocity.Y > 1 || Game.PlayerPed.Velocity.Z > 1))
             {
                 Vehicle veh = Game.PlayerPed.CurrentVehicle;
                 API.SetEntityVelocity(veh.Handle, 0, 0, 0);
+                didStopOnTheSpot = true;
             }
+            return didStopOnTheSpot;
         }
 
-        private void givePlayerLotsOfForwardMomentum()
+        private bool givePlayerLotsOfForwardMomentum()
         {
+            bool didGiveLotsOfForwardMomentum = false;
             if (Game.PlayerPed.IsInVehicle())
             {
                 Vehicle veh = Game.PlayerPed.CurrentVehicle;
-                API.ApplyForceToEntity(veh.Handle, 1, 0.0f, 150.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, true, true, true, false, true);
+                API.ApplyForceToEntity(veh.Handle, 1, 0.0f, 120.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, true, true, true, false, true);
+                didGiveLotsOfForwardMomentum = true;
             }
+            return didGiveLotsOfForwardMomentum;
         }
 
-        private void launchPlayerUp()
+        private bool launchPlayerUp()
         {
-            if (Game.PlayerPed.IsInVehicle())
+            bool didLaunchPlayer = false;
+            if (Game.PlayerPed.IsAlive)
             {
-                Vehicle veh = Game.PlayerPed.CurrentVehicle;
-                API.ApplyForceToEntity(veh.Handle, 1, 0.0f, 0.0f, 40.0f, 0.0f, 0.0f, 0.0f, 0, true, true, true, false, true);
+                if (Game.PlayerPed.IsInVehicle())
+                {
+                    Vehicle veh = Game.PlayerPed.CurrentVehicle;
+                    API.ApplyForceToEntity(veh.Handle, 1, 0.0f, 0.0f, 60.0f, 0.0f, 0.0f, 0.0f, 0, true, true, true, false, true);
+                    didLaunchPlayer = true;
+                }
+                else
+                {
+                    API.ApplyForceToEntity(Game.PlayerPed.Handle, 1, 0.0f, 0.0f, 100.0f, 0.0f, 0.0f, 0.0f, 0, true, true, true, false, true);
+                    Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, true, false);
+                    didLaunchPlayer = true;
+                }
             }
-            else 
-            {
-               API.ApplyForceToEntity(Game.PlayerPed.Handle, 1, 0.0f, 0.0f, 100.0f, 0.0f, 0.0f, 0.0f, 0, true, true, true, false, true); 
-               Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, true, false);
-            }
+            return didLaunchPlayer;
         }
 
         private async Task Spotlight() //spotlight
@@ -404,6 +628,12 @@ namespace STHMaxzzzie.Client
         private bool goBackUp = true;
         private async Task Gta1Cam()
         {
+            if (DateTime.Now > Gta1camEndTime) //turns off the gta1cam.
+            {
+                isGta1CamOn = false;
+                didGta1CamStartOnce = false;
+            }
+
             var playerPed = Game.PlayerPed;
 
             if (isGta1CamOn && ((Game.PlayerPed.Weapons.Current.Hash == WeaponHash.Unarmed && Game.PlayerPed.IsOnFoot) || Game.PlayerPed.IsInVehicle()))
@@ -411,10 +641,12 @@ namespace STHMaxzzzie.Client
                 // Create the camera if it doesn't already exist
                 if (gta1CamHandle == -1)
                 {
+
                     gta1CamHandle = API.CreateCam("DEFAULT_SCRIPTED_CAMERA", true);
                     API.SetCamActive(gta1CamHandle, true);
                     API.RenderScriptCams(true, false, 0, true, false);
                     API.SetCamFov(gta1CamHandle, 50);
+                    didGta1CamStartOnce = true;
                 }
 
                 // Get the player's position and speed
@@ -516,7 +748,10 @@ namespace STHMaxzzzie.Client
                     gta1CamHandle = -1;
                 }
             }
-
+            if (!didGta1CamStartOnce && isGta1CamOn)
+            {
+                Gta1camEndTime = DateTime.Now.AddSeconds(rand.Next(20, 50));
+            }
             await Task.FromResult(0); // Yield control back to FiveM runtime
         }
 
@@ -584,8 +819,9 @@ namespace STHMaxzzzie.Client
             API.EnableControlAction(0, 0x3C, true); // Re-enable camera controls
         }
 
-        private void BounceVehicle()
+        private bool BounceVehicle()
         {
+            bool didBounce = false;
             if (Game.PlayerPed.IsInVehicle())
             {
                 Vehicle veh = Game.PlayerPed.CurrentVehicle;
@@ -599,12 +835,15 @@ namespace STHMaxzzzie.Client
                     Vector3 rotation = veh.Rotation;
                     rotation.Z += 180.0f;
                     veh.Rotation = rotation;
+                    didBounce = true;
                 }
             }
+            return didBounce;
         }
 
-        private void PerformKickflip()
+        private bool PerformKickflip()
         {
+            bool didKickFlip = false;
             if (Game.PlayerPed.IsInVehicle())
             {
                 Vehicle veh = Game.PlayerPed.CurrentVehicle;
@@ -614,8 +853,10 @@ namespace STHMaxzzzie.Client
                     velocity.Z = velocity.Z + 4;
                     veh.Velocity = velocity;
                     API.ApplyForceToEntity(veh.Handle, 1, 0.0f, 0.0f, 3.6f, 1.8f, 0.0f, 0.0f, 0, true, true, true, false, true);
+                    didKickFlip = true;
                 }
             }
+            return didKickFlip;
         }
 
         private int shotsFired = 0;
@@ -665,7 +906,10 @@ namespace STHMaxzzzie.Client
             {
                 //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"holds weapon."}});
                 // Monitor for shooting
-                if (API.IsPedShooting(Game.PlayerPed.Handle))
+                int ammoCount = 0;
+                int weaponHash = (int)Game.PlayerPed.Weapons.Current.Hash;
+                API.GetAmmoInClip(Game.PlayerPed.Handle, (uint)weaponHash, ref ammoCount);
+                if (API.IsPedShooting(Game.PlayerPed.Handle) && ammoCount > 1)
                 {
                     //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"shot"}});
                     shotsFired++;
@@ -801,8 +1045,9 @@ namespace STHMaxzzzie.Client
             };
         }
 
-        void ChangeCarColor()
+        bool ChangeCarColor()
         {
+            bool changeCarColorWorked = false;
             Vehicle veh = Game.PlayerPed.CurrentVehicle;
             if (veh != null)
             {
@@ -810,7 +1055,9 @@ namespace STHMaxzzzie.Client
                 int randomColor = colorIndices[rand.Next(colorIndices.Length)];
                 veh.Mods.PrimaryColor = (VehicleColor)randomColor;
                 veh.Mods.SecondaryColor = (VehicleColor)randomColor;
+                changeCarColorWorked = true;
             }
+            return changeCarColorWorked;
         }
 
         void PaintAllNearbyVehicles()
@@ -841,10 +1088,11 @@ namespace STHMaxzzzie.Client
 
         async void StartElectricalGlitch()
         {
+            isElectricalGlitchRunning = true;
             Vehicle veh = Game.PlayerPed.CurrentVehicle;
             if (veh != null)
             {
-                for (int i = 0; i < 200; i++)
+                for (int i = 0; i < 150; i++)
                 {
                     var horn = rand.Next(0, 5);
                     var dooropen = rand.Next(0, 15);
@@ -861,14 +1109,23 @@ namespace STHMaxzzzie.Client
                     await Delay(200);
                 }
             }
+            isElectricalGlitchRunning = false;
         }
 
         async void StartRainbowCarEffect()
         {
-            Vehicle veh = Game.PlayerPed.CurrentVehicle;
-            if (veh != null && !isStarmodeOn)
+            bool startedStarMode = false;
+            while (isStarmodeOn && !startedStarMode)
             {
-                isStarmodeOn = true;
+                if (Game.PlayerPed.IsInVehicle())
+                {
+                    startedStarMode = true;
+                }
+                await Delay(100);
+            }
+            Vehicle veh = Game.PlayerPed.CurrentVehicle;
+            if (veh != null && isStarmodeOn)
+            {
                 int primary = -1;
                 int secondary = -1;
                 API.GetVehicleColours(veh.Handle, ref primary, ref secondary);
@@ -881,7 +1138,7 @@ namespace STHMaxzzzie.Client
                 starmodeEndTime = DateTime.Now.AddSeconds(rand.Next(15, 40));
                 Debug.WriteLine($"starmodeEndTime: {starmodeEndTime}, {DateTime.Now}");
 
-                int rgb = rand.Next(0, 4); //sets a random start colour
+                int rgb = rand.Next(0, 5); //sets a random start colour
                 if (rgb == 0) { r = 240; b = 255; state = 0; }
                 else if (rgb == 1) { r = 1; b = 255; state = 0; }
                 else if (rgb == 2) { r = 255; g = 100; state = 2; }
@@ -948,6 +1205,10 @@ namespace STHMaxzzzie.Client
                 isStarmodeOn = false;
                 VehiclePersistenceClient.lastVehicle = null;
             }
+            else
+            {//in case something doesn't start starmode
+                isStarmodeOn = false;
+            }
         }
 
 
@@ -977,9 +1238,78 @@ namespace STHMaxzzzie.Client
                 Vehicle compactCar = await World.CreateVehicle(model, currentPosition, heading);
                 API.SetVehicleEngineOn(compactCar.Handle, true, true, false);
                 Game.PlayerPed.Task.WarpIntoVehicle(compactCar, VehicleSeat.Driver);
-                bool temp = false;
-
+                await Delay(5);
+                API.SetVehicleCurrentRpm(compactCar.Handle, 1.0f);
+                API.SetVehicleForwardSpeed(compactCar.Handle, playerSpeed.Length());
                 compactCar.Velocity = playerSpeed;
+                //NotificationScript.ShowNotification($"spawned a " + compactNames[value]);
+            }
+        }
+
+        async void ChangeToCoupeCar()
+        {
+            Vehicle veh = Game.PlayerPed.CurrentVehicle;
+            if (veh != null)
+            {
+                int value = rand.Next(0, 7);
+                string coupes = "zion,sentinel,exemplar,felon,oracle2,oracle,windsor";
+                string[] compactNames = coupes.Split(',');
+                Vector3 playerSpeed = Game.PlayerPed.Velocity;
+                Vector3 currentPosition = veh.Position;
+                float heading = Game.PlayerPed.Heading;
+                veh.Delete();
+                var model = new Model(max_Vehicle.VehicleNameToHash[compactNames[value]]);
+                Vehicle coupeCar = await World.CreateVehicle(model, currentPosition, heading);
+                API.SetVehicleEngineOn(coupeCar.Handle, true, true, false);
+                Game.PlayerPed.Task.WarpIntoVehicle(coupeCar, VehicleSeat.Driver);
+                await Delay(5);
+                API.SetVehicleCurrentRpm(coupeCar.Handle, 1.0f);
+                API.SetVehicleForwardSpeed(coupeCar.Handle, playerSpeed.Length());
+                coupeCar.Velocity = playerSpeed;
+                //NotificationScript.ShowNotification($"spawned a " + compactNames[value]);
+            }
+        }
+
+        async void ChangeToSuperCar()
+        {
+            Vehicle veh = Game.PlayerPed.CurrentVehicle;
+            if (veh != null)
+            {
+                int value = rand.Next(0, 6);
+                string supers = "bullet,adder,entityxf,infernus,voltic,t20";
+                string[] compactNames = supers.Split(',');
+                Vector3 playerSpeed = Game.PlayerPed.Velocity;
+                Vector3 currentPosition = veh.Position;
+                float heading = Game.PlayerPed.Heading;
+                veh.Delete();
+                var model = new Model(max_Vehicle.VehicleNameToHash[compactNames[value]]);
+                Vehicle superCar = await World.CreateVehicle(model, currentPosition, heading);
+                API.SetVehicleEngineOn(superCar.Handle, true, true, false);
+                Game.PlayerPed.Task.WarpIntoVehicle(superCar, VehicleSeat.Driver);
+                await Delay(5);
+                API.SetVehicleCurrentRpm(superCar.Handle, 1.0f);
+                API.SetVehicleForwardSpeed(superCar.Handle, playerSpeed.Length());
+                superCar.Velocity = playerSpeed;
+                //NotificationScript.ShowNotification($"spawned a " + compactNames[value]);
+            }
+        }
+        async void ChangeToShitBoxCar()
+        {
+            Vehicle veh = Game.PlayerPed.CurrentVehicle;
+            if (veh != null)
+            {
+                Vector3 playerSpeed = Game.PlayerPed.Velocity;
+                Vector3 currentPosition = veh.Position;
+                float heading = Game.PlayerPed.Heading;
+                veh.Delete();
+                var model = new Model(max_Vehicle.VehicleNameToHash["voodoo2"]);
+                Vehicle shitbox = await World.CreateVehicle(model, currentPosition, heading);
+                API.SetVehicleEngineOn(shitbox.Handle, true, true, false);
+                Game.PlayerPed.Task.WarpIntoVehicle(shitbox, VehicleSeat.Driver);
+                await Delay(5);
+                API.SetVehicleCurrentRpm(shitbox.Handle, 1.0f);
+                API.SetVehicleForwardSpeed(shitbox.Handle, playerSpeed.Length());
+                shitbox.Velocity = playerSpeed;
                 //NotificationScript.ShowNotification($"spawned a " + compactNames[value]);
             }
         }
@@ -1029,6 +1359,7 @@ namespace STHMaxzzzie.Client
 
         public static async void shakeCam() //currently does nothing
         {
+            isShakeCamOn = true;
             // Possible shake types (updated b617d):  
             // DEATH_FAIL_IN_EFFECT_SHAKE  
             // DRUNK_SHAKE  
@@ -1047,6 +1378,7 @@ namespace STHMaxzzzie.Client
                 await Delay(900);
             }
             API.StopGameplayCamShaking(false);
+            isShakeCamOn = false;
         }
 
         public static void rightLocationChat()

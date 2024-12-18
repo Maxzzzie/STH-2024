@@ -1,0 +1,60 @@
+//StreamLoots commands that belong to the cards formatted as follows. (data is split using "*", the space is important.)
+//effect name*Card Title (basically unimportant)*Chat Message*Applies to (-1 everyone, 1 runner, 2 hunter)
+
+burstall*Burst all tires*Who dropped that box of nails on the road? Enjoy driving without tires ;)*1
+
+burstall*Burst Hunter Tires*Defund the police they said..*2
+
+burstsome*Burst some of Gilly's tires*You should really change those tires every so often..*1
+
+locationchat*DATA BREACH*Someone tipped off the hunters*1
+
+drunk*Drunk*I think you've had one too many.. ~.~*1
+
+electricalglitch*Electrical Glitches*Anonymous is everywhere*1
+
+//???*Fancy ride*Something decent for once, nice!*1
+
+//???*Get out of the car Gil*Get out of the car Gil!*1
+
+gta1cam*GTA 1 Camera*Someone is feeling nosalgic with that GTA 1 POV*1
+
+gunjam*Gun jam*Better clean that gun every so often!*-1
+
+//???*Here's a bicycle**Humming* I want to ride my bicycle!*1
+
+//???*Here's a boat*- Theeere once was a ship that put to sea -*1
+
+bounce*Invert direction of velocity*Someone turned your car into the other direction*1
+
+kickflip*Kickflip Hunters*Someone kickflipped the hunters!*2
+
+kickflip*Kickflip!*Whoah, kickflip!*1
+
+launch*Launch*Someone launched Gilly to space! Can you see my house from there? :O*1
+
+launch*Launch Everyone*Someone launched everyone to space! Whoah, that's messed up dude.*-1
+
+//???*Oh no I can't stop!*Gilly is forced to constantly walk or drive at max speed for 20 seconds.*1
+
+//???*Pacifist*Someone took Gilly's arsenal of weapons for the next 2 minutes.*1
+
+paint*Pay and Spray*This paint job is for free :)*1
+
+paintall*Pay and Spray for everyone*Everyone gets a happy color!*1
+
+starmode*Rainbow paintjob*Gilly is a very colorful person, well.. at least his car is! Lets see what the hunters think when they see this one.*1
+
+//seatbelt*Seatbelt*Hold up, stay in the car Gil!*1
+
+shake*Shake it like you mean it*I think I'm gonna vomit..*1
+
+speed*Supersonic speed*Someone has given Gilly Supersonic Speed!*1
+
+//???*Time to drive a shitbox*It ain't THAT bad...*1
+
+//wanted 1*Wanted Level (1 star)*911 - I want to report an emergency! (Enjoy the 1-star wanted level Gilly)*1
+
+//wanted 2*Wanted Level (2 stars)*911 - I want to report an emergency! (Enjoy the 2-star wanted level Gilly)*1
+
+//wanted 3*Wanted Level (3 stars)*911 - I want to report an emergency! (Enjoy the 3-star wanted level Gilly)*1

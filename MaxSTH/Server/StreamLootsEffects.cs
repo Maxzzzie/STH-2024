@@ -32,7 +32,10 @@ namespace STHMaxzzzie.Server
                 "electricalglitch", //flashes the lights and horn and doors of the clients car
                 "starmode", //sets the clients car to rgb mode and resets it when its done
                 "carborrow", // (broken does nothing) sets the client into an npc's car
-                "compacted", //(broken does only panto) sets the client into a compact
+                "compacted", // sets the client into a compact car
+                "supered", // sets the client into a super car
+                "couped", // sets the client into a coupe car
+                "shitboxed", // sets the client into a shitbox (voodoo)
                 "speedlimiter", //limits the speed of the client
                 "carswap", //(broken does nothing) swaps the clients car with a different players vehicle
                 "shake", // (broken does nothing) shakes player cam for 5 secs
