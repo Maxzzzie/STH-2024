@@ -65,7 +65,9 @@ namespace TwitchTestClient.Server.Features
                 else
                 {
                     Debug.WriteLine("A StreamLoots command came through but there is no round started.");
-                }
+                    //TriggerClientEvent(player, "ShowNotification", text");
+                    TriggerClientEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"Streamloots effect not triggered because there is no round active."}});                  
+                   }
             }
         }
     }

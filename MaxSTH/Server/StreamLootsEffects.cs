@@ -9,6 +9,7 @@ namespace STHMaxzzzie.Server
     public class StreamLootsEffect : BaseScript
     {
         public static bool isSLOn = true;
+        public static int SLItterateTime = 10;
         private List<string> effectNames = new List<string>{
               "cleartires", //removes all tires from near the client
                 "spotlight", //puts a spotlight on the client from above
@@ -36,35 +37,36 @@ namespace STHMaxzzzie.Server
                 "supered", // sets the client into a super car
                 "couped", // sets the client into a coupe car
                 "shitboxed", // sets the client into a shitbox (voodoo)
+                "boated", // sets the client into a boat (jetmax)
                 "speedlimiter", //limits the speed of the client
                 "carswap", //(broken does nothing) swaps the clients car with a different players vehicle
                 "shake", // (broken does nothing) shakes player cam for 5 secs
-                "locationchat" // sends location of player in chat for everyone but player.
+                "locationchat", // sends location of player in chat for everyone but player.
+                "fix" // fixes a vehicle
              };
 
-         [Command("togglesl", Restricted = false)]
+        [Command("togglesl", Restricted = true)]
         void ToggleStreamLootsCommand(int source, List<object> args, string raw)
         {
-    if (args.Count == 0)
+            if (args.Count == 0)
             {
                 if (!isSLOn)
                 {
                     isSLOn = true;
-                    
-                TriggerClientEvent(Players[source], "ShowNotification", "StreamLoots command is now on.");
+
+                    TriggerClientEvent(Players[source], "ShowNotification", "StreamLoots command is now on.");
 
                 }
                 else
                 {
                     isSLOn = false;
-                                    TriggerClientEvent(Players[source], "ShowNotification", "StreamLoots command is now off.");
-
+                    TriggerClientEvent(Players[source], "ShowNotification", "StreamLoots command is now off.");
                 }
             }
             else if (args.Count == 1 && args[0].ToString() == "true")
             {
                 isSLOn = true;
-                                TriggerClientEvent(Players[source], "ShowNotification", "StreamLoots command is now on.");
+                TriggerClientEvent(Players[source], "ShowNotification", "StreamLoots command is now on.");
 
             }
             else if (args.Count == 1 && args[0].ToString() == "false")
@@ -72,13 +74,23 @@ namespace STHMaxzzzie.Server
                 isSLOn = false;
                 TriggerClientEvent(Players[source], "ShowNotification", "StreamLoots command is now off.");
             }
+            else if (args.Count == 2 && args[0].ToString() == "time" && Int32.TryParse(args[1].ToString(), out int Time))
+            {
+                SLItterateTime = Time;
+                UpdateSLItterateTime();
+            }
             else
             {
                 TriggerClientEvent(Players[source], "ShowNotification", "Oh no. Something went wrong!\nYou should do /togglesl (true/false)");
             }
         }
 
-        [Command("sl", Restricted = false)]
+        public static void UpdateSLItterateTime()
+        {
+            TriggerClientEvent("UpdateSLItterateTime", SLItterateTime);
+        }
+
+        [Command("sl", Restricted = true)]
         void StreamLootsCommand(int source, List<object> args, string raw)
         {
             //TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"StreamLoots command." } });
@@ -112,7 +124,7 @@ namespace STHMaxzzzie.Server
 
             else
             {
-                TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"/sl burstsome/spotlight/burstall/" } });
+                TriggerClientEvent(Players[source], "chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"/sl effectname clientId(0 for self and empty for all)" } });
             }
         }
 

@@ -451,6 +451,11 @@ namespace STHMaxzzzie.Client
             if (!Game.PlayerPed.IsInVehicle())
             {
                 TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You need to be in a vehicle to make this command work." } });
+                return;
+            }
+            if (Game.PlayerPed.IsInVehicle() && RoundHandling.thisClientIsTeam == 1 && allowedToFixStatus != "lsc")
+            {
+                NotificationScript.ShowNotification($"~r~Cannot currently fix as a runner.");
             }
 
             else if (args.Count == 0 & Game.PlayerPed.IsInVehicle())

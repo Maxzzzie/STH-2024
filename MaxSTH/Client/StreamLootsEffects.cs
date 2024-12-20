@@ -10,9 +10,10 @@ namespace STHMaxzzzie.Client
 {
     public class StreamLootsEffects : BaseScript
     {
+        int SLItterateTime = 10;
         bool isSpotlightOn = false;
         bool isPlayerDrunk = false;
-        bool isGta1CamOn = false;
+        public static bool isGta1CamOn = false;
         bool didGta1CamStartOnce = false;
         DateTime Gta1camEndTime;
         bool isReverseCamOn = false;
@@ -30,93 +31,75 @@ namespace STHMaxzzzie.Client
             Tick += UpdatePedTasks;
             Tick += Gta1Cam;
             //loopThroughSlowly();
-
+            ProcessEffectCue();
         }
 
-        //     int x = 1;
-
-        // async void loopThroughSlowly()
-        // {
-        //     while (x == 1)
-        //     {
-        //     MonitorWeaponAndShooting();
-        //     await Delay(500);
-        //     }
-        // }
-
-
-        // //
-        // server zegt doe cleartire
-        // kan ik niet doen want ik ben niet met een spel bezig
-        // voeg cleartire toe aan het lijstje
-
-
-        // //
-        // elke 5 seconden
-        // check de lijst eerstvolgende, kan je het doen doe het. 
-        // zo niet probeer de volgende
-
+        [EventHandler("UpdateSLItterateTime")]
+        void UpdateSLItterateTime(int Time)
+        {
+            SLItterateTime = Time;
+        }
 
         // A list to store effects in the order they were received
-    private readonly List<string> EffectCue = new List<string>();
+        private List<string> EffectCue = new List<string>();
 
-    // A flag to prevent multiple iterations running simultaneously
-    private bool IsProcessingCue = false;
 
-    // Method to handle incoming effects
+        // Method to handle incoming effects
         [EventHandler("StreamLootsEffect")]
-    public bool StreamLootsEffect(string effectName)
-    {
-        // Attempt to execute the effect immediately
-        if (DoStreamLootsEvent(effectName))
+        public void ReceiveStreamLootsEffect(string effectName)
         {
-            return true;
-        }
-
-        // If it fails, add it to the queue
-        lock (EffectCue)
-        {
-            EffectCue.Add(effectName);
-        }
-        return false;
-    }
-
-    // Iterates over the EffectCue periodically, trying each effect
-    public async void ProcessEffectCueAsync()
-    {
-        if (IsProcessingCue) return; // Avoid reentry if already running
-
-        IsProcessingCue = true;
-
-        while (true)
-        {
-            // Wait for 30 seconds before processing the queue
-            DateTime cueItterateTime;
-            cueItterateTime = DateTime.Now.AddSeconds(rand.Next(10, 50));
-            while (DateTime.Now < cueItterateTime)
+            // Attempt to execute the effect immediately
+            if (!Game.PlayerPed.IsAlive)
             {
-                await Delay(50);
+                EffectCue.Add(effectName);
+                Debug.WriteLine($"StreamLootsEvent {effectName} added to cue because player is dead.");
             }
-
-
-            lock (EffectCue)
+            else if (DoStreamLootsEvent(effectName))
             {
-                for (int i = 0; i < EffectCue.Count; i++)
+                Debug.WriteLine($"Did {effectName} from the server.");
+            }
+            else
+            {
+                EffectCue.Add(effectName);
+                Debug.WriteLine($"StreamLootsEvent {effectName} added to cue.");
+            }
+        }
+
+        // Iterates over the EffectCue periodically, trying each effect
+        async void ProcessEffectCue()
+        {
+            bool DidClearCueAfterRoundAlready = true; //this prevents cue from clearing if it's made after a round has ended alredy. It does it only once at the end of the round basically. This only works for the command added effects.
+            while (true)
+            {
+                if (RoundHandling.gameMode == "none" && EffectCue.Count != 0 && !DidClearCueAfterRoundAlready)
+                {
+                    Debug.WriteLine($"Game ended. Effect cue cleared. {EffectCue.Count} effects were remaining.");
+                    Debug.WriteLine($"Remaining effects: {string.Join(", ", EffectCue)}.");
+                    EffectCue.Clear();
+                    DidClearCueAfterRoundAlready = true;
+                }
+                List<string> ItterationEffectCue = EffectCue;
+                for (int i = 0; i < ItterationEffectCue.Count; i++)
                 {
                     string effect = EffectCue[i];
 
                     // Try to execute the effect
                     if (DoStreamLootsEvent(effect))
                     {
+                        Debug.WriteLine($"Did {effect} from the cue.");
                         // Remove it from the queue if successful
                         EffectCue.RemoveAt(i);
                         break;
                     }
                 }
+                if (RoundHandling.gameMode != "none")
+                {
+                    DidClearCueAfterRoundAlready = false;
+                }
+                await Delay(SLItterateTime * 1000);
             }
-        IsProcessingCue = false;
         }
-    }
+
 
         bool DoStreamLootsEvent(string type)
         {
@@ -217,10 +200,10 @@ namespace STHMaxzzzie.Client
             // }
             else if (type == "electricalglitch")
             {
-                if (!isElectricalGlitchRunning)
+                if (!isElectricalGlitchRunning && Game.PlayerPed.IsInVehicle())
                 {
-                StartElectricalGlitch();
-                didWork = true;
+                    StartElectricalGlitch();
+                    didWork = true;
                 }
             }
             else if (type == "starmode")
@@ -238,28 +221,54 @@ namespace STHMaxzzzie.Client
             // }
             else if (type == "compacted")
             {
-                ChangeToCompactCar();
+                if (Game.PlayerPed.IsInVehicle())
+                {
+                    ChangeToCompactCar();
+                    didWork = true;
+                }
             }
             else if (type == "supered")
             {
-                ChangeToSuperCar();
+                if (Game.PlayerPed.IsInVehicle())
+                {
+                    ChangeToSuperCar();
+                    didWork = true;
+                }
             }
             else if (type == "couped")
             {
-                ChangeToCoupeCar();
+                if (Game.PlayerPed.IsInVehicle())
+                {
+                    ChangeToCoupeCar();
+                    didWork = true;
+                }
             }
             else if (type == "shitboxed")
             {
-                ChangeToShitBoxCar();
+                if (Game.PlayerPed.IsInVehicle() && Game.PlayerPed.CurrentVehicle.Model.Hash != (uint)API.GetHashKey("voodoo"))
+                {
+                    ChangeToShitBoxCar();
+                    didWork = true;
+                }
             }
-            else if (type == "speedlimiter")
+            else if (type == "boated")
             {
-                ApplySpeedLimiter();
+                if (Game.PlayerPed.IsInVehicle() && Game.PlayerPed.CurrentVehicle.Model.Hash != (uint)API.GetHashKey("jetmax"))
+                {
+                    ChangeToBoat();
+                    didWork = true;
+                }
             }
-            else if (type == "carswap")
-            {
-                SwapCarsWithAnotherPlayer();
-            }
+            // else if (type == "speedlimiter")
+            // {
+            //     if (Game.PlayerPed.IsInVehicle())
+            //     {
+            //     ApplySpeedLimiter();
+            // }
+            // else if (type == "carswap")
+            // {
+            //     SwapCarsWithAnotherPlayer();
+            // }
             else if (type == "shake")
             {
                 if (!isGta1CamOn && !isShakeCamOn)
@@ -272,6 +281,14 @@ namespace STHMaxzzzie.Client
             {
                 rightLocationChat();
                 didWork = true;
+            }
+            else if (type == "fix")
+            {
+                if (Game.PlayerPed.IsInVehicle())
+                {
+                    FixVehicle();
+                    didWork = true;
+                }
             }
             else
             {
@@ -507,35 +524,41 @@ namespace STHMaxzzzie.Client
             return didIBurstAll;
         }
 
-        void setPlayerDrunk()
+        async void setPlayerDrunk()
         // {
         // int handle = Game.PlayerPed.Handle;
         // API.SetAudioSpecialEffectMode(7);
         // API.SetPedIsDrunk(handle ,isPlayerDrunk);
         // API.
         {
-            isPlayerDrunk = !isPlayerDrunk;
-            if (isPlayerDrunk)
+            //Debug.WriteLine($"PlayerDrunk started.");
+            isPlayerDrunk = true;
+            DateTime drunkEndTime;
+            drunkEndTime = DateTime.Now.AddSeconds(rand.Next(15, 40));
+
+            // Apply the timecycle modifier for a drunk effect
+            API.SetTimecycleModifier("spectator5");
+
+            // Increase the intensity of the effect (lower values = stronger effect)
+            API.SetTimecycleModifierStrength(1.0f);
+
+            // Apply camera shake for added realism
+            API.ShakeGameplayCam("DRUNK_SHAKE", 1.0f);
+
+            // Optionally, apply screen effects
+            //API.StartScreenEffect("DrugsTrevorClownsFight", 0, true);
+
+            while (DateTime.Now < drunkEndTime)
             {
-                // Apply the timecycle modifier for a drunk effect
-                API.SetTimecycleModifier("spectator5");
-
-                // Increase the intensity of the effect (lower values = stronger effect)
-                API.SetTimecycleModifierStrength(1.0f);
-
-                // Apply camera shake for added realism
-                API.ShakeGameplayCam("DRUNK_SHAKE", 1.0f);
-
-                // Optionally, apply screen effects
-                //API.StartScreenEffect("DrugsTrevorClownsFight", 0, true);
+                //Debug.WriteLine($"While drunk.");
+                await Delay(100);
             }
-            if (!isPlayerDrunk)
-            {
-                // Clear timecycle and camera effects
-                API.ClearTimecycleModifier();
-                API.StopGameplayCamShaking(true);
-                //API.StopScreenEffect("DrugsTrevorClownsFight");
-            }
+            // Clear timecycle and camera effects
+            API.ClearTimecycleModifier();
+            API.StopGameplayCamShaking(true);
+            //API.StopScreenEffect("DrugsTrevorClownsFight");
+            isPlayerDrunk = false;
+            //Debug.WriteLine($"Ending drunk");
         }
 
         private bool stopPlayerOnTheSpot()
@@ -570,7 +593,7 @@ namespace STHMaxzzzie.Client
                 if (Game.PlayerPed.IsInVehicle())
                 {
                     Vehicle veh = Game.PlayerPed.CurrentVehicle;
-                    API.ApplyForceToEntity(veh.Handle, 1, 0.0f, 0.0f, 60.0f, 0.0f, 0.0f, 0.0f, 0, true, true, true, false, true);
+                    API.ApplyForceToEntity(veh.Handle, 1, 0.0f, 0.0f, 120.0f, 0.0f, 0.0f, 0.0f, 0, true, true, true, false, true);
                     didLaunchPlayer = true;
                 }
                 else
@@ -1314,6 +1337,27 @@ namespace STHMaxzzzie.Client
             }
         }
 
+        async void ChangeToBoat()
+        {
+            Vehicle veh = Game.PlayerPed.CurrentVehicle;
+            if (veh != null)
+            {
+                Vector3 playerSpeed = Game.PlayerPed.Velocity;
+                Vector3 currentPosition = veh.Position;
+                float heading = Game.PlayerPed.Heading;
+                veh.Delete();
+                var model = new Model(max_Vehicle.VehicleNameToHash["jetmax"]);
+                Vehicle jetmax = await World.CreateVehicle(model, currentPosition, heading);
+                API.SetVehicleEngineOn(jetmax.Handle, true, true, false);
+                Game.PlayerPed.Task.WarpIntoVehicle(jetmax, VehicleSeat.Driver);
+                await Delay(5);
+                API.SetVehicleCurrentRpm(jetmax.Handle, 1.0f);
+                API.SetVehicleForwardSpeed(jetmax.Handle, playerSpeed.Length());
+                jetmax.Velocity = playerSpeed;
+                //NotificationScript.ShowNotification($"spawned a " + compactNames[value]);
+            }
+        }
+
         bool isMaxSpeedReduced = false;
         Vehicle oldVehicle;
         void ApplySpeedLimiter()
@@ -1385,6 +1429,45 @@ namespace STHMaxzzzie.Client
         {
             string[] trimmedClosestCalloutName = Callouts.closestCalloutName.Split('*');
             TriggerServerEvent("SendSLChat", Game.Player.ServerId, $"Let me give you a hint. I'm at {trimmedClosestCalloutName[0]}.");
+        }
+
+        private List<string> fixLines = new List<string>{
+              $"{Game.PlayerPed.Handle}'s car: fresh off the assembly line!",
+                "What damage? I see perfection.",
+                "From crumpled to crisp in 10 seconds flat.",
+                "Who needs insurance when you have me?",
+                "Not a scratch… probably.",
+                "Brand new! If you squint.",
+                "This car’s got that ‘just-fixed’ smell.",
+                "Bent, broken, battered—never heard of them.",
+                "Certified dent-free... until next time.",
+                "You break it, I fake it.",
+                "It’s like it never happened. Trust me.",
+                "Wreckage? More like wreck-LESS now.",
+                "Built tougher, shinier, and with 90% less duct tape.",
+                "Damage control complete. Time for damage 2.0?",
+                "As good as new... or at least looks that way.",
+                "This car went from disaster to dazzling.",
+                "From scrapheap to street beast!",
+                "Some call it a miracle; I call it talent.",
+                "This car’s glow-up is Oscar-worthy.",
+                "Your car, now officially un-wrecked.",
+                "Once a jalopy, now a trophy.",
+                "Fixed faster than your insurance can say ‘premium.’",
+                "Wrecked? Nah, it’s just resting beautifully.",
+                "Just like magic, but with wrenches.",
+                "Rebuilt stronger... mostly for show.",
+                "This car is so fixed, it’s practically cheating.",
+                "A little spit, a lot of polish, and voila!",
+                "You’re welcome, [Name]. Try not to ruin it again.",
+                "This car has risen from the ashes. Again.",
+                "Rolling out of here like it’s prom night."
+        };
+        void FixVehicle()
+        {
+            Game.PlayerPed.CurrentVehicle.Repair();
+            string message = fixLines[rand.Next(0, fixLines.Count)];
+            NotificationScript.ShowNotification($"Fixed: {message}");
         }
 
     }

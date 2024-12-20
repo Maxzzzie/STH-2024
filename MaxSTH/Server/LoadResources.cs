@@ -420,9 +420,15 @@ public static class LoadResources
             {
                 continue; // Skip empty lines and any lines starting with //
             }
-            else if (parts.Length < 4)
+            if (parts.Length == 2 && line.StartsWith("Cue time interval in seconds*") && Int32.TryParse(parts[1].ToString(), out int time))
             {
-                CitizenFX.Core.Debug.WriteLine($"Insufficient data in StreamLootsCardInfo.txt line: {line}");
+                StreamLootsEffect.SLItterateTime = time;
+                StreamLootsEffect.UpdateSLItterateTime();
+                continue;
+            }
+            else if (parts.Length != 4)
+            {
+                CitizenFX.Core.Debug.WriteLine($"Insufficient or incorrect data in StreamLootsCardInfo.txt line: {line}");
                 continue;
             }
             else if (!Int32.TryParse(parts[3].ToString(), out int temp))
@@ -433,9 +439,10 @@ public static class LoadResources
 
             string ChatText = parts[2].Trim();
             StreamLootsCardInfoDict.Add(ChatText, line);
-            Debug.WriteLine($"read \"{line}\" and added {parts[2]}");
+            Debug.WriteLine($"streamlootssuccesfully added \"{line}\"");
             
         }
+        Debug.WriteLine($"Finished loading StreamLootsCardInfo");
         return StreamLootsCardInfoDict;
     }
 

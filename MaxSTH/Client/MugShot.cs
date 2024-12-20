@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
@@ -23,7 +24,7 @@ namespace STHMaxzzzie.Client
         [Command("+MugShotKey")]
         private void MugShotKeyIsPressed()
         {
-            if (!Game.PlayerPed.IsAlive || API.IsPauseMenuActive() || isRunning)
+            if (!Game.PlayerPed.IsAlive || API.IsPauseMenuActive() || isRunning || StreamLootsEffects.isGta1CamOn)
                 return;
 
             Debug.WriteLine("mugshot");

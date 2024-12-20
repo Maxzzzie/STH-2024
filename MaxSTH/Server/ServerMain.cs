@@ -101,6 +101,7 @@ namespace STHMaxzzzie.Server
             BlipHandler.UpdateClientBlips();
             TriggerEvent("playerJoinedWhileGameIsActive", source.Handle);
             TriggerEvent("updatePlayerBlips");
+            StreamLootsEffect.UpdateSLItterateTime();
         }
 
         [EventHandler("playerDropped")]
@@ -192,7 +193,7 @@ namespace STHMaxzzzie.Server
     public class Misc : BaseScript
 
     {
-        public static string AllowedToFixStatus = "on";
+        public static string AllowedToFixStatus = "lsc";
         public static int fixWaitTime = 10;
         public static bool isPodOn = true;
 

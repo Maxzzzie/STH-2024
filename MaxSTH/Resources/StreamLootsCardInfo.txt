@@ -1,11 +1,16 @@
 //StreamLoots commands that belong to the cards formatted as follows. (data is split using "*", the space is important.)
 //effect name*Card Title (basically unimportant)*Chat Message*Applies to (-1 everyone, 1 runner, 2 hunter)
+Cue time interval in seconds*10
 
 burstall*Burst all tires*Who dropped that box of nails on the road? Enjoy driving without tires ;)*1
 
-burstall*Burst Hunter Tires*Defund the police they said..*2
+burstall*Burst Hunter Tires*Defund the police?*2
 
-burstsome*Burst some of Gilly's tires*You should really change those tires every so often..*1
+burstsome*Burst some of Gilly's tires*You should change those tires every so often..*1
+
+cleartires*Burst EVERYONE'S tires (runners, hunters and NPC's)*Looks like everyone's tired of staying on track!*-1
+
+cleartires*Bursts all tires in Gilly's orbit*Don’t lose your tread over this…*1
 
 locationchat*DATA BREACH*Someone tipped off the hunters*1
 
@@ -21,9 +26,19 @@ gta1cam*GTA 1 Camera*Someone is feeling nosalgic with that GTA 1 POV*1
 
 gunjam*Gun jam*Better clean that gun every so often!*-1
 
-//???*Here's a bicycle**Humming* I want to ride my bicycle!*1
+compacted*Here's a compact car*Need more legroom!*1
 
-//???*Here's a boat*- Theeere once was a ship that put to sea -*1
+couped*Drive a coupe*This is a coupe!*1
+
+supered*Here's a super car*Pedal to the metal! Wohoooo!*1
+
+shitboxed*Here's a shitbox*What is this for a koekblik!*1
+
+boated*Here's a boat*Gilly just got a Bouient!*1
+
+???*Here's a bicycle*-Humming- I want to ride my bicycle!*1
+
+boated*Here's a boat*Gilly got a Buoyant Option Across Tides. - Theeere once was a ship that put to sea -*1
 
 bounce*Invert direction of velocity*Someone turned your car into the other direction*1
 
@@ -58,3 +73,7 @@ speed*Supersonic speed*Someone has given Gilly Supersonic Speed!*1
 //wanted 2*Wanted Level (2 stars)*911 - I want to report an emergency! (Enjoy the 2-star wanted level Gilly)*1
 
 //wanted 3*Wanted Level (3 stars)*911 - I want to report an emergency! (Enjoy the 3-star wanted level Gilly)*1
+
+stop*Stop*A viewer has used a suspicious force to stop Gilly*1
+
+fix*Fix vehicle*Gilly's car, fresh of the assembly line.*1
