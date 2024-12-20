@@ -245,7 +245,7 @@ namespace STHMaxzzzie.Client
             }
             else if (type == "shitboxed")
             {
-                if (Game.PlayerPed.IsInVehicle() && Game.PlayerPed.CurrentVehicle.Model.Hash != (uint)API.GetHashKey("voodoo"))
+                if (Game.PlayerPed.IsInVehicle() && Game.PlayerPed.CurrentVehicle.Model.Hash != (uint)API.GetHashKey("voodoo2"))
                 {
                     ChangeToShitBoxCar();
                     didWork = true;
