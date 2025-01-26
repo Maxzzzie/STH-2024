@@ -9,13 +9,17 @@ using System.Numerics;
 using STHMaxzzzie;
 using System.Drawing;
 using TwitchTestClient.Server.Features;
+using System.Linq.Expressions;
+using TwitchLib.Client.Models;
+using System.Linq;
 
 
 namespace STHMaxzzzie.Server
 {
     public class ServerMain : BaseScript
     {
-        static List<string> allowed_discord_ids = new List<string>();
+
+        public static List<string> allowed_discord_ids = new List<string>();
         public static Dictionary<string, Vector4> respawnLocationsDict;
         public static Dictionary<string, Vector3> maxzzzieCalloutsDict;
         public static Dictionary<string, string> vehicleinfoDict;
@@ -27,7 +31,7 @@ namespace STHMaxzzzie.Server
         public ServerMain()
         {
             //load whitelist to list allowed_discord_ids
-            allowed_discord_ids = LoadResources.loadWhitelist();
+            allowed_discord_ids = LoadResources.loadAdmins();
 
             foreach (string id in allowed_discord_ids)
             {
@@ -51,8 +55,8 @@ namespace STHMaxzzzie.Server
             vehicleinfoDict = LoadResources.allowedVehicles();
             StreamlootsFeature.textToCommand = LoadResources.streamLootsCardInfo();
             Vehicles.vehicleColourForPlayer = LoadResources.playerVehicleColour();
-            
-            foreach (Player player in Players) 
+
+            foreach (Player player in Players)
             {
                 ServerMain.sendRespawnLocationsDict(player);
                 ServerMain.sendVehicleinfoDict(player);
@@ -80,6 +84,7 @@ namespace STHMaxzzzie.Server
             TriggerClientEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
             TriggerClientEvent("disableCanPlayerShootFromVehicles", Armoury.isShootingFromVehicleAllowed);
             DelayMode.updateClientsDelayModeSettings();
+            Misc.updateFireStatus();
         }
 
 
@@ -102,22 +107,33 @@ namespace STHMaxzzzie.Server
             TriggerEvent("playerJoinedWhileGameIsActive", source.Handle);
             TriggerEvent("updatePlayerBlips");
             StreamLootsEffect.UpdateSLItterateTime();
+            Misc.updateFireStatus();
         }
 
         [EventHandler("playerDropped")]
         void playerDroppedHandler([FromSource] Player source, string reason)
         {
-            if (RoundHandling.teamAssignment[int.Parse(source.Handle)] == 1 && RoundHandling.gameMode != "none")
+            //CitizenFX.Core.Debug.WriteLine("playerDroppedHandler");
+            if (RoundHandling.gameMode == "infected")
             {
+                RoundHandling.teamAssignment.Remove(int.Parse(source.Handle));
+                GameInfected.shouldGameEndAfterPlayerDisconnect();
+                GameInfected.sendClientTeamAssignment();
+            }
+            if (RoundHandling.gameMode != "none" && RoundHandling.teamAssignment[int.Parse(source.Handle)] == 1)
+            {
+                //CitizenFX.Core.Debug.WriteLine("playerDroppedHandler 1");
                 TriggerEvent("endGame", "end");
             }
             if (PriusMechanics.playerPris.ContainsKey(source))
             {
+                //CitizenFX.Core.Debug.WriteLine("playerDroppedHandler 2");
                 PriusMechanics.playerPris.Remove(source);
                 BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
                 request.BlipsToRemove.Add($"pri{source.Name}");
                 BlipHandler.AddBlips(request);
             }
+            //CitizenFX.Core.Debug.WriteLine("playerDroppedHandler 3");
             TriggerEvent("updatePlayerBlips");
         }
 
@@ -212,33 +228,105 @@ namespace STHMaxzzzie.Server
                 {
                     isPodOn = true;
                     API.StartResource("playernames");
-                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PlayerOverheadDisplay is now on." } });
+                    TriggerClientEvent("ShowNotification", $"PlayerOverheadDisplay is now on.");
 
                 }
                 else
                 {
                     isPodOn = false;
                     API.StopResource("playernames");
-                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PlayerOverheadDisplay is now off." } });
+                    TriggerClientEvent("ShowNotification", $"PlayerOverheadDisplay is now off.");
                 }
             }
             else if (args.Count == 1 && args[0].ToString() == "true")
             {
                 isPodOn = true;
                 API.StartResource("playernames");
-                TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PlayerOverheadDisplay is now on." } });
+                TriggerClientEvent("ShowNotification", $"PlayerOverheadDisplay is now on.");
             }
             else if (args.Count == 1 && args[0].ToString() == "false")
             {
                 isPodOn = false;
                 API.StopResource("playernames");
-                TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"PlayerOverheadDisplay is now off." } });
+                TriggerClientEvent("ShowNotification", $"PlayerOverheadDisplay is now off.");
             }
             else
             {
-                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglepod (true/false)");
+                TriggerClientEvent("ShowErrorNotification", "Oh no. Something went wrong!\nYou should do /togglepod (true/false)");
             }
         }
+
+        [Command("togglefire", Restricted = true)]
+        void togglefire(int source, List<object> args, string raw)
+        {
+            if (args.Count == 0)
+            {
+                if (!LoadResources.defaultShouldFireBeControlled)
+                {
+                    LoadResources.defaultShouldFireBeControlled = true;
+                }
+                else
+                {
+                    LoadResources.defaultShouldFireBeControlled = false;
+                }
+            }
+            else if (args.Count == 1 && args[0].ToString() == "on" || args[0].ToString() == "true")
+            {
+                LoadResources.defaultShouldFireBeControlled = true;
+                TriggerClientEvent("ShowNotification", $"~h~~r~Fires are now surpressed within {LoadResources.FireControlrange}m from players.");
+            }
+            else if (args.Count == 1 && args[0].ToString() == "off" || args[0].ToString() == "false")
+            {
+                LoadResources.defaultShouldFireBeControlled = false;
+                TriggerClientEvent("ShowNotification", "~h~~r~Fires are now not surpressed.");
+            }
+            else if (args.Count == 1 && args[0].ToString() == "clear")
+            {
+                TriggerClientEvent("clearFire");
+                TriggerClientEvent(Players[source], "ShowNotification", "~h~~r~togglefire ~s~Cleared all fires.");
+            }
+            else if (args.Count == 1 && args[0].ToString() == "help")
+            {
+                TriggerClientEvent(Players[source], "ShowNotification", "~h~~r~togglefire help~s~\n\"clear\" removes all fires\n\"on/off\" toggles fire supression\n\"range [value]\" sets the range from players");
+                TriggerClientEvent(Players[source], "ShowNotification", "~h~~r~togglefire help~s~\n\"range [value]\" sets the range from players\nIf set to off, holding an extinghuisher will stop fire in close proximity.");
+            }
+            else if (args.Count == 2 && args[0].ToString() == "range" && int.TryParse(args[1].ToString(), out int newRange))
+            {
+                LoadResources.FireControlrange = newRange;
+                LoadResources.defaultShouldFireBeControlled = true;
+                TriggerClientEvent("ShowNotification", $"~h~~r~Fires are now surpressed within {LoadResources.FireControlrange}m from players.");
+            }
+            else
+            {
+                TriggerClientEvent(Players[source], "ShowNotification", "~h~~r~togglefire~s~\nSomething went wrong.\nType /togglefire help");
+            }
+            updateFireStatus();
+        }
+
+        public static void updateFireStatus()
+        {
+            TriggerClientEvent("toggleFire", LoadResources.defaultShouldFireBeControlled, LoadResources.FireControlrange);
+        }
+
+
+        [Command("settings", Restricted = true)]
+        void Settings(int source, List<object> args, string raw)
+        {
+            TriggerClientEvent(Players[source], "ShowNotification", $"~h~~o~Current server settings are printed in the client console(f8).");
+            TriggerClientEvent(Players[source], "displayClientDebugLine", 
+            " \n"
+            +$"Fix status: {AllowedToFixStatus}\nFix wait time: {fixWaitTime}\nIs POD on: {isPodOn}\n"
+            +$"Is PvP on: {Armoury.isPvpAllowed}\nAre weapons allowed: {Armoury.isWeaponsAllowed}\nIs SFV allowed: {Armoury.isShootingFromVehicleAllowed}\n"
+            +$"Are vehicle spawns restricted: {ServerMain.isVehRestricted}\nIs shots fired marker on: {ShotBlipServer.areShotsFiredVisible}\n"
+            +$"Is fire surpression on: {LoadResources.defaultShouldFireBeControlled}\nRange of fire surpression: {LoadResources.FireControlrange}\n"
+            +$"Are players allowed to tp: {Teleports.isPlayerAllowedToTp}\nPlayer vehicles should persist: {Vehicles.vehicleShouldNotDespawn}\n"
+            +$"Is streamloots on: {StreamLootsEffect.isSLOn}\nStreamLoots itterate time: {StreamLootsEffect.SLItterateTime}\n"
+            +$"Is player vehicles colour on: {Vehicles.vehicleShouldChangePlayerColour}\nBounce mode set radius:{GameBounce.radius}\n"
+            +$"Bounce mode does player see blip: {GameBounce.runnerSeesCircleBlip}\nDelay mode does player see blip: {DelayMode.runnerSeesDelayBlip}\n"
+            +$"Delay mode distance to blip: {DelayMode.distanceToBlip}\nCurrent game mode: {RoundHandling.gameMode}\n"
+            +" ");
+        }
+
 
         string lastFixStatus = "none";
         [Command("togglefix", Restricted = true)]
@@ -253,21 +341,23 @@ namespace STHMaxzzzie.Server
                     TriggerClientEvent("VehicleFixStatus", AllowedToFixStatus, fixWaitTime);
                     if (args[0].ToString() != "wait")
                     {
-                        TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"/fix status is now set to {args[0].ToString()}." } });
+                        TriggerClientEvent("ShowNotification", $"/fix status is now set to {args[0]}.");
                     }
                     else
                     {
-                        TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"/fix status is now set to \"wait\" with a time of {fixWaitTime} seconds." } });
+                        TriggerClientEvent("ShowNotification", $"/fix status is now set to \"wait\" with a time of {fixWaitTime} seconds.");
                     }
                 }
                 else if (args[0].ToString() == "help")
                 {
-                    CitizenFX.Core.Debug.WriteLine($"/togglefix sets the state of the /fix command. There are 4 options. \n/togglefix on | allows players to instantly fix their vehicle.\n/togglefix off | It turns the fix feature off.\n/togglefix lsc | Requires a player to drive to an LS customs for a fix.\n/togglefix wait (time in seconds) | Makes a player wait stationairy for a fix.");
-
+                    TriggerClientEvent(Players[source], "ShowNotification", $"/togglefix sets the state of the /fix command. There are 4 options.");
+                    TriggerClientEvent(Players[source], "ShowNotification", $"/togglefix on | allows players to instantly fix their vehicle.\n/togglefix off | It turns the fix feature off.");
+                    TriggerClientEvent(Players[source], "ShowNotification", $"/togglefix lsc | Requires a player to drive to an LS customs for a fix.");
+                    TriggerClientEvent(Players[source], "ShowNotification", $"/togglefix wait (time in seconds) | Makes a player wait stationairy for a fix.");
                 }
                 else
                 {
-                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix on/off/lsc/wait(and a value).");
+                    TriggerClientEvent(Players[source], "ShowErrorNotification", $"Oh no. Something went wrong!\nYou should do /togglefix on/off/lsc/wait(and a value).");
                 }
             }
             else if (args.Count == 2)
@@ -280,16 +370,16 @@ namespace STHMaxzzzie.Server
                     AllowedToFixStatus = args[0].ToString();
                     fixWaitTime = int.Parse(args[1].ToString());
                     TriggerClientEvent("VehicleFixStatus", AllowedToFixStatus, fixWaitTime);
-                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"/fix status is now set to \"wait\" with a time of {fixWaitTime} seconds." } });
+                    TriggerClientEvent(Players[source], "ShowNotification", $"/fix status is now set to \"wait\" with a time of {fixWaitTime} seconds.");
                 }
                 else
                 {
-                    CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/lsc/wait(and a value))");
+                    TriggerClientEvent(Players[source], "ShowErrorNotification", $"Oh no. Something went wrong!\nYou should do /togglefix on/off/lsc/wait(and a value).");
                 }
             }
             else
             {
-                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglefix (on/off/lsc/wait(and a value)/)");
+                TriggerClientEvent(Players[source], "ShowErrorNotification", $"Oh no. Something went wrong!\nYou should do /togglefix on/off/lsc/wait(and a value).");
             }
             UpdateLSCustomsBlips();
         }
@@ -399,9 +489,10 @@ namespace STHMaxzzzie.Server
             }
         }
 
-        [Command("clear", Restricted = true)] //restriction (default true)
-        async void clear(int source, List<object> args, string raw)
+        [Command("clear", Restricted = true)] //restriction (default false)
+        void clear2(int source, List<object> args, string raw)
         {
+
             if (args.Count == 0)
             {
                 TriggerClientEvent("clear_vehicles", false);
@@ -416,6 +507,47 @@ namespace STHMaxzzzie.Server
             }
             didClearJustHappen();
         }
+
+
+        [Command("clear", Restricted = true)] //restriction (default false)
+        void clear(int source, List<object> args, string raw)
+        {
+            if (args.Count == 0) TriggerClientEvent("clear_vehicles", false);
+            else if (args.Count == 1 && (args[0].ToString() == "all")) TriggerClientEvent("clear_vehicles", true);
+            else if (args.Count == 1 && (args[0].ToString() == "near")) TriggerClientEvent(Players[source], "clearNearVehicles", 50);
+            else if (args.Count == 2 && (args[0].ToString() == "near") && int.TryParse(args[0].ToString(), out int radius)) TriggerClientEvent(Players[source], "clearNearVehicles", radius);
+            else if (args.Count == 1 && int.TryParse(args[0].ToString(), out radius)) TriggerClientEvent(Players[source], "clearNearVehicles", radius);
+            else
+            {
+                TriggerClientEvent(Players[source], "ShowNotification", $"This option clears vehicles and entities.\nType \"/clear\" to clear vehicles and \"/clear all\" to clear all entities.");
+            }
+        }
+
+        [Command("delveh", Restricted = true)] //restriction (default false)
+        void delveh(int source, List<object> args, string raw)
+        {
+            if (args.Count == 0)
+            {
+                TriggerClientEvent(Players[source], "delveh");
+            }
+            else if (args.Count == 1 && int.TryParse(args[0].ToString(), out int radius))
+            {
+                if (radius > 150) radius = 150;
+                if (radius < 2) radius = 2;
+                TriggerClientEvent(Players[source], "clearNearVehicles", radius);
+            }
+            else if (args.Count == 1 && args[0].ToString() == "near")
+            {
+                TriggerClientEvent(Players[source], "clearNearVehicles", 30);
+            }
+            else
+            {
+                TriggerClientEvent(Players[source], "ShowNotification", $"/delveh will delete your last vehicle.\n\"/delveh near\" will delete all unoccupied vehicles in 30m.");
+            }
+            didClearJustHappen();
+        }
+
+
         [EventHandler("didClearJustHappen")] //upon removing pri's this event get's called by the client. This to prevent the msg's not popping up due to ping. As the pri check happens too quick (OnTick).
         async void didClearJustHappen()
         {
@@ -423,6 +555,8 @@ namespace STHMaxzzzie.Server
             PriusMechanics.didClearJustHappen = true;
         }
     }
+
+
     public class Armoury : BaseScript
 
     {
@@ -469,23 +603,17 @@ namespace STHMaxzzzie.Server
         [Command("toggleweapon", Restricted = true)]
         void toggleweapon(int source, List<object> args, string raw)
         {
-            if (args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "true"))
+            if (args.Count == 0 || (args.Count == 1 && (bool.TryParse(args[0].ToString(),out isWeaponsAllowed) || args[0].ToString() == "on" || args[0].ToString() == "off")))
             {
-                isWeaponsAllowed = bool.Parse(args[0].ToString());
+                if (args[0].ToString() == "on") isWeaponsAllowed = true;
+                else if (args[0].ToString() == "off") isWeaponsAllowed = false;
+                else if (args.Count == 0) isWeaponsAllowed = !isWeaponsAllowed;
+
                 TriggerClientEvent("isWeaponAllowed", isWeaponsAllowed);
-                if (isWeaponsAllowed)
-                {
-                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Weapons are enabled." } });
-                }
-                else
-                {
-                    TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Weapons are disabled." } });
-                }
+                if (isWeaponsAllowed) TriggerClientEvent("ShowNotification", $"/weapon is enabled.");
+                else TriggerClientEvent("ShowNotification", $"/weapon is disabled.");
             }
-            else
-            {
-                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /toggleweapon (true/false)");
-            }
+            else TriggerClientEvent(Players[source], "ShowErrorNotification", $"Something went wrong!\nYou should do /toggleweapon (true/false)");
         }
 
 
@@ -529,15 +657,15 @@ namespace STHMaxzzzie.Server
     public class MapBounds : BaseScript
     // a few blip color id's :1=red 2=green 3=lightblue 4=white 5=yellow 6=lighterRed 7=lila 8=purple/pink 64=orange 69=lime Find the rest here https://docs.fivem.net/docs/game-references/blips/
     {
-        static List<float[]> argArrayList = new List<float[]>();
-        //argArrayList stores the input values for the map blips so players that join late can sync the map bounds.
+        static List<float[]> MapboundsArrayList = new List<float[]>();
+        //MapboundsArrayList stores the input values for the map blips so players that join late can sync the map bounds.
         public static Dictionary<string, List<Vector3>> mapBoundsDict;
-        int argColor = 4; //initial default circle colour
+        int CircleColour = 4; //initial default circle colour
 
         public MapBounds()
         {
             mapBoundsDict = LoadResources.mapBounds();
-            CitizenFX.Core.Debug.WriteLine($"I'm making a MapBounds dictionary.");
+            //CitizenFX.Core.Debug.WriteLine($"I'm making a MapBounds dictionary.");
         }
 
         //updates the player's circles.
@@ -546,7 +674,7 @@ namespace STHMaxzzzie.Server
         {
             TriggerClientEvent("delCircle");
 
-            foreach (float[] argArray in argArrayList)
+            foreach (float[] argArray in MapboundsArrayList)
             {
                 TriggerClientEvent("updateCircle", argArray);
             }
@@ -561,69 +689,66 @@ namespace STHMaxzzzie.Server
         [Command("circle", Restricted = true)] //restriction (default true)
         void circle(int source, List<object> args, string raw)
         {
+
             //CitizenFX.Core.Debug.WriteLine($"server circle 1");
-            if (args.Count <= 1 && args.Count >= 4)
+            if (args.Count == 0)
             {
-                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for more info.");
+                TriggerClientEvent(Players[source], "PrintCoords");
+            }
+            else if (args.Count == 1 && int.TryParse(args[0].ToString(), out int circleSize))
+            {
+                TriggerClientEvent(Players[source], "SendCoordsToServerForMapbounds", circleSize, source); //sends client a request for coords. And makes a circle at that position with radius arg[0]. In function SetMapboundsWithPlayerCoords()
+            }
+            else if (args.Count == 2 && args[0].ToString() == "color" && Int32.TryParse(args[1].ToString(), out int temp))
+            {
+                CircleColour = Int32.Parse(args[1].ToString());
                 return;
             }
-
-            else if (args.Count == 2 && args[0].ToString() == "color")
-            {
-                int temp;
-                bool isArgs1Int = Int32.TryParse(args[1].ToString(), out temp);
-                if (isArgs1Int)
-                {
-                    argColor = Int32.Parse(args[1].ToString());
-                    return;
-                }
-                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for more info.");
-            }
-            if (args.Count == 4)
+            else if (args.Count == 4)
             {
                 //temp because function needs a return. Is not used other then to return something
-                int temp;
-                bool isArgs0Int = Int32.TryParse(args[0].ToString(), out temp);
-                bool isArgs1Int = Int32.TryParse(args[1].ToString(), out temp);
-                bool isArgs2Int = Int32.TryParse(args[2].ToString(), out temp);
-                bool isArgs3Int = Int32.TryParse(args[3].ToString(), out temp);
+
+                bool isArgs0Int = float.TryParse(args[0].ToString(), out float argX);
+                bool isArgs1Int = float.TryParse(args[1].ToString(), out float argY);
+                bool isArgs2Int = float.TryParse(args[2].ToString(), out float argRadius);
+                bool isArgs3Int = float.TryParse(args[3].ToString(), out float argColor);
 
                 if (isArgs0Int == false || isArgs1Int == false || isArgs2Int == false || isArgs3Int == false)
                 {
                     CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
                     return;
                 }
-                float argX = float.Parse(args[0].ToString());
-                float argY = float.Parse(args[1].ToString());
-                float argRadius = float.Parse(args[2].ToString());
-                argColor = int.Parse(args[3].ToString());
                 CitizenFX.Core.Debug.WriteLine("The server recieved cords for a circle.");
                 float[] argArray = { argX, argY, argRadius, argColor };
-                argArrayList.Add(argArray);
+                MapboundsArrayList.Add(argArray);
                 updateCircle(false);
             }
 
             else if (args.Count == 3)
             {
-                int temp;
-                bool isArgs0Int = Int32.TryParse(args[0].ToString(), out temp);
-                bool isArgs1Int = Int32.TryParse(args[1].ToString(), out temp);
-                bool isArgs2Int = Int32.TryParse(args[2].ToString(), out temp);
+
+                bool isArgs0Int = float.TryParse(args[0].ToString(), out float argX);
+                bool isArgs1Int = float.TryParse(args[1].ToString(), out float argY);
+                bool isArgs2Int = float.TryParse(args[2].ToString(), out float argRadius);
 
                 if (isArgs0Int == false || isArgs1Int == false || isArgs2Int == false)
                 {
                     CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
                     return;
                 }
-                float argX = float.Parse(args[0].ToString());
-                float argY = float.Parse(args[1].ToString());
-                float argRadius = float.Parse(args[2].ToString());
-                int argColor = int.Parse(args[3].ToString());
-                float[] argArray = { argX, argY, argRadius, argColor };
-                argArrayList.Add(argArray);
+                float[] argArray = { argX, argY, argRadius, CircleColour };
+                MapboundsArrayList.Add(argArray);
                 updateCircle(false);
             }
-
+            else if (args.Count == 1 && args[0].ToString() == "placed")
+            {
+                if (MapboundsArrayList.Count != 0)
+                {
+                    string debugString = string.Join(";", MapboundsArrayList.Select(array => string.Join(",", array)));
+                    CitizenFX.Core.Debug.WriteLine(debugString);
+                    TriggerClientEvent(Players[source], "ShowNotification", debugString);
+                }
+            }
             else if (args.Count == 1)
             {
                 string arg0 = args[0].ToString();
@@ -641,8 +766,8 @@ namespace STHMaxzzzie.Server
                         float mapX = location.X;
                         float mapY = location.Y;
                         float mapRadius = location.Z;
-                        float[] argArray = { mapX, mapY, mapRadius, argColor };
-                        argArrayList.Add(argArray);
+                        float[] argArray = { mapX, mapY, mapRadius, CircleColour };
+                        MapboundsArrayList.Add(argArray);
                     }
                     updateCircle(false);
                     CitizenFX.Core.Debug.WriteLine($"Added {arg0} to your circles.");
@@ -664,7 +789,7 @@ namespace STHMaxzzzie.Server
             }
             else
             {
-                CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
+                TriggerClientEvent(Players[source], "ShowNotification", "Oh no. Something went wrong!\nYou should do \"/circle help\" for assistance.");
             }
         }
 
@@ -675,7 +800,7 @@ namespace STHMaxzzzie.Server
         void delCircle(int source, List<object> args, string raw)
         {
 
-            if (argArrayList.Count == 0)
+            if (MapboundsArrayList.Count == 0)
             {
                 CitizenFX.Core.Debug.WriteLine("There is no circle to delete.");
                 return;
@@ -685,17 +810,17 @@ namespace STHMaxzzzie.Server
                 CitizenFX.Core.Debug.WriteLine($"Delcircle {args[0].ToString()} command got recieved by the server.");
                 if (args[0].ToString() == "last")
                 {
-                    argArrayList.RemoveAt(argArrayList.Count - 1);
+                    MapboundsArrayList.RemoveAt(MapboundsArrayList.Count - 1);
                     updateCircle(false);
                 }
                 else if (args[0].ToString() == "first")
                 {
-                    argArrayList.RemoveAt(0);
+                    MapboundsArrayList.RemoveAt(0);
                     updateCircle(false);
                 }
                 else if (args[0].ToString() == "all")
                 {
-                    argArrayList.Clear();
+                    MapboundsArrayList.Clear();
                     CitizenFX.Core.Debug.WriteLine("All circles are deleted.");
                     updateCircle(false);
                 }
@@ -704,6 +829,19 @@ namespace STHMaxzzzie.Server
             {
                 CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /delcircle (first/ last/ all)");
             }
+        }
+
+        [EventHandler("SetMapboundsWithPlayerCoords")]
+        void SetMapboundsWithPlayerCoords(Vector3 playerPosition, int CircleRadius, int source)
+        {
+            float mapX = playerPosition.X;
+            float mapY = playerPosition.Y;
+            float mapRadius = CircleRadius;
+            float[] argArray = { mapX, mapY, mapRadius, CircleColour };
+            TriggerClientEvent(Players[source], "ShowNotification", $"Added {mapX}, {mapY}, {mapRadius} ");
+            CitizenFX.Core.Debug.WriteLine($"SetMapboundsWithPlayerCoords, {argArray}");
+            MapboundsArrayList.Add(argArray);
+            updateCircle(false);
         }
     }
 
@@ -868,8 +1006,8 @@ namespace STHMaxzzzie.Server
 
     public class Vehicles : BaseScript
     {
-        bool vehicleShouldChangePlayerColour = true;
-        bool vehicleShouldNotDespawn = true;
+        public static bool vehicleShouldChangePlayerColour = true;
+        public static bool vehicleShouldNotDespawn = true;
         public static Dictionary<string, string> vehicleColourForPlayer = new Dictionary<string, string>();
 
 
@@ -1094,40 +1232,4 @@ namespace STHMaxzzzie.Server
         }
     }
 }
-
-
-
-
-// private string[] deathMsgs = new string[] { "{0} has died.", "{0} isn't.", "Rest in peace {0}?" };
-// private string[] killedMsgs = new string[] { "{1} killed {0}.", "{0} ended {1}.", "A conflict happened between {0} and {1}. {0} came out worse." };
-// private string[] killSelfMessages = new string[] { "{0} ended their own life.", "Suicide: {0}", "{0} couldn't handle it anymore." };
-// private string[] killedByPlayerMessages = new string[] { "{1} killed {0}.", "{0} was taken out by {1}.", "{0} met their demise at the hands of {1}." };
-
-
-// private void OnPlayerDied([FromSource] Player source)
-// {
-//     string message = string.Format(deathMsgs[new Random().Next(0, deathMsgs.Length)], source.Name);
-//     TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { message } });
-// }
-
-// private void OnPlayerKilled([FromSource] Player killer, string reason)
-// {
-//     Player victim = Players[killer.Handle];
-
-//     string message;
-
-//     if (killer.Handle == victim.Handle)
-//     {
-//         message = string.Format(killSelfMessages[new Random().Next(0, killSelfMessages.Length)], victim.Name);
-//     }
-//     else
-//     {
-//         message = string.Format(killedByPlayerMessages[new Random().Next(0, killedByPlayerMessages.Length)], victim.Name, killer.Name);
-//     }
-
-//     TriggerClientEvent("chat:addMessage", new { color = new[] { 255, 0, 0 }, args = new[] { message } });
-// }
-
-
-
 

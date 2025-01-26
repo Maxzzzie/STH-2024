@@ -31,9 +31,9 @@ namespace STHMaxzzzie.Server
             else
             {
                 //Debug.WriteLine($"test 3");
-                if (RoundHandling.runnerThisGame != -1)
+                if (RoundHandling.targetThisGame != -1)
                 {
-                    sendClientModelNameForOutfit(source, RoundHandling.runnerThisGame);
+                    sendClientModelNameForOutfit(source, RoundHandling.targetThisGame);
                 }
                 else sendClientModelNameForOutfit(source, source);
 

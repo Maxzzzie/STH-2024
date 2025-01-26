@@ -1,0 +1,26 @@
+// This is the configuration file for MaxSTH. Any line without // will be read and configured.
+// Any change in the names will result in a failed configuration for that specific item. Change anything after the = 
+
+// Formatting: Default spawn location = x, y, z, heading
+// Liberty City spawn
+//Default spawn location = 7002.115, -2909.120, 22.510, 203.537
+// Los Santos spawn
+Default spawn location = -1610.000, -1055.000, 13.000, 318.000
+
+// Formatting: Mugshot area position = x, y, z, heading
+// Liberty City mugshot area
+// Mugshot area position = 5633.444, -3219.189, 71.71848, 257.1849
+// Los Santos mugshot area
+ Mugshot area position = 402.848, -996.826, -99.900, 178.805
+
+// A message that will be displayed to all users when they join the server
+// Formatting: Message of the Day = text, can include formatting https://docs.fivem.net/docs/game-references/text-formatting/
+Message of the Day = ~o~Welcome to MaxSTH Server! Enjoy your stay!
+
+// Restrict commands to hosts
+// Set to true to restrict certain commands to hosts only, false to allow all users
+// Restrict commands to hosts = true
+
+// Sets the fire spread control defaults. Is active or not and the range from every player it takes away the fire.
+Is fire control active = false
+Default fire control range = 20

@@ -15,7 +15,7 @@ end
 function handleStateBagInitilization(source)
 	local plyState = Player(source).state
 	if not plyState.pmaVoiceInit then 
-		plyState:set('radio', GetConvarInt('voice_defaultRadioVolume', 30), true)
+		plyState:set('radio', GetConvarInt('voice_defaultRadioVolume', 50), true)
 		plyState:set('phone', GetConvarInt('voice_defaultPhoneVolume', 60), true)
 		plyState:set('proximity', {}, true)
 		plyState:set('callChannel', 0, true)
@@ -73,7 +73,7 @@ Citizen.CreateThread(function()
 		end
 	end
 
-	local radioVolume = GetConvarInt("voice_defaultRadioVolume", 30)
+	local radioVolume = GetConvarInt("voice_defaultRadioVolume", 50)
 	local phoneVolume = GetConvarInt("voice_defaultPhoneVolume", 60)
 
 	-- When casted to an integer these get set to 0 or 1, so warn on these values that they don't work
@@ -81,7 +81,7 @@ Citizen.CreateThread(function()
 		radioVolume == 0 or radioVolume == 1 or
 		phoneVolume == 0 or phoneVolume == 1
 	then
-		SetConvarReplicated("voice_defaultRadioVolume", 30)
+		SetConvarReplicated("voice_defaultRadioVolume", 50)
 		SetConvarReplicated("voice_defaultPhoneVolume", 60)
 		for i = 1, 5 do
 			Wait(5000)

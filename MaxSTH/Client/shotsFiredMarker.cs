@@ -12,7 +12,7 @@ public class ShotDetection : BaseScript
     }
         private async Task OnTick()
         {
-            if (API.IsPedShooting(Game.PlayerPed.Handle))
+            if (API.IsPedShooting(Game.PlayerPed.Handle) && Game.PlayerPed.Weapons.Current.Hash != WeaponHash.FireExtinguisher)
             {
                 int X = (int)Game.PlayerPed.Position.X;
                 int Y = (int)Game.PlayerPed.Position.Y;

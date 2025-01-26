@@ -8,7 +8,8 @@ namespace STHMaxzzzie.Client
 {
     public class MugShot : BaseScript
     {
-        private Vector3 mugshotModelPosition = new Vector3(402.848f, -996.826f, -99.900f);
+
+        private Vector4 mugshotModelPosition = new Vector4(0,0,0,0);
         private float cameraFov = 4.1f; // Zoom in for a close-up
         private int customCamera = 0; // Camera handle
         private int pedHandle = 0; // NPC handle
@@ -27,7 +28,7 @@ namespace STHMaxzzzie.Client
             if (!Game.PlayerPed.IsAlive || API.IsPauseMenuActive() || isRunning || StreamLootsEffects.isGta1CamOn)
                 return;
 
-            Debug.WriteLine("mugshot");
+            //Debug.WriteLine("mugshot");
             TriggerServerEvent("mugShot", Game.Player.ServerId, 0);
 
         }
@@ -109,8 +110,8 @@ namespace STHMaxzzzie.Client
             }
 
             // Spawn the NPC
-            pedHandle = API.CreatePed(4, modelHash, mugshotModelPosition.X, mugshotModelPosition.Y, mugshotModelPosition.Z, 178.805f, true, false);
-
+            pedHandle = API.CreatePed(4, modelHash, mugshotModelPosition.X, mugshotModelPosition.Y, mugshotModelPosition.Z, mugshotModelPosition.W, true, false);
+            //Debug.WriteLine($"Creating ped at {mugshotModelPosition.X}, {mugshotModelPosition.Y}, {mugshotModelPosition.Z},{mugshotModelPosition.W}");
             // Set all components to default
             for (int componentId = 0; componentId < 12; componentId++)
             {
@@ -141,7 +142,7 @@ namespace STHMaxzzzie.Client
             API.AttachCamToPedBone(customCamera, pedHandle, 31086, 0.0f, 4.8f, 0.0f, true); // Adjust offset as needed
             API.SetCamFov(customCamera, cameraFov);
             API.PointCamAtPedBone(customCamera, pedHandle, 31086, 0.0f, 0.0f, 0.075f, true);
-
+            API.PlaySoundFrontend(-1, "Camera_Shoot", "Phone_Soundset_Franklin", false);
             // Enable the custom camera
             API.RenderScriptCams(true, false, 0, true, false);
         }
@@ -165,6 +166,13 @@ namespace STHMaxzzzie.Client
                 API.DeletePed(ref pedHandle);
                 pedHandle = 0;
             }
+        }
+
+        [EventHandler("updateMugshotArea")]
+        void updateMugshotArea(Vector4 newMugshotPosition)
+        {
+            mugshotModelPosition = newMugshotPosition;
+            //Debug.WriteLine($"Setting mugshot position to {newMugshotPosition.X}, {newMugshotPosition.Y}, {newMugshotPosition.Z}, {newMugshotPosition.W}");
         }
     }
 }

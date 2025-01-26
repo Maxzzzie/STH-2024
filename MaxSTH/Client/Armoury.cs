@@ -11,13 +11,18 @@ namespace STHMaxzzzie.Client
 {
     public class Armoury : BaseScript
     {
-        bool isWeaponAllowed = true;
-        bool isPvpAllowed = false;
-        string lastWeaponClass = "hunt";
+        static bool isWeaponAllowed = true;
+        static bool isPvpAllowed = false;
+        static string lastWeaponClass = "hunt";
 
         [Command("weapon")]
         public void weaponCommand(int source, List<object> args, string raw)
         {
+            if (!isWeaponAllowed)
+            {
+                NotificationScript.ShowErrorNotification($"/weapon is not allowed at the moment.");
+                return;
+            }
             if (args.Count == 1)
             {
                 string input = args[0].ToString();
@@ -32,6 +37,10 @@ namespace STHMaxzzzie.Client
                 else if (input == "all")
                 {
                     giveAllWeapon(false);
+                }
+                else if (input == "nonlethal")
+                {
+                    giveNonLethalWeapon(false);
                 }
 
                 else
@@ -55,18 +64,11 @@ namespace STHMaxzzzie.Client
         //if we get this from the /model command, "model" is true.
         //This prevents the you now have weapons message.
         {
-            if (lastWeaponClass == "hunt")
-            {
-                giveHuntWeapon(model);
-            }
-            else if (lastWeaponClass == "all")
-            {
-                giveAllWeapon(model);
-            }
-            else if (lastWeaponClass == "run")
-            {
-                giveRunWeapon(model);
-            }
+            if (lastWeaponClass == "hunt") giveHuntWeapon(model);
+            else if (lastWeaponClass == "all") giveAllWeapon(model);
+            else if (lastWeaponClass == "run") giveRunWeapon(model);
+            else if (lastWeaponClass == "nonLethal") giveNonLethalWeapon(model);
+
         }
 
         [EventHandler("updatePvp")]
@@ -84,7 +86,7 @@ namespace STHMaxzzzie.Client
             isWeaponAllowed = isAllowed;
             if (isWeaponAllowed == false)
             {
-                Game.PlayerPed.Weapons.RemoveAll();
+                delWeapon();
             }
             if (isWeaponAllowed == true)
             {
@@ -102,7 +104,7 @@ namespace STHMaxzzzie.Client
 
         //Giving a runweapon
         [EventHandler("runWeapon")]
-        public void giveRunWeapon(bool model)
+        public static void giveRunWeapon(bool model)
         //Void doesn't return anything. These are datatypes. (var/int/string/bool/double/char/my_own!)
 
         {
@@ -114,38 +116,73 @@ namespace STHMaxzzzie.Client
 
                 Game.PlayerPed.Weapons.RemoveAll();
                 Game.PlayerPed.Weapons.Give(WeaponHash.Firework, 25, false, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.FlareGun, 25, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.RayPistol, 1, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.PumpShotgun, 500, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.SawnOffShotgun, 500, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.SMG, 500, true, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.FlareGun, 25, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.RayPistol, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.PumpShotgun, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.CombatPistol, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.SawnOffShotgun, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.SMG, 500, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.StickyBomb, 25, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.Flare, 25, false, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.StunGun, 1, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.Nightstick, 1, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.Knife, 1, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.Musket, 500, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.CarbineRifle, 500, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.Pistol, 500, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.SniperRifle, 500, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.HomingLauncher, 5, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, true, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.StunGun, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Nightstick, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Knife, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Musket, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.CarbineRifle, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Pistol, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.SniperRifle, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.HomingLauncher, 5, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.FireExtinguisher, 200, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Molotov, 20, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Snowball, 20, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Ball, 20, false, false);
 
-                if (!model)
+                if (!model && RoundHandling.gameMode != "infected")
                 {
-                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You have run weapons." } });
+                    NotificationScript.ShowNotification($"You now have run weapons.");
                 }
             }
             //if (isWeaponAllowed) checks for true/false. And continues with the body if it's true.
             else
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Weapon command is currently off." } });
+                NotificationScript.ShowErrorNotification($"Weapon command is currently off.");
+            }
+        }
+
+        //Giving a weapon
+        [EventHandler("nonLethalWeapon")]
+        public static void giveNonLethalWeapon(bool model)
+        {
+            lastWeaponClass = "nonLethal";
+            if (isWeaponAllowed)
+            {
+                Game.PlayerPed.Weapons.RemoveAll();
+                Game.PlayerPed.Weapons.Give(WeaponHash.RayPistol, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.FlareGun, 25, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Flare, 25, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Nightstick, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Knife, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.FireExtinguisher, 200, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Molotov, 20, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Snowball, 20, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Ball, 20, false, false);
+
+                if (!model && RoundHandling.gameMode != "infected")
+                {
+                    NotificationScript.ShowNotification($"You now have nonLethal weapons.");
+                }
+            }
+            else
+            {
+                NotificationScript.ShowErrorNotification($"Weapon command is currently off.");
             }
         }
 
         //Giving a weapon
         [EventHandler("huntWeapon")]
-        void giveHuntWeapon(bool model)
+        public static void giveHuntWeapon(bool model)
         //Void doesn't return anything. These are datatypes. (var/int/string/bool/double/char/my_own!)
         {
             lastWeaponClass = "hunt";
@@ -156,26 +193,30 @@ namespace STHMaxzzzie.Client
 
                 Game.PlayerPed.Weapons.RemoveAll();
                 Game.PlayerPed.Weapons.Give(WeaponHash.Firework, 5, false, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.RayPistol, 1, true, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.RayPistol, 1, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.CombatPistol, 25, false, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.FlareGun, 25, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.PumpShotgun, 500, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.SawnOffShotgun, 500, true, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.FlareGun, 25, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.PumpShotgun, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.SawnOffShotgun, 500, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.Flare, 25, false, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.Nightstick, 1, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.Knife, 1, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.Musket, 500, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.Pistol, 500, true, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, true, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Nightstick, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Knife, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Musket, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Pistol, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.FireExtinguisher, 200, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Molotov, 20, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Snowball, 20, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Ball, 20, false, false);
 
-                if (!model)
+                if (!model && RoundHandling.gameMode != "infected")
                 {
-                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You now have hunter weapons." } });
+                    NotificationScript.ShowNotification($"You now have hunter weapons.");
                 }
             }
             else
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Huntweapon command is currently off." } });
+                NotificationScript.ShowErrorNotification($"Weapon command is currently off.");
             }
         }
         //Giving all weapons
@@ -192,12 +233,12 @@ namespace STHMaxzzzie.Client
                 }
                 if (!model)
                 {
-                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You now have all weapons." } });
+                    NotificationScript.ShowNotification($"You now have all weapons.");
                 }
             }
             else
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Allweapon command is currently off." } });
+                NotificationScript.ShowErrorNotification($"Weapon command is currently off.");
             }
         }
 
@@ -205,6 +246,7 @@ namespace STHMaxzzzie.Client
         void delWeapon()
         {
             Game.PlayerPed.Weapons.RemoveAll();
+            Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, false, false);
         }
     }
 }

@@ -42,7 +42,8 @@ namespace STHMaxzzzie.Server
                 "carswap", //(broken does nothing) swaps the clients car with a different players vehicle
                 "shake", // (broken does nothing) shakes player cam for 5 secs
                 "locationchat", // sends location of player in chat for everyone but player.
-                "fix" // fixes a vehicle
+                "fix", // fixes a vehicle
+                "gravity" //makes the client anti gravity when on foot
              };
 
         [Command("togglesl", Restricted = true)]

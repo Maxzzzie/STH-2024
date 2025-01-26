@@ -29,7 +29,7 @@ namespace STHMaxzzzie.Server
                 playerPris.Remove(player); // Remove the old vehicle from the dictionary
             }
             string closestCalloutToPri = "the Void";
-            float distanceToClosestCalloutToPri = 10000;
+            float distanceToClosestCalloutToPri = float.PositiveInfinity;
             foreach (var kvp in ServerMain.maxzzzieCalloutsDict)
             {
                 float distance = Vector3.Distance(position, kvp.Value);
@@ -45,7 +45,8 @@ namespace STHMaxzzzie.Server
             //int networkId = API.NetworkGetNetworkIdFromEntity(vehicle);
 
             string[] trimmedClosestCalloutName = closestCalloutToPri.Split('*');
-            TriggerClientEvent("chat:addMessage", new { color = new[] { 204, 0, 204 }, multiline = true, args = new[] { "Server", $"{player.Name} is spawning a Prius near {trimmedClosestCalloutName[0]}!" } });
+            //TriggerClientEvent("chat:addMessage", new { color = new[] { 204, 0, 204 }, multiline = true, args = new[] { "Server", $"{player.Name} is spawning a Prius near {trimmedClosestCalloutName[0]}!" } });
+            TriggerClientEvent("chat:addMessage", new { color = new[] { 204, 0, 204 }, args = new[] { player.Name, $"I'm spawning a Prius near {trimmedClosestCalloutName[0]}!" } });
             //TriggerClientEvent("ShowNotification", $"~h~~q~<C>{player.Name}<C>~s~~h~ spawned a ~h~~q~Prius~s~~h~ near~n~<C>{trimmedClosestCalloutName[0]}<C>!");
             await Delay(10);
             API.SetVehicleColours(vehicle, 135, 135);
@@ -92,7 +93,7 @@ namespace STHMaxzzzie.Server
                         //     multiline = false,
                         //     args = new[] { "Server", "Your pri got destroyed!" }
                         // });
-                        TriggerClientEvent(playerPri.Key, "ShowNotification", "Your ~q~~h~pri~h~~s~ got destroyed!");
+                        TriggerClientEvent(playerPri.Key, "ShowSpecialNotification", "Your ~q~~h~pri~h~~s~ got destroyed!" , "Goal" , "DLC_HEIST_HACKING_SNAKE_SOUNDS" );
                         BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
                         request.BlipsToRemove.Add($"pri{playerPri.Key.Name}");
                         BlipHandler.AddBlips(request);
@@ -107,7 +108,7 @@ namespace STHMaxzzzie.Server
                     //     multiline = false,
                     //     args = new[] { "Server", "Your pri disappeared!" }
                     // });
-                    TriggerClientEvent(playerPri.Key, "ShowNotification", "Your ~q~~h~pri~h~~s~ disappeared!");
+                    TriggerClientEvent(playerPri.Key, "ShowErrorNotification", "Your ~q~~h~pri~h~~s~ disappeared!");
                     BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
                     request.BlipsToRemove.Add($"pri{playerPri.Key.Name}");
                     BlipHandler.AddBlips(request);

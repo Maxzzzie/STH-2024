@@ -14,6 +14,8 @@ namespace STHMaxzzzie.Client
     public class Spawns : BaseScript
     {
         static Dictionary<string, Vector4> respawnLocationsDict = new Dictionary<string, Vector4>();
+        static Vector4 DefaultSpawnPosition = new Vector4(0,0,71.5f,0);
+        public bool didDefaultSpawnPositionGetSet = false;
         bool didIAlreadySpawnOnce = false;
         string lastRespawnPoint = "null";
         string secondToLastRespawnPoint = "null";
@@ -22,6 +24,14 @@ namespace STHMaxzzzie.Client
 
         public Spawns()
         { }
+
+        [EventHandler("setInitialRespawnOff")]
+        void setInitialRespawnOff()
+        {
+        didIAlreadySpawnOnce = false;
+        lastRespawnPoint = "null";
+        secondToLastRespawnPoint = "null";
+        }
 
         [EventHandler("getRespawnLocationsDict")]
         void getRespawnLocationsDict(string respawnLocationName, Vector4 respawnLocationsXYZH)
@@ -67,18 +77,25 @@ namespace STHMaxzzzie.Client
             }
             isRespawnRunning = true;
             Vector3 pPos = Game.PlayerPed.Position;
-            Vector4 SpawnPos = new Vector4(-1610f, -1055f, 13f, 318f);
+            Vector4 SpawnPos = DefaultSpawnPosition;
             Debug.WriteLine("running spawn function");
             TriggerServerEvent("thisClientDiedForGameStateCheck", Game.Player.ServerId);
 
             //-------------------------------------------------- temp respawn code. Can use the bits for later on in the main code -------------------------------- below here including didIAlreadySpawnOnce bool up top of this funciton
             if (!didIAlreadySpawnOnce)
             {
-                Spawn.SpawnPlayer(-1610f, -1055f, 13f, 318f);
+                while (!didDefaultSpawnPositionGetSet)
+                {
+                    Debug.WriteLine("default spawnposition isn't set yet.");
+                    await Delay(50);
+                }
+                await Spawn.SpawnPlayer(DefaultSpawnPosition.X, DefaultSpawnPosition.Y, DefaultSpawnPosition.Z, DefaultSpawnPosition.W);
                 didIAlreadySpawnOnce = true;
                 isRespawnRunning = false;
-                await Delay(100);
+                await Delay(200);
                 Appearance.changeRandomModel();
+                await Delay(2000);
+                NotificationScript.ShowMOTD();
                 return;
             }
             else if (respawnLocationsDict.Count() != 0)
@@ -162,6 +179,14 @@ namespace STHMaxzzzie.Client
             TriggerServerEvent("updatePlayerBlips");
             isRespawnRunning = false;
 
+        }
+
+        [EventHandler("updateDefaultSpawnLocation")]
+        void updateDefaultSpawnLocation(Vector4 receivedSpawnPoint)
+        {
+            Debug.WriteLine($"setting default spawnlocation to {receivedSpawnPoint}.");
+            DefaultSpawnPosition = receivedSpawnPoint;
+            didDefaultSpawnPositionGetSet = true;
         }
     }
 }

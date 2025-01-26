@@ -61,12 +61,15 @@ namespace STHMaxzzzie.Server
 
         public void setPlayerBlipsForAll()
         {
+            Debug.WriteLine("setPlayerBlipsForAll");
             BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
             foreach (Player player in Players)
             {
                 int PlayerHandle = int.Parse(player.Handle.ToString());
+                Debug.WriteLine($"Playerblip handle {PlayerHandle}.");
                 BlipHandler.BlipData playerblip = new BlipHandler.BlipData($"{player.Name}-{player.Handle}")
                 {
+                    Sprite = 480,
                     Type = "player",
                     Colour = PlayerHandle + 5,
                     Shrink = false,

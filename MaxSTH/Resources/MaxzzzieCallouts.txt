@@ -501,3 +501,194 @@ Grapeseed airfield west, 1936.061, 4713.211, 40.80388
 Grapeseed airfield Hangar, 2108.984, 4794.674, 40.523
 Airfield bridge Grapeseed, 2199.071, 4832.135, 44.57805
 LS customs Grand senora desert, 1182.82, 2653.487, 37.41716
+The arch, 6291.165, -3329.128, 36.10118
+Outlook park*1, 6213.75, -3327.73, 28.5556
+Outlook park*2, 6218.159, -3399.58, 29.62535
+Outlook park*3, 6234.557, -3482.583, 23.10936
+Bowling alley, 6379.793, -3925.901, 16.4449
+Beach gate, 6436.929, -3831.361, 13.47205
+Main terminal Francis International Airport, 7555.17, -2863.064, 5.430371
+Runway intersection Francis International Airport, 7937.664, -2841.769, 5.586852
+Radar tower Francis International Airport, 7515.222, -3230.125, 5.160122
+South runway Francis International Airport, 7514.005, -3337.276, 5.184546
+South runway Francis International Airport*2, 7696.102, -3105.799, 5.748987
+South runway Francis International Airport*3, 7811.819, -2985.138, 5.713262
+North runway Francis International Airport*3, 7849.436, -2769.183, 5.76749
+North runway Francis International Airport*2, 7766.904, -2687.044, 6.09257
+North runway Francis International Airport*1, 7672.301, -2596.963, 5.776944
+North runway Francis International Airport*0, 7561.009, -2493.12, 5.726997
+North runway Francis International Airport*4, 7472.952, -2411.065, 5.73994
+Flight control tower Francis International Airport, 7808.603, -2848.221, 5.28599
+Cargo enterance Francis International Airport, 7425.338, -3066.249, 5.255043
+Multi story parking Francis International Airport, 7437.147, -2891.149, 6.948102
+Big willies mall, 7006.631, -2639.639, 28.26118
+Rons Meadows park, 6958.061, -2419.854, 15.78397
+Museum Meadow park, 6677.549, -2539.954, 28.56127
+Monoglobe, 6676.387, -2692.005, 27.99508
+Tennis courts Meadows park, 6687.26, -2495.906, 28.1145
+Playground Meadows park, 6627.724, -2501.867, 36.36051
+Liberty Eye, 6190.08, -3913.997, 10.71901
+Liberty karts, 6113.821, -3896.678, 14.95733
+Jizzy Jims, 6109.491, -3732.22, 15.13862
+Clucking bell Times Square, 5048.59, -3189.888, 14.10739
+Twitchins sugar factory, 6008.048, -2808.815, 13.30677
+Deli Supreme Boabo, 6156.548, -2881.86, 33.5048
+Broker Fire Department, 6130.692, -3152.089, 34.65906
+Spenders, 5003.911, -3360.724, 13.93815
+Schottler Medical Center, 6426.321, -3086.886, 32.17006
+Spenders*2, 5053.949, -3345.518, 14.16301
+Deli Beechwood City, 6602.229, -3020.238, 25.54678
+LCPD Dukes, 6425.911, -2678.033, 38.12344
+Car Scrapyard, 6184.92, -2577.615, 25.64089
+Rons Gas Station Cerveza Heights, 6308.413, -2931.823, 29.82915
+PD Suffolk, 4804.737, -3520.775, 12.83038
+Medical Center Cerveza Heights, 6438.95, -2762.167, 29.5351
+Anchor statue, 4823.223, -3774.696, 3.693289
+Burger Shot Beechwood City, 6844.772, -3026.82, 24.58604
+Schottler Drugstore, 6528.634, -3164.465, 30.94289
+Scrap and Auto parts, 6579.52, -3527.106, 19.54292
+Rons Hove Beach, 6318.933, -3613.317, 18.64469
+Hove Beach Viewing Platform, 6014.33, -3846.476, 13.47512
+Navy Yard Docks, 5922.516, -3525.67, 5.432279
+Navy Yard Docks*1, 5904.167, -3602.889, 5.482971
+Navy Yard Docks*2, 5913.18, -3398.156, 5.442771
+Navy Yard Docks*3, 5935.643, -3266.657, 5.539766
+Navy Yard Docks*4, 5909.792, -3143.863, 5.696861
+Brokers Navy Yard*2, 6004.437, -3000.88, 5.761932
+Steinway Park Entrance, 6129.579, -2357.417, 22.45526
+Steinway Park Pier, 6009.72, -2483.696, 7.465249
+Steinway Park Entrance*1, 6009.06, -2660.759, 14.43666
+Steinway Park Platform, 6112.02, -2501.849, 17.50422
+Thrashy's Final Resting Place, 6092.104, -2291.102, 8.239552
+Scrapyard Boabo, 6232.026, -2744.29, 19.7471
+Steinway Construction Site, 6190.595, -2525.735, 30.06456
+Giant Pillars, 6780.853, -2379.456, 15.32019
+Used Auto Parts, 5808.081, -1784.068, 12.6791
+Welham Parkway, 5673.59, -1403.493, 23.96797
+Welham Parkway*1, 5902.443, -1392.598, 34.87679
+Steinway Park Dock Area, 6367.025, -2207.271, 8.429506
+Train Trains Crossover, 6568.866, -2867.913, 23.40102
+Statue of Happiness, 4578.833, -4007.781, 99.92294
+Charge Island Sewage Works, 5806.547, -2537.116, 35.32327
+Charge Island Sewage Works*1, 5834.706, -2341.523, 42.04737
+Charge Island Baseball Diamond, 5794.524, -2195.107, 2.76106
+Charge Island Boathouse, 5629.875, -2157.318, 30.5806
+Charge Island Toll Booths, 5735.582, -2488.906, 27.94903
+The Triangle Club, 6368.735, -1576.879, 24.66185
+Rons Bohan, 6643.765, -1534.533, 23.17527
+Hove Beach Construction, 6369.857, -3625.919, 21.13524
+Bohan 24/7, 6182.491, -1403.968, 39.88755
+Bohan Police Department, 6178.483, -1390.961, 39.8745
+Downtown Buss Station, 6215.323, -2989.691, 31.04717
+Bohan Burger Shot West, 5637.407, -1751.792, 23.00026
+Bohan Burger Shot East, 6296.046, -1667.443, 23.21971
+Bohan Tennis Courts, 5561.374, -1401.902, 32.59832
+Swing Glitch, 6537.514, -3502.974, 23.2063
+Bohan Basketball Courts, 5557.771, -1349.202, 29.99653
+South Bohan Highway, 5735.719, -1975.274, 30.36562
+West Bohan Highway, 5479.897, -1470.926, 30.34731
+East Bohan Bridge, 6598.575, -1711.029, 16.68099
+Bohan Southwest Construction, 5633.282, -1983.63, 26.70575
+Pier 45, 5606.206, -3769.847, 43.10926
+Alpha Mail, 6099.083, -1654.335, 37.8889
+ARS Building, 5810.059, -1573.198, 89.82438
+Willis wash & lube, 7020.836, -2898.641, 22.55239
+Bohan Medical Center, 6163.194, -1433.713, 19.62821
+Shoeworld, 6087.347, -3588.526, 17.62616
+Roman taxi depot, 5998.713, -3531.645, 14.95894
+Perestroika, 6147.994, -3555.507, 19.18737
+Vinewood bar&grill, 5122.34, -3249.703, 14.16856
+Squidrow, 5227.398, -3347.035, 14.17695
+Chinatown, 5247.128, -3686.461, 14.16309
+West end Broker Bridge, 5382.623, -3665.351, 7.022874
+Pier 45 bus stop, 5514.778, -3890.131, 4.117999
+Heli tours, 5489.432, -3955.688, 4.086228
+Flock of cranes, 5296.522, -4162.822, 4.107831
+Poop deck seafood restaurant, 5061.528, -4198.396, 4.519644
+Castle gardens, 4957.874, -4117.139, 4.082467
+Liberty City Hall, 5013.178, -3624.51, 14.02092
+Broker bridge*0, 5693.399, -3669.302, 38.78437
+Broker bridge*1, 5823.682, -3670.281, 40.52427
+Broker bridge*2, 5948.807, -3669.595, 39.73829
+East end Broker Bridge, 6110.908, -3667.592, 36.90287
+Broker bridge*4, 5524.27, -3668.057, 31.34797
+Civalisation committe, 5380.934, -2851.917, 14.52148
+Civalization Committee, 5377.462, -2855.394, 14.56868
+Super star cafe, 5206.272, -2274.951, 15.64092
+Central park North*1, 5083.047, -2115.699, 13.98262
+Central park North*2, 5014.704, -2115.602, 13.63823
+Central park North*3, 4912.985, -2130.425, 9.920744
+Central park West*1, 4856, -2154.83, 13.69862
+Central park West*2, 4862.756, -2250.398, 13.38613
+Central park West*3, 4867.238, -2325.132, 13.99995
+Central park West*4, 4863.084, -2390.159, 10.05217
+Central park West*5, 4869.798, -2463.779, 10.0953
+Central park West*6, 4859.342, -2561.009, 12.02413
+Central park South*1, 4890.001, -2612.803, 13.33815
+Central park South*2, 4944.677, -2614.458, 12.57122
+Central park South*3, 5031.637, -2605.884, 11.95354
+Central park South*4, 5071.847, -2604.809, 13.0906
+Central park East*1, 5109.188, -2580.916, 13.03755
+Central park museum, 5081.858, -2444.995, 18.6249
+PD East Holland, 5284.592, -2025.695, 15.39709
+Terroil Lancaster, 5296.98, -2117.717, 14.41198
+Lynch street station*0, 6836.78, -2826.771, 28.56698
+Lynch street station*1, 6879.826, -2824.954, 28.39539
+Lynch street station*2, 6794.924, -2837.994, 28.38633
+Jerk restaurant, 6530.272, -3299.649, 24.14268
+Shotler gate, 6481.552, -3297.024, 27.93518
+Little Jamaica, 6569.296, -3181.94, 25.42994
+Lube factory, 6596.55, -3270.744, 24.52213
+Gingo restaurant, 6532.056, -3389.627, 23.10352
+Hairy al's scrapyard, 6606.8, -3527.597, 17.39186
+Double jump, 6638.553, -3593.505, 16.00056
+Double jump highway T-junction, 6670.033, -3747.843, 31.76865
+Outlook park LSC, 6246.448, -3547.561, 21.03138
+LCPD broker West, 6082.951, -3613.931, 18.1797
+Firefly, 6077.974, -3815.417, 13.44592
+Broker navy yard sign, 5993.839, -3482.905, 14.40119
+Wood fellas, 6062.896, -3455.802, 5.912334
+Brucie's autos, 6062.834, -3366.04, 5.675784
+East hook plumbing, 6000.275, -3256.013, 5.703165
+Rons Brokers navy yard, 5945.61, -3059.562, 5.845116
+Bridge pillar underpass Broker, 6046.538, -2996.202, 5.632601
+Creek St Diner, 6137.633, -2810.379, 15.24197
+Broker pedestrianized*1, 6064.915, -3122.709, 31.21304
+Broker pedestrianized*2, 6046.559, -3170.886, 28.63331
+Broker pedestrianized*3, 6067.931, -3068.729, 30.77185
+Curbcrawler skatestore, 6219.568, -3108.804, 31.82632
+S'wish pizza, 6110.538, -3237.879, 26.95297
+Gunstore Outlook park, 6240.686, -3178.404, 33.05341
+Fall hazard road*1, 6031.85, -3267.741, 25.59234
+Fall hazard road*2, 6056.044, -3306.835, 26.13938
+West Outlook park, 6183.479, -3454.807, 23.78142
+West Outlook park*2, 6154.864, -3353.507, 23.67675
+North Outlook park, 6200.789, -3265.326, 25.69202
+East Outlook park, 6301.719, -3439.833, 27.05197
+Animal clinic South Slopes, 6475.791, -3424.73, 26.90378
+Roof boards, 6480.158, -3591.793, 21.88701
+Screamer rollercoaster, 6309.316, -3839.817, 13.50445
+Mikhail Faustin house, 6526.068, -4095.306, 7.686212
+Beachgate road, 6528.236, -3978.977, 7.729382
+Beachgate parking, 6515.59, -3885.138, 11.91263
+Beachgate road*2, 6490.776, -3923.379, 9.856356
+Carwash Beechwood city, 6701.347, -3129.923, 22.8143
+Live nude, 6619.619, -3117.793, 26.07091
+Come clean, 6464.617, -3233.139, 35.8637
+LCPD broker East, 6419.793, -3345.809, 28.02575
+Silverback, 6201.835, -2694.583, 21.81632
+Graffiti wall, 6322.359, -2780.862, 28.47567
+Behind public library, 6388.629, -3278.976, 34.29651
+S-Tunnel North exit, 6656.595, -2887.799, 16.3246
+S-Tunnel South exit, 6540.639, -3040.487, 20.8186
+S-Tunnel, 6622.343, -2957.873, 8.092818
+Brick Appartments, 6832.029, -2649.461, 28.65913
+Brick Appartments North, 6834.748, -2552.485, 27.47803
+Brick Appartments West, 6761.358, -2565.233, 27.5209
+Brick Appartments West*2, 6761.827, -2675.932, 28.36182
+Brick Appartments West*3, 6759.515, -2757.758, 28.34459
+Brick Appartments South *1, 6809.665, -2794.503, 28.46213
+Big Al's furniture, 6893.801, -2775.889, 28.44845
+Brick Appartments East *1, 6916.991, -2691.208, 28.61366
+Brick Appartments East *2, 6917.611, -2598.323, 27.57766
+Church Meadows park, 6561.004, -2580.551, 34.88955

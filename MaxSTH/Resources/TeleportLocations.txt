@@ -22,3 +22,8 @@ chiliad 495 5591 795
 sky 0 -1000 1200
 lifeinvader -1080 -251 38
 mugshot 402 -996 -99
+timessquare 4994 -3087 15
+arch 6283 -3339 37
+fia 7552 -2865 6
+west 3997 -1526 33
+swingset 6530 -3507 23

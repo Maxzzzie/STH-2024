@@ -22,7 +22,7 @@ namespace STHMaxzzzie.Client
             {
                 veh.Delete();
             }
-            TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"All vehicles are removed." } });
+            NotificationScript.ShowNotification($"All vehicles are removed.");
             if (shouldRemoveProps)
             {
                 Prop[] allProp = World.GetAllProps();
@@ -30,8 +30,23 @@ namespace STHMaxzzzie.Client
                 {
                     prop.Delete();
                 }
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"All entities are removed too." } });
+                NotificationScript.ShowNotification($"All entities are removed too.");
             }
+            TriggerServerEvent("didClearJustHappen");
+        }
+
+        [EventHandler("clearNearVehicles")]
+        void RemoveNearVehicles(int range)
+        {
+            Vehicle[] allVeh = World.GetAllVehicles();
+            Vector3 pos = Game.PlayerPed.Position;
+            foreach (Vehicle veh in allVeh)
+            {
+                Vector3 vehpos = veh.Position;
+                if (IsVehicleSeatFree(veh.Handle, -1) && GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, vehpos.X, vehpos.Y, vehpos.Z ,true) < range) veh.Delete();
+                
+            }
+            NotificationScript.ShowNotification($"All empty vehicles are removed within {range}m.");
             TriggerServerEvent("didClearJustHappen");
         }
 
@@ -69,6 +84,19 @@ namespace STHMaxzzzie.Client
             SetBlipAlpha(blip, 40);//sets opacity of the mapbound circles
             SetBlipColour(blip, int.Parse(argArray[3].ToString()));
             blipList.Add(blip);
+        }
+
+        [EventHandler("PrintCoords")]
+        void PrintCoords()
+        {
+            NotificationScript.ShowNotification($"Current player position = {Game.PlayerPed.Position}");
+        }
+
+        [EventHandler("SendCoordsToServerForMapbounds")]
+        void SendCoordsToServer(int CircleRadius, int source)
+        {
+            //Debug.WriteLine("SendCoordsToServer");
+            TriggerServerEvent("SetMapboundsWithPlayerCoords", Game.PlayerPed.Position, CircleRadius, source);
         }
     }
 }

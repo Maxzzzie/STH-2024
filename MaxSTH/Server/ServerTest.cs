@@ -1,39 +1,23 @@
 using System;
 using System.Collections.Generic;
 using CitizenFX.Core;
+using CitizenFX.Core.Native;
 
 namespace STHMaxzzzie.Server
 {
-        public class Test : BaseScript
+    public class Test : BaseScript
+    {
+        [Command("test", Restricted = false)]
+        public void TestCommand(int source, List<object> args, string raw)
         {
-                [Command("test", Restricted = false)]
-                void TestCommand(int source, List<object> args, string raw)
-                {
-                        // BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
-                        // if (args[0].ToString() == "add")
-                        //         foreach (Player player in Players)
-                        //         {
+          if (args.Count == 1 && args[0].ToString() == "bounce") TriggerClientEvent(Players[source], "gameBounce",0,true);
+          if (args.Count == 1 && args[0].ToString() == "audio") TriggerClientEvent(Players[source], "clientTest1");
+          else if (args.Count == 1) TriggerClientEvent(Players[source], "clientTest2", args[0].ToString());
+          else TriggerClientEvent(Players[source], "chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"Error test."}});
+        }
+    
 
-                        //                 BlipHandler.BlipData playerblip = new BlipHandler.BlipData($"{player.Name}-{player.Handle}")
-                        //                 {
-                        //                         Type = "player",
-                        //                         Colour = 6,
-                        //                         Shrink = false,
-                        //                         MapName = player.Name,
-                        //                         Sprite = 64
-                        //                 };
-                        //                 request.BlipsToAdd.Add(playerblip);
 
-                        //         }
-                        // else if (args[0].ToString() == "del")
-                        // {
-                        //         foreach (Player player in Players)
-                        //         {
-                        //                 request.BlipsToRemove.Add($"{player.Name}-{player.Handle}");
-                        //         }
-                        // }
-                        //         BlipHandler.AddBlips(request);
-                }
                 [Command("rpi", Restricted = true)]
                 void rpi(int source, List<object> args, string raw)
                 {

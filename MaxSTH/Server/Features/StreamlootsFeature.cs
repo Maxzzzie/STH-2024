@@ -40,7 +40,7 @@ namespace TwitchTestClient.Server.Features
                 if (RoundHandling.gameMode != "none")
                 {
                     int target = int.Parse(parts[3]);
-                    int runnerId = RoundHandling.runnerThisGame;
+                    int runnerId = RoundHandling.targetThisGame;
                     if (target == -1) //send effect to all players
                     {
                         TriggerClientEvent("StreamLootsEffect", parts[0]);

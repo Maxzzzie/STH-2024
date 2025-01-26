@@ -4,7 +4,7 @@ using System;
 
 public class ShotBlipServer : BaseScript
 {
-    bool areShotsFiredVisible = true;
+    public static bool areShotsFiredVisible = true;
 
 [EventHandler("OnShotsFired")]
     private void OnShotsFired(int X, int Y)

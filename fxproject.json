@@ -24,11 +24,34 @@
       "restartOnChange": true
     },
     "pma-voice": {
-      "enabled": false,
+      "enabled": true,
       "restartOnChange": true
     },
     "MaxSTH2.fxworld": {
       "enabled": true
+    },
+    "liberty_city_peds": {
+      "enabled": true,
+      "restartOnChange": true
+    },
+    "liberty_vehicles": {
+      "enabled": true,
+      "restartOnChange": true
+    },
+    "libertycity": {
+      "enabled": true,
+      "restartOnChange": true
+    },
+    "lcpack": {
+      "enabled": true
+    },
+    "loadingscreen": {
+      "enabled": true,
+      "restartOnChange": true
+    },
+    "ox_lib": {
+      "enabled": false,
+      "restartOnChange": false
     }
   },
   "serverUpdateChannel": "latest",

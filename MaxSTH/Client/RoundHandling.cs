@@ -14,7 +14,7 @@ namespace STHMaxzzzie.Client
         public static int thisClientIsTeam = 0; //0= not assigned a team, 1= runner, 2= hunter 3= spectator
         public static Dictionary<int, int> teamAssignment = new Dictionary<int, int>();
         public static string gameMode = "none";
-        int serverId = Game.Player.ServerId;
+        public static int serverId = Game.Player.ServerId;
 
         [EventHandler("startGame")]
         public void startGame(List<object> playerIdAndTeamAssignment, string newGameMode)
@@ -31,32 +31,38 @@ namespace STHMaxzzzie.Client
                     int playerId = (int)vector.X;
                     int team = (int)vector.Y;
                     teamAssignment.Add(playerId, team);
-                    //TriggerEvent("pma-voice:SetPlayerRadioChannel", playerId, team);
                     if (playerId == serverId)
                     {
                         thisClientIsTeam = team;
+                        if (Radio.setsAutomatically) TriggerEvent("AddPlayerToRadio", team);
                     }
                 }
             }
             if (gameMode == "hunt")
             {
-                //Debug.WriteLine($"client startGame was Hunt");
                 startHuntMode();
-                
             }
             else if (gameMode == "delay")
             {
                 startDelayMode();
             }
+            else if (gameMode == "bounce" && thisClientIsTeam == 1)
+            {
+                GameBounce.gameBounceBlipCalculation();
+            }
+            else if (gameMode == "infected")
+            {
+                GameInfected.infectedWeapons();
+            }
 
             if (thisClientIsTeam == 1)
-                {
-                    Health.SetPlayerStats(300, 100);
-                    TriggerEvent("HealCompletely");
-                }
+            {
+                Health.SetPlayerStats(300, 100);
+                TriggerEvent("HealCompletely");
+            }
             else
             {
-            Health.SetPlayerStats(300, 0);
+                Health.SetPlayerStats(300, 0);
             }
 
         }
@@ -64,9 +70,10 @@ namespace STHMaxzzzie.Client
         [EventHandler("clientEndGame")]
         public void clientEndGame(List<object> playerIdAndTeamAssignment)
         {
-            Debug.WriteLine($"client clientEndGame");
+            //Debug.WriteLine($"client clientEndGame");
             gameMode = "none";
             TriggerEvent("HealHalf");
+            if (Radio.setsAutomatically) TriggerEvent("AddPlayerToRadio", 69);
 
             teamAssignment.Clear();
             foreach (var obj in playerIdAndTeamAssignment)
@@ -86,13 +93,18 @@ namespace STHMaxzzzie.Client
 
         public void startHuntMode()
         {
-            //Debug.WriteLine($"client startHuntMode");
             if (thisClientIsTeam == 1) { TriggerEvent("runWeapon", false); }
             else if (thisClientIsTeam == 2) { TriggerEvent("huntWeapon", false); }
+
         }
         public void startDelayMode()
         {
-            //Debug.WriteLine($"client startHuntMode");
+            if (thisClientIsTeam == 1) { TriggerEvent("runWeapon", false); }
+            else if (thisClientIsTeam == 2) { TriggerEvent("huntWeapon", false); }
+        }
+
+        public void startBounceMode()
+        {
             if (thisClientIsTeam == 1) { TriggerEvent("runWeapon", false); }
             else if (thisClientIsTeam == 2) { TriggerEvent("huntWeapon", false); }
         }
@@ -123,11 +135,12 @@ namespace STHMaxzzzie.Client
             }
         }
 
-        [EventHandler("updateTeamAssignment")]
+        [EventHandler("updateTeamAssignment")] //for when a player has joined the server after round start. He gets added to the hunters.
         public void updateTeamAssignment(int joinedPlayerId)
         {
             //Debug.WriteLine($"client updateTeamAssignment");
-            teamAssignment[joinedPlayerId] = 2;
+            if (gameMode != "none") teamAssignment[joinedPlayerId] = 2;
+            if (gameMode == "infected") GameInfected.infectedWeapons();
         }
 
         [EventHandler("gameWonNotification")]
@@ -148,7 +161,7 @@ namespace STHMaxzzzie.Client
         [EventHandler("gameNeutralNotification")]
         public void gameNeutralNotification(string winningTeam)
         {
-           //Debug.WriteLine($"client gameNeutralNotification");
+            //Debug.WriteLine($"client gameNeutralNotification");
             neutralNotification(winningTeam);
         }
 
@@ -163,7 +176,7 @@ namespace STHMaxzzzie.Client
         public void gameJoinNotification(List<object> runnerList)
         {
             //Debug.WriteLine($"client gameJoinNotification");
-             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameJoinNotification" } });
+            //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameJoinNotification" } });
 
             if (runnerList.Count == 0)
             {
@@ -188,10 +201,10 @@ namespace STHMaxzzzie.Client
 
         public async Task startNotification(string runnerNames)
         {
-           // Debug.WriteLine($"client startNotification");
+            // Debug.WriteLine($"client startNotification");
             string notificationText = "null";
 
-             notificationText = $"A new round of \"{gameMode}\" is starting. \n{runnerNames} is a runner.";
+            notificationText = $"A new game is starting with type: \"{gameMode}\".\n{runnerNames} is a runner.";
 
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"startNotification" } });
 
@@ -266,7 +279,7 @@ namespace STHMaxzzzie.Client
             }
             else
             {
-                
+
                 notificationText = $"Game over. \nYou lost this round.";
             }
 
@@ -283,8 +296,9 @@ namespace STHMaxzzzie.Client
         }
 
         public async Task neutralNotification(string winningTeam)
-        { string notificationText;
-        //Debug.WriteLine($"client neutralNotification");
+        {
+            string notificationText;
+            //Debug.WriteLine($"client neutralNotification");
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameNeutralNotification" } });
             if (winningTeam == "draw")
             {
@@ -307,8 +321,11 @@ namespace STHMaxzzzie.Client
             await DisplayCenteredNotification(notificationText, 0, 255, 0, 255);
         }
 
+        static bool isDisplayed = false; //prevent double notifications
         private async Task DisplayCenteredNotification(string text, int r, int g, int b, int a)
-        { 
+        {
+            isDisplayed = false;
+            await Delay(100);
             //Debug.WriteLine($"client DisplayCenteredNotification");
             float baseX = 0.5f; // Center X
             float baseY = 0.5f; // Center Y
@@ -330,7 +347,9 @@ namespace STHMaxzzzie.Client
 
             // Draw the notification for a few seconds
             DateTime endTime = DateTime.Now.AddSeconds(5);
-            while (DateTime.Now < endTime)
+            isDisplayed = true;
+            API.PlaySoundFrontend(-1, "CHALLENGE_UNLOCKED", "HUD_AWARDS", false);
+            while (DateTime.Now < endTime && isDisplayed)
             {
                 // Draw background rectangle
                 Function.Call(Hash.DRAW_RECT, baseX, baseY + 0.01f, rectWidth, rectHeight, 0, 0, 0, 150);
@@ -344,6 +363,7 @@ namespace STHMaxzzzie.Client
 
                 await BaseScript.Delay(0); // Run in a loop to keep it displayed
             }
+            isDisplayed = false;
         }
 
 

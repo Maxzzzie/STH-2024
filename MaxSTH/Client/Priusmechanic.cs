@@ -18,17 +18,17 @@ namespace STHMaxzzzie.Client
             {
                 if (RoundHandling.thisClientIsTeam == 1)
                 {
-                    TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"You are a runner you silly goose."}});
+                    NotificationScript.ShowErrorNotification($"You are a runner you silly goose.");
                     return;
                 }
             canSpawnNextPri = false;
             TriggerServerEvent("pri-spawn-requested", VehicleHash.Dilettante, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading - 180);
-            await WaitForSeconds(30);//time between pri spawning to prevent spam, in seconds.
+            await WaitForSeconds(20);//time between pri spawning to prevent spam, in seconds.
             canSpawnNextPri = true;
             }
             else
             {
-                TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"Wait"}});
+                NotificationScript.ShowErrorNotification($"wait");
             }
         }
 

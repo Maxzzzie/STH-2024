@@ -22,6 +22,7 @@ namespace STHMaxzzzie.Client
         DateTime fameStartTime;
         DateTime carFameStartTime;
         static bool isShakeCamOn = false;
+        static bool isAntiGravity = false;
         Random rand = new Random();
 
         public StreamLootsEffects()
@@ -290,9 +291,18 @@ namespace STHMaxzzzie.Client
                     didWork = true;
                 }
             }
+            else if (type == "gravity" && !isAntiGravity)
+            {
+                if (Game.PlayerPed.IsOnFoot)
+                {
+                    didWork = antiGravity();
+                }
+            }
+
             else
             {
-                Debug.WriteLine("StreamLootsEffect doesn't exist. Not cued.");
+                Debug.WriteLine("StreamLootsEffect doesn't exist.");
+                didWork = true;
             }
             return didWork;
         }
@@ -403,6 +413,7 @@ namespace STHMaxzzzie.Client
                     again = rand.Next(0, 4); //25% chance to pop another tire.
                     alreadyPopped.Add(index);
                     Debug.WriteLine($"count {alreadyPopped.Count}, again = {again} ");
+                    didIPopOne = true;
                 }
             }
 
@@ -437,6 +448,7 @@ namespace STHMaxzzzie.Client
                     again = rand.Next(0, 2); //50% chance to pop another tire.
                     alreadyPopped.Add(index);
                     Debug.WriteLine($"count {alreadyPopped.Count}, again = {again}");
+                    didIPopOne = true;
                 }
             }
             return didIPopOne;
@@ -896,12 +908,12 @@ namespace STHMaxzzzie.Client
             if (isGunJammed)
             {
                 //TriggerEvent("chat:addMessage", new{color=new[]{255,153,153},args=new[]{$"isjammed"}});
-                API.DisablePlayerFiring(playerPed.Handle, true);
-                // if (API.IsControlJustPressed(0, (int)Control.Attack)) // Check for attack key press
+                // if (API.fire) // Check for shooting
                 // {
-                //     API.PlaySoundFrontend(-1, "WEAPON_EMPTY", "HUD_LIQUOR_STORE_SOUNDSET", false);
+                //     API.PlaySoundFrontend(-1, "Pin_Centred", "DLC_HEIST_BIOLAB_PREP_HACKING_SOUNDS", false);
                 // }
-                // Allow unjamming by reloading, switching weapon, or getting in vehicle
+                API.DisablePlayerFiring(playerPed.Handle, true);
+                //Allow unjamming by reloading, switching weapon, or getting in vehicle
                 if (API.IsPedReloading(playerPed.Handle) || API.IsControlJustPressed(0, 24) || !Game.PlayerPed.IsOnFoot || Game.PlayerPed.Weapons.Current.Hash != jammedWeapon) // Check for reload key press
                 {
                     isGunJammed = false;
@@ -1257,7 +1269,7 @@ namespace STHMaxzzzie.Client
                 Vector3 currentPosition = veh.Position;
                 float heading = Game.PlayerPed.Heading;
                 veh.Delete();
-                var model = new Model(max_Vehicle.VehicleNameToHash[compactNames[value]]);
+                var model = new Model(Game.GenerateHash(compactNames[value]));
                 Vehicle compactCar = await World.CreateVehicle(model, currentPosition, heading);
                 API.SetVehicleEngineOn(compactCar.Handle, true, true, false);
                 Game.PlayerPed.Task.WarpIntoVehicle(compactCar, VehicleSeat.Driver);
@@ -1276,12 +1288,12 @@ namespace STHMaxzzzie.Client
             {
                 int value = rand.Next(0, 7);
                 string coupes = "zion,sentinel,exemplar,felon,oracle2,oracle,windsor";
-                string[] compactNames = coupes.Split(',');
+                string[] coupeNames = coupes.Split(',');
                 Vector3 playerSpeed = Game.PlayerPed.Velocity;
                 Vector3 currentPosition = veh.Position;
                 float heading = Game.PlayerPed.Heading;
                 veh.Delete();
-                var model = new Model(max_Vehicle.VehicleNameToHash[compactNames[value]]);
+                var model = new Model(Game.GenerateHash(coupeNames[value]));
                 Vehicle coupeCar = await World.CreateVehicle(model, currentPosition, heading);
                 API.SetVehicleEngineOn(coupeCar.Handle, true, true, false);
                 Game.PlayerPed.Task.WarpIntoVehicle(coupeCar, VehicleSeat.Driver);
@@ -1300,12 +1312,12 @@ namespace STHMaxzzzie.Client
             {
                 int value = rand.Next(0, 6);
                 string supers = "bullet,adder,entityxf,infernus,voltic,t20";
-                string[] compactNames = supers.Split(',');
+                string[] superNames = supers.Split(',');
                 Vector3 playerSpeed = Game.PlayerPed.Velocity;
                 Vector3 currentPosition = veh.Position;
                 float heading = Game.PlayerPed.Heading;
                 veh.Delete();
-                var model = new Model(max_Vehicle.VehicleNameToHash[compactNames[value]]);
+                var model = new Model(Game.GenerateHash(superNames[value]));
                 Vehicle superCar = await World.CreateVehicle(model, currentPosition, heading);
                 API.SetVehicleEngineOn(superCar.Handle, true, true, false);
                 Game.PlayerPed.Task.WarpIntoVehicle(superCar, VehicleSeat.Driver);
@@ -1325,7 +1337,7 @@ namespace STHMaxzzzie.Client
                 Vector3 currentPosition = veh.Position;
                 float heading = Game.PlayerPed.Heading;
                 veh.Delete();
-                var model = new Model(max_Vehicle.VehicleNameToHash["voodoo2"]);
+                var model = new Model(Game.GenerateHash("voodoo2"));
                 Vehicle shitbox = await World.CreateVehicle(model, currentPosition, heading);
                 API.SetVehicleEngineOn(shitbox.Handle, true, true, false);
                 Game.PlayerPed.Task.WarpIntoVehicle(shitbox, VehicleSeat.Driver);
@@ -1346,7 +1358,7 @@ namespace STHMaxzzzie.Client
                 Vector3 currentPosition = veh.Position;
                 float heading = Game.PlayerPed.Heading;
                 veh.Delete();
-                var model = new Model(max_Vehicle.VehicleNameToHash["jetmax"]);
+                var model = new Model(Game.GenerateHash("jetmax"));
                 Vehicle jetmax = await World.CreateVehicle(model, currentPosition, heading);
                 API.SetVehicleEngineOn(jetmax.Handle, true, true, false);
                 Game.PlayerPed.Task.WarpIntoVehicle(jetmax, VehicleSeat.Driver);
@@ -1470,5 +1482,17 @@ namespace STHMaxzzzie.Client
             NotificationScript.ShowNotification($"Fixed: {message}");
         }
 
+        bool antiGravity()
+        {
+            isAntiGravity = true;
+
+            DateTime endTime = DateTime.Now.AddSeconds(rand.Next(10, 20));
+            //while (DateTime.Now < endTime)
+            {
+            //Game.PlayerPed.HasGravity = false;
+            }
+            isAntiGravity = false;
+            return true;
+        }
     }
 }

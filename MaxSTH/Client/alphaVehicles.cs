@@ -1,61 +1,3 @@
-// using System;
-// using System.Threading.Tasks;
-// using CitizenFX.Core;
-// using CitizenFX.Core.Native;
-// using static CitizenFX.Core.Native.API;
-// using System.Collections.Generic;
-// using STHMaxzzzie.Client;
-
-// namespace STHMaxzzzie.Client
-// {
-//     public class max_Vehicle : BaseScript
-//     {
-//         Random rand = new Random();
-//         string allowedToFixStatus = "wait"; //can be on/off/wait/lsc.
-//         int timeStationairBeforeFix = 10;
-//         bool isVehSpawningRestricted = true;
-//         static Dictionary<string, string> vehicleinfoDict = new Dictionary<string, string>();
-//         public static Dictionary<string, VehicleHash> VehicleNameToHash = null;
-//         bool CarChangesColourInLscForRunner = true;
-//         public max_Vehicle()
-//         {
-//             //make a dictionary mapping vehicle name => hash
-//             //https://stackoverflow.com/a/5583817
-//             VehicleNameToHash = new Dictionary<string, VehicleHash>();
-//             foreach (var veh_hash in Enum.GetValues(typeof(VehicleHash)))
-//             {
-//                 VehicleNameToHash.Add(veh_hash.ToString().ToLower(), (VehicleHash)veh_hash);
-//                 Debug.WriteLine($"{veh_hash.ToString().ToLower()} , {(VehicleHash)veh_hash}");
-//             }
-//             TriggerServerEvent("sendVehicleinfoDict");
-//         }
-
-//         [EventHandler("getVehicleinfoDict")]
-//         void getVehicleinfoDict(string vehicleName, string vehicleInfo)
-//         {
-//             vehicleinfoDict[vehicleName] = vehicleInfo;
-
-//             //vehicle dict formatting --> Key= Tug || value= -2100640717,Boats,true || Value is vehiclehash, vehicle class, allowed to spawn or not bool.
-//             //use these formats to access the vehicleInfo components.
-//             // long vehicleHash = long.Parse(vehicleInfo.Split(',')[0]);           
-//             // string vehicleClass = vehicleInfo.Split(',')[1];
-//             // bool allowedVehicle = bool.Parse(vehicleInfo.Split(',')[2]);
-//             // Debug.WriteLine($"clientVehicleInfoDict = {vehicleName} {vehicleInfo} -- {vehicleHash} {vehicleClass} allowed ?{allowedVehicle}");
-//         }
-
-//         [EventHandler("whatIsVehAllowed")]
-//         void whatIsVehicleAllowed(bool vehicleSpawningRestricted)
-//         {
-//             isVehSpawningRestricted = vehicleSpawningRestricted;
-//         }
-
-//         [EventHandler("VehicleFixStatus")]
-//         void whatIsVehicleFixStatus(string vehicleFixStatus, int fixWaitTime)
-//         {
-//             allowedToFixStatus = vehicleFixStatus;
-//             timeStationairBeforeFix = fixWaitTime;
-//         }
-
 using System;
 using System.Threading.Tasks;
 using CitizenFX.Core;
@@ -63,61 +5,120 @@ using CitizenFX.Core.Native;
 using static CitizenFX.Core.Native.API;
 using System.Collections.Generic;
 using STHMaxzzzie.Client;
+using System.Linq;
 
 namespace STHMaxzzzie.Client
 {
     public class max_Vehicle : BaseScript
     {
+        bool isSpawningRunning = false;
         Random rand = new Random();
         string allowedToFixStatus = "wait"; //can be on/off/wait/lsc.
         int timeStationairBeforeFix = 10;
         bool isVehSpawningRestricted = true;
-        static Dictionary<string, string> vehicleinfoDict = new Dictionary<string, string>();
+        public static Dictionary<string, string> vehicleinfoDict = new Dictionary<string, string>();
         bool CarChangesColourInLscForRunner = true;
-        public static Dictionary<string, VehicleHash> VehicleNameToHash { get; private set; }
+
+        // Mapping vehicle class names to their corresponding dictionaries
+        Dictionary<string, Dictionary<string, bool>> vehicleClasses = new Dictionary<string, Dictionary<string, bool>>()
+    {
+        { "boats", boatsInfo },
+        { "commercial", commercialInfo },
+        { "compacts", compactsInfo },
+        { "coupes", coupesInfo },
+        { "cycles", cyclesInfo },
+        { "emergency", emergencyInfo },
+        { "helicopters", helicoptersInfo },
+        { "industrial", industrialInfo },
+        { "military", militaryInfo },
+        { "motorcycles", motorcyclesInfo },
+        { "muscle", muscleInfo },
+        { "off-road", offroadInfo },
+        { "open-wheel", openwheelInfo },
+        { "planes", planesInfo },
+        { "sedans", sedansInfo },
+        { "service", serviceInfo },
+        { "sports", sportsInfo },
+        { "sportsclassics", sportsclassicsInfo },
+        { "super", superInfo },
+        { "suv", suvInfo },
+        { "utility", utilityInfo },
+        { "vans", vansInfo },
+        //{ "trains", trainsInfo}
+    };
+
+        Dictionary<string, string> alternateNamesForClasses = new Dictionary<string, string>
+        { {"boat", "boats"}, {"comercial", "commercial"}, {"truck", "commercial"}, {"compact", "compacts"}, {"coupe", "coupes"}, {"cycle", "cycles"}, {"bicycle", "cycles"}, {"helicopter", "helicopters"}, {"heli", "helicopters"},
+        {"militairy", "military"}, {"motorcycle", "motorcycles"}, {"motor", "motorcycles"}, {"bike", "motorcycles"}, {"mc", "motorcycles"}, {"muscles", "muscle"}, {"off road", "off-road"}, {"offroad", "off-road"},
+        {"open wheel", "open-wheel"}, {"openwheel", "open-wheel"}, {"plane", "planes"}, {"sedan", "sedans"}, {"services", "service"}, {"sport", "sports"}, {"sportsclassic", "sportsclassics"}, {"emergancy", "emergency"},
+        {"sportclassics", "sportsclassics"}, {"sportclassic", "sportsclassics"}, {"supers", "super"}, {"suv", "suvs"}, {"suv's", "suvs"}, {"utilitys", "utility"},
+        {"van", "vans"}, {"trailers", "trailer"}}; //{"train", "trains"}, 
+
+        public static Dictionary<string, bool> boatsInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> commercialInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> compactsInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> coupesInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> cyclesInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> emergencyInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> helicoptersInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> industrialInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> militaryInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> motorcyclesInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> muscleInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> offroadInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> openwheelInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> planesInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> sedansInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> serviceInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> sportsInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> sportsclassicsInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> superInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> suvInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> utilityInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> vansInfo = new Dictionary<string, bool>();
+        public static Dictionary<string, bool> trainsInfo = new Dictionary<string, bool>();
+
+
         public max_Vehicle()
         {
-            VehicleNameToHash = new Dictionary<string, VehicleHash>();
-        PopulateVehicleDictionary();
             TriggerServerEvent("sendVehicleinfoDict");
+            PopulateInfoDicts();
         }
 
-        private void PopulateVehicleDictionary()
-    {
-        // Call GetAllVehicleModels to get all vehicle names
-        var vehicleModels = GetAllVehicleModels();
 
-        foreach (var vehicleName in vehicleModels)
+        async void PopulateInfoDicts()
         {
-            string lowerCaseName = vehicleName.ToLower();
-
-            // Convert the vehicle name to a VehicleHash
-            if (Enum.TryParse(lowerCaseName, true, out VehicleHash hashValue))
+            // Wait until vehicleinfoDict is populated
+            while (vehicleinfoDict.Count == 0)
             {
-                //Debug.WriteLine($"lowerCaseName: {lowerCaseName}, VehicleHash: {hashValue}");
-                if (!VehicleNameToHash.ContainsKey(lowerCaseName))
+                await Delay(1000);
+            }
+
+            // Iterate through the main dictionary and populate corresponding class dictionaries
+            foreach (var kvp in vehicleinfoDict)
+            {
+                string[] value = kvp.Value.Split(',');
+                string vehClass = value[2];
+                if (!bool.TryParse(value[3], out bool allowedBool)) allowedBool = false;
+
+                // Check if the class exists in the map and add the vehicle to the appropriate dictionary
+                if (vehicleClasses.TryGetValue(vehClass, out var specificDict))
                 {
-                    VehicleNameToHash.Add(lowerCaseName, hashValue);
+                    specificDict[kvp.Key] = allowedBool;
                 }
             }
-            else
-            {
-                // Log or handle cases where the model name doesn't map to an enum
-                Console.WriteLine($"Warning: Vehicle name '{vehicleName}' could not be mapped to a VehicleHash.");
-            }
         }
-    }
 
         [EventHandler("getVehicleinfoDict")]
         void getVehicleinfoDict(string vehicleName, string vehicleInfo)
         {
             vehicleinfoDict[vehicleName] = vehicleInfo;
-
-            //vehicle dict formatting --> Key= Tug || value= -2100640717,Boats,true || Value is vehiclehash, vehicle class, allowed to spawn or not bool.
+            //vehicle dict formatting --> Key= Tug || value= Tug,-2100640717,Boats,true || Value is vehiclename,vehiclehash, vehicle class, allowed to spawn or not bool.
             //use these formats to access the vehicleInfo components.
-            // long vehicleHash = long.Parse(vehicleInfo.Split(',')[0]);           
-            // string vehicleClass = vehicleInfo.Split(',')[1];
-            // bool allowedVehicle = bool.Parse(vehicleInfo.Split(',')[2]);
+            // string vehicleName = vehicleInfo.Split(',')[0]);
+            // long vehicleHash = long.Parse(vehicleInfo.Split(',')[1]);           
+            // string vehicleClass = vehicleInfo.Split(',')[2];
+            // bool allowedVehicle = bool.Parse(vehicleInfo.Split(',')[3]);
             // Debug.WriteLine($"clientVehicleInfoDict = {vehicleName} {vehicleInfo} -- {vehicleHash} {vehicleClass} allowed ?{allowedVehicle}");
         }
 
@@ -138,32 +139,9 @@ namespace STHMaxzzzie.Client
         [Command("veh")]
         async void vehicle(int source, List<object> args, string raw)
         {
-            if (RoundHandling.gameMode != "none" && RoundHandling.thisClientIsTeam == 1)
-            {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"A game is running, vehicle spawns are disabled for runners." } });
-                return;
-            }
-            if (args.Count == 0)
-            {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"What vehicle do you want to spawn?" } });
-            }
-
-            else if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()) && vehicleinfoDict.ContainsKey(args[0].ToString()))
-            {
-                string vehicleInfo = vehicleinfoDict[args[0].ToString()];
-                if (bool.Parse(vehicleInfo.Split(',')[2]) || !isVehSpawningRestricted)
-                {
-                    var model = new Model(VehicleNameToHash[args[0].ToString()]);
-                    Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
-                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, multiline = true, args = new[] { $"You spawned an {args[0]}." } });
-                }
-                else { TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"This vehicle isn't allowed to be spawned." } }); }
-            }
-            else if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()) && !vehicleinfoDict.ContainsKey(args[0].ToString()))
-            {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Ask Max. FiveM recognises this vehicle but it doesn't have a definition for a restriction." } });
-            }
-            else if (args.Count == 1)
+            if (isSpawningRunning) return;
+            isSpawningRunning = true;
+            if (args.Count == 1 && !await DoesVehicleNameExist(args[0].ToString()) && !vehicleClasses.ContainsKey(args[0].ToString()) && !alternateNamesForClasses.ContainsKey(args[0].ToString()))
             {
                 string playerName = args[0].ToString();
                 if (playerName == "boss") vehBoss();
@@ -175,69 +153,380 @@ namespace STHMaxzzzie.Client
                 else if (playerName == "gil") vehGilly();
                 else if (playerName == "max") vehMax();
                 //else if (playerName == "") veh();
-                else TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Something went wrong!\nYou should do /veh \"vehiclename\"." } });
+                else NotificationScript.ShowErrorNotification($"The vehicle or vehicle class \"{args[0].ToString()}\" does not exist in FiveM.");
+                isSpawningRunning = false;
+                return;
+            }
+            if (args.Count == 1 && vehicleinfoDict.ContainsKey(args[0].ToString()))
+            {
+                string[] vehicleInfo = vehicleinfoDict[args[0].ToString()].Split(',');
+                if (vehicleInfo.Length == 3)
+                    TriggerServerEvent("notifyEveryone", $"~r~{Game.Player.Name} ~s~- Max, {args[0].ToString()} doesn't have a definition for a vehicle restriction yet.");
+            }
+            if (RoundHandling.gameMode != "none" && RoundHandling.thisClientIsTeam == 1)
+            {
+                NotificationScript.ShowErrorNotification("Vehicle spawns are disabled for runners.");
+                isSpawningRunning = false;
+                return;
+            }
 
+
+            if (args.Count == 0 || (args.Count == 1 && vehicleClasses.ContainsKey(args[0].ToString())) || (args.Count == 1 && alternateNamesForClasses.ContainsKey(args[0].ToString()))) //only runs if for example /veh coupes or /veh (class) is selected or if a random vehicle is requested from all vehicles.
+            {
+                string checkForThisClass = "none";
+
+                if (args.Count == 1)
+                {
+                    checkForThisClass = args[0].ToString();
+                    if (alternateNamesForClasses.ContainsKey(checkForThisClass)) checkForThisClass = alternateNamesForClasses[checkForThisClass];
+                    Debug.WriteLine($"veh arg = 1 checkforthisclass = {checkForThisClass}");
+
+
+                    bool anyVehiclesAvalible; //check for troubled classes that might have all vehicles restricted.
+                    if (isVehSpawningRestricted && checkForThisClass == "cycles") anyVehiclesAvalible = cyclesInfo.ContainsValue(true);
+                    else if (isVehSpawningRestricted && checkForThisClass == "emergency") anyVehiclesAvalible = emergencyInfo.ContainsValue(true);
+                    else if (isVehSpawningRestricted && checkForThisClass == "helicopters") anyVehiclesAvalible = helicoptersInfo.ContainsValue(true);
+                    else if (isVehSpawningRestricted && checkForThisClass == "military") anyVehiclesAvalible = militaryInfo.ContainsValue(true);
+                    else if (isVehSpawningRestricted && checkForThisClass == "super") anyVehiclesAvalible = superInfo.ContainsValue(true);
+                    else if (isVehSpawningRestricted && checkForThisClass == "open-wheel") anyVehiclesAvalible = openwheelInfo.ContainsValue(true);
+                    else if (isVehSpawningRestricted && checkForThisClass == "planes") anyVehiclesAvalible = planesInfo.ContainsValue(true);
+                    else anyVehiclesAvalible = true;
+                    if (!anyVehiclesAvalible)
+                    {
+                        NotificationScript.ShowErrorNotification($"No vehicles unrestricted in the {checkForThisClass} class.");
+                        isSpawningRunning = false;
+                        return;
+                    }
+                }
+
+                bool foundAnAllowedVehicle = false;
+                string vehicleName = "panto";
+                string[] vehicleInfo;
+                int attempts = 0;
+                while (!foundAnAllowedVehicle)
+                {
+                    await Delay(5);
+                    if (attempts > 20) //prevents hanging and crashing if no vehicles are allowed. Super class or trains for example.
+                    {
+                        NotificationScript.ShowErrorNotification($"Tried 20 vehicles. All were restricted. Try a different class.");
+                        isSpawningRunning = false;
+                        return;
+                    }
+
+                    int value = rand.Next(0, vehicleinfoDict.Count);
+                    var kvp = vehicleinfoDict.ElementAt(value);
+                    vehicleName = kvp.Key;
+                    vehicleInfo = kvp.Value.Split(',');
+
+                    //checks if we have need to check for the right class and if the vehicle we chose at random is in that class, also stops spawning trains at random.
+                    if (checkForThisClass != "none" && checkForThisClass != vehicleInfo[2])
+                    {
+                        Debug.WriteLine($"Random vehicle: {vehicleName} isn't in the right class: {checkForThisClass}.");
+                        continue;
+                    }
+                    if (checkForThisClass == "none" && (vehicleInfo[2] == "trains" || vehicleInfo[2] == "trailer" || vehicleInfo[2] == "helicopters") || vehicleInfo[2] == "planes")
+                    {
+                        Debug.WriteLine($"Random vehicle: {vehicleName} is a {vehicleInfo[2]} and we don't want those.");
+                        continue;
+                    }
+                    attempts++; //attempts++ comes after class check to make sure we try 20 of the class needed.
+
+                    //checks if vehicle is allowed to be spawend. Or if vehiclespawning isn't restricted.
+                    if ((vehicleInfo.Length == 4 && bool.TryParse(vehicleInfo[3], out bool restrictionBool) && isVehSpawningRestricted && restrictionBool) || !isVehSpawningRestricted)
+                    {
+                        foundAnAllowedVehicle = true;
+                    }
+
+
+                    Debug.WriteLine($"Random vehicle: {vehicleName}. Is allowed: {foundAnAllowedVehicle}.");
+
+                }
+                // if (!await DoesVehicleNameExist(args[0].ToString()))
+                // {
+                //     TriggerServerEvent("notifyEveryone", $"~r~{Game.Player.Name} ~s~- Max, {vehicleName} doesn't exist in FiveM but it does in the AllowedVehicles.txt");
+                //     foundAnAllowedVehicle = false; //cannot spawn as it doesn't exist.
+                // }
+                Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash(vehicleName)), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
+                API.SetVehicleNumberPlateText(vehicle.Handle, Game.Player.Name);
+                NotificationScript.ShowNotification($"You spawned a \"{vehicleName}\" at random.");
+            }
+
+
+
+            else if (args.Count == 1 && vehicleinfoDict.ContainsKey(args[0].ToString()))
+            {
+                string vehicleName = args[0].ToString();
+                string[] vehicleInfo = vehicleinfoDict[vehicleName].Split(',');
+                if ((vehicleInfo.Length == 4 && bool.TryParse(vehicleInfo[3], out bool restrictionBool) && isVehSpawningRestricted && restrictionBool) || !isVehSpawningRestricted)
+                {
+                    Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash(vehicleName)), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
+                    API.SetVehicleNumberPlateText(vehicle.Handle, Game.Player.Name);
+
+                    NotificationScript.ShowNotification($"You spawned a \"{args[0]}\".");
+                }
+                else { NotificationScript.ShowErrorNotification($"This vehicle isn't allowed to be spawned now."); }
+            }
+            else if (args.Count == 1 && !vehicleinfoDict.ContainsKey(args[0].ToString()))
+            {
+                TriggerServerEvent("notifyEveryone", $"~r~{Game.Player.Name} ~s~- Max, {args[0].ToString()} exists in FiveM but not in the AllowedVehicles resource.");
+                //-----Take this away once the list is updated.
+                string vehicleName = args[0].ToString();
+
+                if (!isVehSpawningRestricted)
+                {
+                    Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash(vehicleName)), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
+                    API.SetVehicleNumberPlateText(vehicle.Handle, Game.Player.Name);
+                    NotificationScript.ShowNotification($"You spawned a \"{args[0]}\".");
+                }
+                else NotificationScript.ShowErrorNotification($"Vehiclespawns are restricted, cannot spawn it.");
+                //-----To here
 
             }
             else
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Something went wrong!\nYou should do /veh \"vehiclename\"." } });
+                NotificationScript.ShowErrorNotification($"Something went wrong!\nYou should do /veh \"vehiclename\".");
             }
+            isSpawningRunning = false;
         }
 
-        //places player in vehicle when spawning one.
+        //spawning a vehicle in front of the player. 
         [Command("inveh")]
         async void inVehicle(int source, List<object> args, string raw)
         {
-            if (RoundHandling.gameMode != "none" && RoundHandling.thisClientIsTeam == 1)
+            if (isSpawningRunning) return;
+            isSpawningRunning = true;
+            if (args.Count == 1 && !await DoesVehicleNameExist(args[0].ToString()) && !vehicleClasses.ContainsKey(args[0].ToString()) && !alternateNamesForClasses.ContainsKey(args[0].ToString()))
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"A game is running, vehicle spawns are disabled for runners." } });
+                NotificationScript.ShowErrorNotification($"The vehicle \"{args[0].ToString()}\" does not exist in FiveM.");
+                isSpawningRunning = false;
                 return;
             }
-            if (args.Count == 0)
+            if (args.Count == 1 && vehicleinfoDict.ContainsKey(args[0].ToString()))
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"What vehicle do you want to spawn in?" } });
+                string[] vehicleInfo = vehicleinfoDict[args[0].ToString()].Split(',');
+                if (vehicleInfo.Length == 3)
+                    TriggerServerEvent("notifyEveryone", $"~r~{Game.Player.Name} ~s~- Max, {args[0].ToString()} doesn't have a definition for a vehicle restriction yet.");
             }
-            else if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()) && vehicleinfoDict.ContainsKey(args[0].ToString()))
+            if (RoundHandling.gameMode != "none" && RoundHandling.thisClientIsTeam == 1)
             {
-                string vehicleInfo = vehicleinfoDict[args[0].ToString()];
-                if (bool.Parse(vehicleInfo.Split(',')[2]) || !isVehSpawningRestricted) //checks if vehicle is true OR if vehicles aren't restricted.
+                NotificationScript.ShowErrorNotification("Vehicle spawns are disabled for runners.");
+                isSpawningRunning = false;
+                return;
+            }
+
+
+            if (args.Count == 0 || (args.Count == 1 && vehicleClasses.ContainsKey(args[0].ToString())) || (args.Count == 1 && alternateNamesForClasses.ContainsKey(args[0].ToString()))) //only runs if for example /veh coupes or /veh (class) is selected or if a random vehicle is requested from all vehicles.
+            {
+                string checkForThisClass = "none";
+
+                if (args.Count == 1)
                 {
-                    var model = new Model(VehicleNameToHash[args[0].ToString()]);
-                    Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
-                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a {args[0]}." } });
-                    Game.PlayerPed.SetIntoVehicle(vehicle, VehicleSeat.Driver);
-                    //Game.PlayerPed.CurrentVehicle.CreateRandomPedOnSeat(VehicleSeat.Passenger);
-                    API.SetVehicleEngineOn(vehicle.Handle, true, true, false);
+                    checkForThisClass = args[0].ToString();
+                    if (alternateNamesForClasses.ContainsKey(checkForThisClass)) checkForThisClass = alternateNamesForClasses[checkForThisClass];
+                    Debug.WriteLine($"veh arg = 1 checkforthisclass = {checkForThisClass}");
+
+
+                    bool anyVehiclesAvalible; //check for troubled classes that might have all vehicles restricted.
+                    if (isVehSpawningRestricted && checkForThisClass == "cycles") anyVehiclesAvalible = cyclesInfo.ContainsValue(true);
+                    else if (isVehSpawningRestricted && checkForThisClass == "emergency") anyVehiclesAvalible = emergencyInfo.ContainsValue(true);
+                    else if (isVehSpawningRestricted && checkForThisClass == "helicopters") anyVehiclesAvalible = helicoptersInfo.ContainsValue(true);
+                    else if (isVehSpawningRestricted && checkForThisClass == "military") anyVehiclesAvalible = militaryInfo.ContainsValue(true);
+                    else if (isVehSpawningRestricted && checkForThisClass == "super") anyVehiclesAvalible = superInfo.ContainsValue(true);
+                    else if (isVehSpawningRestricted && checkForThisClass == "open-wheel") anyVehiclesAvalible = openwheelInfo.ContainsValue(true);
+                    else if (isVehSpawningRestricted && checkForThisClass == "planes") anyVehiclesAvalible = planesInfo.ContainsValue(true);
+                    else anyVehiclesAvalible = true;
+                    if (!anyVehiclesAvalible)
+                    {
+                        NotificationScript.ShowErrorNotification($"No vehicles unrestricted in the {checkForThisClass} class.");
+                        isSpawningRunning = false;
+                        return;
+                    }
                 }
 
-                else { TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"This vehicle isn't allowed to be spawned." } }); }
+                bool foundAnAllowedVehicle = false;
+                string vehicleName = "panto";
+                string[] vehicleInfo;
+                int attempts = 0;
+                while (!foundAnAllowedVehicle)
+                {
+                    await Delay(5);
+                    if (attempts > 20) //prevents hanging and crashing if no vehicles are allowed. Super class or trains for example.
+                    {
+                        NotificationScript.ShowErrorNotification($"Tried 20 vehicles. All were restricted. Try a different class.");
+                        isSpawningRunning = false;
+                        return;
+                    }
+
+                    int value = rand.Next(0, vehicleinfoDict.Count - 1);
+                    var kvp = vehicleinfoDict.ElementAt(value);
+                    vehicleName = kvp.Key;
+                    vehicleInfo = kvp.Value.Split(',');
+
+                    //checks if we have need to check for the right class and if the vehicle we chose at random is in that class, also stops spawning trains at random.
+                    if (checkForThisClass != "none" && checkForThisClass != vehicleInfo[2])
+                    {
+                        Debug.WriteLine($"Random vehicle: {vehicleName} isn't in the right class: {checkForThisClass}.");
+                        continue;
+                    }
+                    if (checkForThisClass == "none" && (vehicleInfo[2] == "trains" || vehicleInfo[2] == "trailer" || vehicleInfo[2] == "helicopters") || vehicleInfo[2] == "planes")
+                    {
+                        Debug.WriteLine($"Random vehicle: {vehicleName} is a {vehicleInfo[2]} and we don't want those.");
+                        continue;
+                    }
+                    attempts++; //attempts++ comes after class check to make sure we try 20 of the class needed.
+
+                    //checks if vehicle is allowed to be spawend. Or if vehiclespawning isn't restricted.
+                    if ((vehicleInfo.Length == 4 && bool.TryParse(vehicleInfo[3], out bool restrictionBool) && isVehSpawningRestricted && restrictionBool) || !isVehSpawningRestricted)
+                    {
+                        foundAnAllowedVehicle = true;
+                    }
+
+
+                    Debug.WriteLine($"Random vehicle: {vehicleName}. Is allowed: {foundAnAllowedVehicle}.");
+
+                }
+                // if (!await DoesVehicleNameExist(args[0].ToString()))
+                // {
+                //     TriggerServerEvent("notifyEveryone", $"~r~{Game.Player.Name} ~s~- Max, {vehicleName} doesn't exist in FiveM but it does in the AllowedVehicles.txt");
+                //     foundAnAllowedVehicle = false; //cannot spawn as it doesn't exist.
+                // }
+                setPlayerIntoNewVehicle(vehicleName);
+                NotificationScript.ShowNotification($"You spawned a \"{vehicleName}\" at random.");
             }
-            else if (args.Count == 1 && VehicleNameToHash.ContainsKey(args[0].ToString()) && !vehicleinfoDict.ContainsKey(args[0].ToString()))
+
+
+
+            else if (args.Count == 1 && vehicleinfoDict.ContainsKey(args[0].ToString()))
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Ask Max to add this to the list of secrets, he might do it." } });
+                string vehicleName = args[0].ToString();
+                string[] vehicleInfo = vehicleinfoDict[vehicleName].Split(',');
+                if ((vehicleInfo.Length == 4 && bool.TryParse(vehicleInfo[3], out bool restrictionBool) && isVehSpawningRestricted && restrictionBool) || !isVehSpawningRestricted)
+                {
+                    setPlayerIntoNewVehicle(vehicleName);
+
+                    NotificationScript.ShowNotification($"You spawned a \"{args[0]}\".");
+                }
+                else { NotificationScript.ShowErrorNotification($"This vehicle isn't allowed to be spawned now."); }
+            }
+            else if (args.Count == 1 && !vehicleinfoDict.ContainsKey(args[0].ToString()))
+            {
+                TriggerServerEvent("notifyEveryone", $"~r~{Game.Player.Name} ~s~- Max, {args[0].ToString()} exists in FiveM but not in the AllowedVehicles resource.");
+                //-----Take this away once the list is updated.
+                string vehicleName = args[0].ToString();
+
+                if (!isVehSpawningRestricted)
+                {
+                    setPlayerIntoNewVehicle(vehicleName);
+                    NotificationScript.ShowNotification($"You spawned a \"{args[0]}\".");
+                }
+                else NotificationScript.ShowErrorNotification($"Vehiclespawns are restricted, cannot spawn it.");
+                //-----To here
+
             }
             else
             {
-                TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Something went wrong!\nYou should do /inveh \"vehiclename\"." } });
+                NotificationScript.ShowErrorNotification($"Something went wrong!\nYou should do /veh \"vehiclename\".");
             }
+            isSpawningRunning = false;
         }
 
-        [EventHandler("clientVeh")]
-        void clientVeh(string vehicleName, bool isPrivate, string sourceName)
+        public string GetRandomVehicleFromClass(string vehClass)
         {
-            bool exists = VehicleNameToHash.ContainsKey(vehicleName);
-            // Debug.WriteLine($"client veh is triggered ?{exists}");
-            if (exists)
+            string chosenVehicleName = "null";
+
+
+
+            // Check if the vehicle class exists in the mapping
+            if (vehicleClasses.TryGetValue(vehClass, out Dictionary<string, bool> randomClassVehicleInfo))
             {
-                var model = new Model(VehicleNameToHash[vehicleName]);
-                World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
-                if (isPrivate)
-                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You got a vehicle called \"{vehicleName}\" from {sourceName}." } });
-                if (!isPrivate)
-                    TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"Everyone got a \"{vehicleName}\" from {sourceName}." } });
+                // Filter the dictionary for keys with value `true` if restrictions apply
+                var validVehicles = isVehSpawningRestricted
+                    ? randomClassVehicleInfo.Where(v => v.Value).Select(v => v.Key).ToList()
+                    : randomClassVehicleInfo.Keys.ToList();
+
+                // Choose a random vehicle if any are available
+                if (validVehicles.Count > 0)
+                {
+                    chosenVehicleName = validVehicles[rand.Next(0, validVehicles.Count)];
+                }
             }
-            else { TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"A host messed up LOL." } }); }
+
+            return chosenVehicleName;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        static async void givePlayerNewVehicle(string VehicleName)
+        {
+            Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash(VehicleName)), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
+            API.SetVehicleNumberPlateText(vehicle.Handle, Game.Player.Name);
+            NotificationScript.ShowNotification($"A {VehicleName} spawned.");
+        }
+
+        static async void setPlayerIntoNewVehicle(string VehicleName)
+        {
+            Vehicle veh = Game.PlayerPed.CurrentVehicle;
+            Vector3 playerSpeed = Game.PlayerPed.Velocity;
+            float speed = playerSpeed.Length();
+            Vector3 currentPosition = Game.PlayerPed.Position;
+            if (veh != null) currentPosition = veh.Position;
+            float heading = Game.PlayerPed.Heading;
+            if (veh != null || Game.PlayerPed.SeatIndex == VehicleSeat.Driver) veh.Delete();
+            if (Game.PlayerPed.SeatIndex != VehicleSeat.Driver) currentPosition.X = +7;
+            var model = new Model(Game.GenerateHash(VehicleName));
+
+            string vehicleInfo = vehicleinfoDict[VehicleName];
+
+            string[] vehicleInfoSplit = vehicleInfo.Split(',');
+
+            //checks if we have need to check for the right class and if the vehicle we chose at random is in that class.
+            if (vehicleInfoSplit[2] == "helicopters") currentPosition.Z = +50;
+            else if (vehicleInfoSplit[2] == "planes") { speed = +40; currentPosition.Z = +150; }
+
+            Vehicle newVeh = await World.CreateVehicle(model, currentPosition, heading);
+            API.SetVehicleNumberPlateText(newVeh.Handle, Game.Player.Name);
+            API.SetVehicleEngineOn(newVeh.Handle, true, true, false);
+            Game.PlayerPed.Task.WarpIntoVehicle(newVeh, VehicleSeat.Driver);
+            await Delay(5);
+            API.SetVehicleCurrentRpm(newVeh.Handle, 1.0f);
+            API.SetVehicleForwardSpeed(newVeh.Handle, speed);
+        }
+
+
+        [EventHandler("clientVeh")]
+        async void clientVeh(string vehicleName, bool isPrivate, string sourceName)
+        {
+            if (await DoesVehicleNameExist(vehicleName))
+            {
+                Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash(vehicleName)), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
+                if (isPrivate)
+                    NotificationScript.ShowNotification($"You got a vehicle called \"{vehicleName}\" from {sourceName}.");
+                if (!isPrivate)
+                    NotificationScript.ShowNotification($"Everyone got a \"{vehicleName}\" from {sourceName}.");
+            }
+            else { NotificationScript.ShowErrorNotification($"A host messed up LOL.\n{sourceName} tried spawning a {vehicleName}"); }
+        }
+
+        async static Task<bool> DoesVehicleNameExist(string vehName)
+        {
+            Vehicle spawned = await World.CreateVehicle(new Model(Game.GenerateHash(vehName)), new Vector3(0, 0, 0), 0);
+            if (spawned == null) return false;
+            spawned.Delete();
+            return true;
         }
 
 
@@ -256,8 +545,7 @@ namespace STHMaxzzzie.Client
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a specialized fq2. Enjoy Cornelius!" } });
             int color1 = 53; //53 is dark green
             int color2 = 0; //0 gives it black metalic look
-            var model = new Model(VehicleNameToHash["fq2"]);
-            Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+            Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash("fq2")), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
             API.SetVehicleDoorBroken(vehicle.Handle, 0, true);
             API.SetVehicleDoorBroken(vehicle.Handle, 1, true);
             API.SetVehicleColours(vehicle.Handle, color1, color2);
@@ -279,8 +567,7 @@ namespace STHMaxzzzie.Client
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a vehicle. Enjoy Drifting!" } });
             int color1 = 73; //12 is matte black
             int color2 = 73;
-            var model = new Model(VehicleNameToHash["sultan"]);
-            Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+            Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash("sultan")), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
             API.SetVehicleColours(vehicle.Handle, color1, color2);
             API.SetVehicleExtraColours(vehicle.Handle, 131, 73);
             API.SetVehicleNumberPlateText(vehicle.Handle, "drifting");
@@ -304,8 +591,7 @@ namespace STHMaxzzzie.Client
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a specialized f620. Enjoy Finger!" } });
             int color1 = 52;
             int color2 = 52; //52 = Metalic olive green
-            var model = new Model(VehicleNameToHash["f620"]);
-            Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+            Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash("f620")), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
             API.SetVehicleColours(vehicle.Handle, color1, color2);
             API.SetVehicleNumberPlateText(vehicle.Handle, "Finger");
             API.SetVehicleNeonLightEnabled(vehicle.Handle, 0, true);
@@ -325,8 +611,7 @@ namespace STHMaxzzzie.Client
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You morphed into GhostRider. Enjoy Firewolf!" } });
             int color1 = 12; //12 is matte black
             int color2 = 12;
-            var model = new Model(VehicleNameToHash["sanctus"]);
-            Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+            Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash("sanctus")), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
             API.SetVehicleColours(vehicle.Handle, color1, color2);
             API.SetVehicleExtraColours(vehicle.Handle, 12, 30);
             API.SetVehicleNumberPlateText(vehicle.Handle, "ghost");
@@ -353,8 +638,7 @@ namespace STHMaxzzzie.Client
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a vehicle. Enjoy Firewolf!" } });
             int color1 = 12; //12 is matte black
             int color2 = 12;
-            var model = new Model(VehicleNameToHash["carbonizzare"]);
-            Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+            Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash("carbonizzare")), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
             API.SetVehicleColours(vehicle.Handle, color1, color2);
             API.SetVehicleExtraColours(vehicle.Handle, 12, 30);
             API.SetVehicleNumberPlateText(vehicle.Handle, "firewolf");
@@ -379,8 +663,7 @@ namespace STHMaxzzzie.Client
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a custom police cruiser. Enjoy Ed!" } });
             int color1 = 42; //53 is dark green
             int color2 = 0; //0 gives it black metalic look
-            var model = new Model(VehicleNameToHash["police3"]);
-            Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+            Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash("police3")), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
             API.SetVehicleColours(vehicle.Handle, color1, color2);
             API.SetVehicleNumberPlateText(vehicle.Handle, "ed");
             API.SetVehicleNeonLightEnabled(vehicle.Handle, 0, true);
@@ -400,8 +683,7 @@ namespace STHMaxzzzie.Client
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a custom Alpha. Enjoy Gilly!" } });
             int color1 = 127;
             int color2 = 140;
-            var model = new Model(VehicleNameToHash["alpha"]);
-            Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+            Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash("alpha")), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
             API.SetVehicleColours(vehicle.Handle, color1, color2);
             API.SetVehicleNumberPlateText(vehicle.Handle, "Gilly");
             API.SetVehicleNeonLightEnabled(vehicle.Handle, 0, true);
@@ -422,8 +704,7 @@ namespace STHMaxzzzie.Client
             TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"You spawned a custom comet. Enjoy Max!" } });
             int color1 = 41;
             int color2 = 42;
-            var model = new Model(VehicleNameToHash["comet2"]);
-            Vehicle vehicle = await World.CreateVehicle(model, Game.PlayerPed.GetOffsetPosition(new Vector3(0, 5, 0)), Game.PlayerPed.Heading);
+            Vehicle vehicle = await World.CreateVehicle(new Model(Game.GenerateHash("comet2")), Game.PlayerPed.GetOffsetPosition(new Vector3(0, 7, 0)), Game.PlayerPed.Heading);
             API.SetVehicleColours(vehicle.Handle, color1, color2);
             API.SetVehicleNumberPlateText(vehicle.Handle, "Maxzzzie");
             API.SetVehicleNeonLightEnabled(vehicle.Handle, 0, true);
@@ -547,7 +828,7 @@ namespace STHMaxzzzie.Client
                             Vehicle veh = Game.PlayerPed.CurrentVehicle;
                             if (veh != null)
                             {
-                                int[] colorIndices = { 0, 1, 2, 3, 4, 8, 9, 11, 27, 34, 49, 50, 62, 63, 74, 94, 95, 96, 97, 103, 147, 120  };
+                                int[] colorIndices = { 0, 1, 2, 3, 4, 8, 9, 11, 27, 34, 49, 50, 62, 63, 74, 94, 95, 96, 97, 103, 147, 120 };
                                 int randomColor = colorIndices[rand.Next(colorIndices.Length)];
                                 //int randomColor = rand.Next(160);
                                 veh.Mods.PrimaryColor = (VehicleColor)randomColor;
@@ -573,8 +854,8 @@ namespace STHMaxzzzie.Client
             }
         }
 
-        [Command("delveh")]
-        static void deleteVehicle(int source, List<object> args, string raw)
+        [EventHandler("delveh")]
+        static void deleteVehicle()
         {
             if (Game.PlayerPed.IsInVehicle())
             {

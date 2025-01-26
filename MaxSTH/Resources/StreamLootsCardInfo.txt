@@ -76,4 +76,4 @@ speed*Supersonic speed*Someone has given Gilly Supersonic Speed!*1
 
 stop*Stop*A viewer has used a suspicious force to stop Gilly*1
 
-fix*Fix vehicle*Gilly's car, fresh of the assembly line.*1
+fix*Repair*Gilly's car, fresh of the assembly line.*1
