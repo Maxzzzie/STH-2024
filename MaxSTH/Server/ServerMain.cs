@@ -5,7 +5,6 @@ using CitizenFX.Core.Native;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Diagnostics;
-using System.Numerics;
 using STHMaxzzzie;
 using System.Drawing;
 using TwitchTestClient.Server.Features;
@@ -43,7 +42,7 @@ namespace STHMaxzzzie.Server
             respawnLocationsDict = LoadResources.respawnLocations();
             maxzzzieCalloutsDict = LoadResources.calloutsList();
             vehicleinfoDict = LoadResources.allowedVehicles();
-
+            TriggerClientEvent("setInitialRespawnOff");
         }
 
         [EventHandler("reloadResources")]
@@ -103,11 +102,10 @@ namespace STHMaxzzzie.Server
             source.TriggerEvent("VehicleFixStatus", Misc.AllowedToFixStatus, Misc.fixWaitTime);
             source.TriggerEvent("Stamina");
             source.TriggerEvent("whatIsVehAllowed", isVehRestricted);
-            BlipHandler.UpdateClientBlips();
             TriggerEvent("playerJoinedWhileGameIsActive", source.Handle);
-            TriggerEvent("updatePlayerBlips");
             StreamLootsEffect.UpdateSLItterateTime();
             Misc.updateFireStatus();
+            if (RoundHandling.gameMode == "none") {RoundHandling.teamAssignment[int.Parse(source.Handle)] = 0; TriggerEvent("sendClientTeamAssignment");}
         }
 
         [EventHandler("playerDropped")]
@@ -118,8 +116,9 @@ namespace STHMaxzzzie.Server
             {
                 RoundHandling.teamAssignment.Remove(int.Parse(source.Handle));
                 GameInfected.shouldGameEndAfterPlayerDisconnect();
-                GameInfected.sendClientTeamAssignment();
+                GameInfected.sendClientTeamAssignmentForInfected();
             }
+            else TriggerEvent("sendClientTeamAssignment");
             if (RoundHandling.gameMode != "none" && RoundHandling.teamAssignment[int.Parse(source.Handle)] == 1)
             {
                 //CitizenFX.Core.Debug.WriteLine("playerDroppedHandler 1");
@@ -134,7 +133,6 @@ namespace STHMaxzzzie.Server
                 BlipHandler.AddBlips(request);
             }
             //CitizenFX.Core.Debug.WriteLine("playerDroppedHandler 3");
-            TriggerEvent("updatePlayerBlips");
         }
 
         [Command("togglevehres", Restricted = true)] //restriction default = true
@@ -178,10 +176,12 @@ namespace STHMaxzzzie.Server
 
         public static void sendVehicleinfoDict(Player source)
         {
+            List<string> vehicleInfo = new List<string>();
             foreach (KeyValuePair<string, string> entry in vehicleinfoDict)
             {
-                source.TriggerEvent("getVehicleinfoDict", entry.Key, entry.Value);
+                vehicleInfo.Add(entry.Value);
             }
+            TriggerClientEvent(source, "getVehicleinfoDict", vehicleInfo);
         }
 
 
@@ -273,12 +273,10 @@ namespace STHMaxzzzie.Server
             else if (args.Count == 1 && args[0].ToString() == "on" || args[0].ToString() == "true")
             {
                 LoadResources.defaultShouldFireBeControlled = true;
-                TriggerClientEvent("ShowNotification", $"~h~~r~Fires are now surpressed within {LoadResources.FireControlrange}m from players.");
             }
             else if (args.Count == 1 && args[0].ToString() == "off" || args[0].ToString() == "false")
             {
                 LoadResources.defaultShouldFireBeControlled = false;
-                TriggerClientEvent("ShowNotification", "~h~~r~Fires are now not surpressed.");
             }
             else if (args.Count == 1 && args[0].ToString() == "clear")
             {
@@ -300,33 +298,16 @@ namespace STHMaxzzzie.Server
             {
                 TriggerClientEvent(Players[source], "ShowNotification", "~h~~r~togglefire~s~\nSomething went wrong.\nType /togglefire help");
             }
+            if (LoadResources.defaultShouldFireBeControlled) TriggerClientEvent("ShowNotification", $"~h~~r~Fires are now surpressed within {LoadResources.FireControlrange}m from players.");
+            else TriggerClientEvent("ShowNotification", "~h~~r~Fires are now not surpressed.");
             updateFireStatus();
         }
 
         public static void updateFireStatus()
         {
+            
             TriggerClientEvent("toggleFire", LoadResources.defaultShouldFireBeControlled, LoadResources.FireControlrange);
         }
-
-
-        [Command("settings", Restricted = true)]
-        void Settings(int source, List<object> args, string raw)
-        {
-            TriggerClientEvent(Players[source], "ShowNotification", $"~h~~o~Current server settings are printed in the client console(f8).");
-            TriggerClientEvent(Players[source], "displayClientDebugLine", 
-            " \n"
-            +$"Fix status: {AllowedToFixStatus}\nFix wait time: {fixWaitTime}\nIs POD on: {isPodOn}\n"
-            +$"Is PvP on: {Armoury.isPvpAllowed}\nAre weapons allowed: {Armoury.isWeaponsAllowed}\nIs SFV allowed: {Armoury.isShootingFromVehicleAllowed}\n"
-            +$"Are vehicle spawns restricted: {ServerMain.isVehRestricted}\nIs shots fired marker on: {ShotBlipServer.areShotsFiredVisible}\n"
-            +$"Is fire surpression on: {LoadResources.defaultShouldFireBeControlled}\nRange of fire surpression: {LoadResources.FireControlrange}\n"
-            +$"Are players allowed to tp: {Teleports.isPlayerAllowedToTp}\nPlayer vehicles should persist: {Vehicles.vehicleShouldNotDespawn}\n"
-            +$"Is streamloots on: {StreamLootsEffect.isSLOn}\nStreamLoots itterate time: {StreamLootsEffect.SLItterateTime}\n"
-            +$"Is player vehicles colour on: {Vehicles.vehicleShouldChangePlayerColour}\nBounce mode set radius:{GameBounce.radius}\n"
-            +$"Bounce mode does player see blip: {GameBounce.runnerSeesCircleBlip}\nDelay mode does player see blip: {DelayMode.runnerSeesDelayBlip}\n"
-            +$"Delay mode distance to blip: {DelayMode.distanceToBlip}\nCurrent game mode: {RoundHandling.gameMode}\n"
-            +" ");
-        }
-
 
         string lastFixStatus = "none";
         [Command("togglefix", Restricted = true)]
@@ -490,32 +471,12 @@ namespace STHMaxzzzie.Server
         }
 
         [Command("clear", Restricted = true)] //restriction (default false)
-        void clear2(int source, List<object> args, string raw)
-        {
-
-            if (args.Count == 0)
-            {
-                TriggerClientEvent("clear_vehicles", false);
-            }
-            else if (args.Count == 1 && (args[0].ToString() == "all"))
-            {
-                TriggerClientEvent("clear_vehicles", true);
-            }
-            else
-            {
-                CitizenFX.Core.Debug.WriteLine($"This option clears vehicles and entities.\nType \"/clear\" to clear vehicles and \"/clear all\" to clear all entities.");
-            }
-            didClearJustHappen();
-        }
-
-
-        [Command("clear", Restricted = true)] //restriction (default false)
         void clear(int source, List<object> args, string raw)
         {
             if (args.Count == 0) TriggerClientEvent("clear_vehicles", false);
             else if (args.Count == 1 && (args[0].ToString() == "all")) TriggerClientEvent("clear_vehicles", true);
-            else if (args.Count == 1 && (args[0].ToString() == "near")) TriggerClientEvent(Players[source], "clearNearVehicles", 50);
-            else if (args.Count == 2 && (args[0].ToString() == "near") && int.TryParse(args[0].ToString(), out int radius)) TriggerClientEvent(Players[source], "clearNearVehicles", radius);
+            else if (args.Count == 1 && (args[0].ToString() == "near")) TriggerClientEvent(Players[source], "sendClearNearVehiclesInfo", 50);
+            else if (args.Count == 2 && (args[0].ToString() == "near") && int.TryParse(args[1].ToString(), out int radius)) TriggerClientEvent(Players[source], "sendClearNearVehiclesInfo", radius);
             else if (args.Count == 1 && int.TryParse(args[0].ToString(), out radius)) TriggerClientEvent(Players[source], "clearNearVehicles", radius);
             else
             {
@@ -523,7 +484,7 @@ namespace STHMaxzzzie.Server
             }
         }
 
-        [Command("delveh", Restricted = true)] //restriction (default false)
+        [Command("delveh", Restricted = false)] //restriction (default false)
         void delveh(int source, List<object> args, string raw)
         {
             if (args.Count == 0)
@@ -532,19 +493,28 @@ namespace STHMaxzzzie.Server
             }
             else if (args.Count == 1 && int.TryParse(args[0].ToString(), out int radius))
             {
-                if (radius > 150) radius = 150;
+                if (radius > 150) radius = 200;
                 if (radius < 2) radius = 2;
-                TriggerClientEvent(Players[source], "clearNearVehicles", radius);
+                TriggerClientEvent(Players[source], "sendClearNearVehiclesInfo", radius);
             }
             else if (args.Count == 1 && args[0].ToString() == "near")
             {
-                TriggerClientEvent(Players[source], "clearNearVehicles", 30);
+                TriggerClientEvent(Players[source], "sendClearNearVehiclesInfo", 30);
             }
             else
             {
                 TriggerClientEvent(Players[source], "ShowNotification", $"/delveh will delete your last vehicle.\n\"/delveh near\" will delete all unoccupied vehicles in 30m.");
             }
             didClearJustHappen();
+        }
+
+        //has to be a little complicated as if we send it directly to the client requesting it it will only delete the vehicle he's loading in. 
+        //now we get the clients position first. And trigger an event to the server that distributes that position to all clients.
+        [EventHandler("clearNearVehicles")]
+        public void clearNearVehicles(Vector4 clearNearInfo)
+        {
+            TriggerClientEvent("clearNearVehicles", clearNearInfo);
+            PriusMechanics.didClearJustHappen = true;
         }
 
 
@@ -603,7 +573,7 @@ namespace STHMaxzzzie.Server
         [Command("toggleweapon", Restricted = true)]
         void toggleweapon(int source, List<object> args, string raw)
         {
-            if (args.Count == 0 || (args.Count == 1 && (bool.TryParse(args[0].ToString(),out isWeaponsAllowed) || args[0].ToString() == "on" || args[0].ToString() == "off")))
+            if (args.Count == 0 || (args.Count == 1 && (bool.TryParse(args[0].ToString(), out isWeaponsAllowed) || args[0].ToString() == "on" || args[0].ToString() == "off")))
             {
                 if (args[0].ToString() == "on") isWeaponsAllowed = true;
                 else if (args[0].ToString() == "off") isWeaponsAllowed = false;
@@ -648,6 +618,12 @@ namespace STHMaxzzzie.Server
             {
                 CitizenFX.Core.Debug.WriteLine("Oh no. Something went wrong!\nYou should do /togglepvp (true/false)");
             }
+            TriggerClientEvent("updatePvp", isPvpAllowed);
+        }
+
+        public static void turnOnPvpForGames()
+        {
+            isPvpAllowed = true;
             TriggerClientEvent("updatePvp", isPvpAllowed);
         }
     }
@@ -744,9 +720,11 @@ namespace STHMaxzzzie.Server
             {
                 if (MapboundsArrayList.Count != 0)
                 {
-                    string debugString = string.Join(";", MapboundsArrayList.Select(array => string.Join(",", array)));
+                    string debugString = string.Join(";", MapboundsArrayList
+                        .Select(array => string.Join(",", array.Take(3)))); // Take only the first 3 elements
+
                     CitizenFX.Core.Debug.WriteLine(debugString);
-                    TriggerClientEvent(Players[source], "ShowNotification", debugString);
+                    TriggerClientEvent(Players[source], "displayClientDebugLine", debugString);
                 }
             }
             else if (args.Count == 1)
@@ -1226,9 +1204,9 @@ namespace STHMaxzzzie.Server
         }
 
         [Command("stuck", Restricted = false)]
-        void stuckCommand([FromSource] Player source, List<object> args, string raw)
+        void stuckCommand(int source, List<object> args, string raw)
         {
-            TriggerClientEvent(source, "StuckCommand");
+            TriggerClientEvent(Players[source], "StuckCommand");
         }
     }
 }

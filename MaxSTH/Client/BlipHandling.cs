@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection.Metadata;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using static CitizenFX.Core.Native.API;
 using System.Threading.Tasks;
 using System.Linq;
 
@@ -14,13 +15,12 @@ namespace STHMaxzzzie.Client
 {
     public class BlipManager : BaseScript
     {
-            static int Me;
+        static int serverId;
 
         private static Dictionary<string, int> blips = new Dictionary<string, int>();
         public BlipManager()
         {
-            Me = Game.Player.ServerId;
-            API.DisplayPlayerNameTagsOnBlips(true);
+            serverId = Game.Player.ServerId;
         }
 
         [EventHandler("RepackBlipDataForClient")]
@@ -99,45 +99,23 @@ namespace STHMaxzzzie.Client
 
             if (blip.Visibility.VisibilityType != VisibilityType.All)
             {
-                if (blip.Visibility.VisibilityType == VisibilityType.Except && blip.Visibility.Players.Contains(Me))
+                if (blip.Visibility.VisibilityType == VisibilityType.Except && blip.Visibility.Players.Contains(serverId))
                 {
                     return;
                 }
-                if (blip.Visibility.VisibilityType == VisibilityType.Only && !blip.Visibility.Players.Contains(Me))
+                if (blip.Visibility.VisibilityType == VisibilityType.Only && !blip.Visibility.Players.Contains(serverId))
                 {
                     return;
                 }
             }
 
             int blipHandle = 0;
-            if (blip.Type == "coord") 
+            if (blip.Type == "coord")
             {
                 //Debug.WriteLine($"HandleBlip 2 coord added {blip.Name}");
                 blipHandle = API.AddBlipForCoord(blip.Coords.X, blip.Coords.Y, blip.Coords.Z);
             }
-                else if (blip.Type == "player")
-                {
-                                        if (RoundHandling.gameMode != "none" && RoundHandling.thisClientIsTeam == 1)
-                    {
-                        Debug.WriteLine($"Player is runner. Blip \"{blip.Name}\" not added.");
-                       return;
-                    }
-                    string[] splitName = blip.Name.Split('-');
-                    if (RoundHandling.gameMode != "none" && RoundHandling.teamAssignment[int.Parse(splitName[1])] == 1)
-                {
-                    Debug.WriteLine($"Target player is runner. Blip \"{blip.Name}\" not added.");
-                    return;
-                }
-                else if (int.Parse(splitName[1]) == Me)
-                {
-                    Debug.WriteLine($"My blip. Blip \"{blip.Name}\" not added.");
-                    return;
-                    //NotificationScript.ShowNotification($"Me!");
-                }
-                    Debug.WriteLine($"{splitName[1]} and {splitName[0]}");
-                    int entityId = API.GetPlayerPed(API.GetPlayerFromServerId(int.Parse(splitName[1])));
-                    blipHandle = API.AddBlipForEntity(entityId);
-                }
+
             else if (blip.Type == "entity")
             {
                 int entityHandle = API.NetworkGetEntityFromNetworkId(blip.EntityId);
@@ -145,13 +123,13 @@ namespace STHMaxzzzie.Client
             }
             else
             {
-                Debug.WriteLine($"Error: Cannot add blip, type wasn't coord, player or entity.");
+                Debug.WriteLine($"Error: Cannot add blip, type wasn't coord or entity.");
                 return;
             }
 
             blips.Add(blip.Name, blipHandle);
 
-            if (blip.Sprite != 0 ) API.SetBlipSprite(blipHandle, blip.Sprite);
+            if (blip.Sprite != 0) API.SetBlipSprite(blipHandle, blip.Sprite);
             API.SetBlipColour(blipHandle, blip.Colour);
             API.SetBlipAlpha(blipHandle, blip.Alpha);
             API.SetBlipFlashes(blipHandle, blip.IsFlashing);
@@ -174,9 +152,10 @@ namespace STHMaxzzzie.Client
             }
             API.SetBlipCategory(blipHandle, blip.Category);
         }
-
-
     }
+
+
+
 
     class BlipData
     {

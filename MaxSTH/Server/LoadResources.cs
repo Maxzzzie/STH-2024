@@ -334,14 +334,14 @@ namespace STHMaxzzzie.Server
                     CitizenFX.Core.Debug.WriteLine($"Incorrect vehicle class in AllowedVehicles.txt line: \"{line}\"");
                     continue;
                 }
-                else if (parts.Length == 4 & bool.TryParse(parts[3],out bool temp))
+                else if (parts.Length == 4 & !bool.TryParse(parts[3],out bool temp))
                 {
                     vehiclesWithoutBool.Add(allowedVehicleName);
                     //Debug.WriteLine($"No bool for restriction set yet in \"{line}\".");
                 }
 
                 AllowedVehiclesDict.Add(allowedVehicleName, lowerLine);
-
+                //Debug.WriteLine(lowerLine);
 
             }
             if(vehiclesWithoutBool.Count > 0)
@@ -666,3 +666,4 @@ namespace STHMaxzzzie.Server
         }
     }
 }
+

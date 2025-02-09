@@ -15,7 +15,12 @@ namespace STHMaxzzzie.Client
         int bounceAreaBlip;//blip marking the area the player can be in.
         int bounceCenterBlip;//blip marking the center of the area in case it's off your map.
         bool runnerSeesCircleBlip = false; //does the runner see the circle too?
+        static bool shouldDecay = true;
+        bool shouldDing = true; //Does the circle change make noise.
         static int defaultRadius = 450;
+        static int defaultColour = 3;
+        static int defaultAlpha = 50;
+        static int decayRate = 100;
 
         public GameBounce()
         {
@@ -33,6 +38,7 @@ namespace STHMaxzzzie.Client
             //while (Game.PlayerPed.IsAlive)
             while (Game.PlayerPed.IsAlive && RoundHandling.gameMode == "bounce")
             {
+                blipPosAndRadius.W = defaultRadius;
                 Vector3 newPos = Game.PlayerPed.Position;
 
                 float distance = GetDistanceBetweenCoords(newPos.X, newPos.Y, newPos.Z, blipPosAndRadius.X, blipPosAndRadius.Y, blipPosAndRadius.Z, false);
@@ -82,33 +88,55 @@ namespace STHMaxzzzie.Client
         }
 
         [EventHandler("setGameBounceBlip")]
-        private void setGameBounceBlip(Vector4 blipPosAndRadius, bool removeBlipOnly)
+        private void setGameBounceBlip(Vector4 newBlipPosAndRadius, bool removeBlipOnly)
         {
             //Debug.WriteLine("setGameBounceBlip");
-            RemoveBlip(ref bounceAreaBlip);
-            RemoveBlip(ref bounceCenterBlip);
+
+            RemoveAreaBlip(bounceAreaBlip, bounceCenterBlip);
             if (removeBlipOnly) return; //Stops placing of new blips.
 
             if (runnerSeesCircleBlip || RoundHandling.thisClientIsTeam != 1)
             {
+                if (shouldDing) API.PlaySoundFrontend(-1, "CHALLENGE_UNLOCKED", "HUD_AWARDS", false);
                 //Debug.WriteLine("setGameBounceBlip");
-                bounceAreaBlip = AddBlipForRadius(blipPosAndRadius.X, blipPosAndRadius.Y, blipPosAndRadius.Z, blipPosAndRadius.W);
-                SetBlipAlpha(bounceAreaBlip, 40);
-                SetBlipColour(bounceAreaBlip, 49);
-                bounceCenterBlip = AddBlipForCoord(blipPosAndRadius.X, blipPosAndRadius.Y, blipPosAndRadius.Z);
-                SetBlipColour(bounceCenterBlip, 49);
+                bounceAreaBlip = AddBlipForRadius(newBlipPosAndRadius.X, newBlipPosAndRadius.Y, newBlipPosAndRadius.Z, newBlipPosAndRadius.W);
+                SetBlipAlpha(bounceAreaBlip, defaultAlpha);
+                SetBlipColour(bounceAreaBlip, defaultColour);
+                bounceCenterBlip = AddBlipForCoord(newBlipPosAndRadius.X, newBlipPosAndRadius.Y, newBlipPosAndRadius.Z);
+                SetBlipColour(bounceCenterBlip, 4);
+                SetBlipAlpha(bounceCenterBlip, 90);
+                SetBlipShrink(bounceCenterBlip, true);
                 SetBlipSprite(bounceCenterBlip, 161);
             }
         }
 
-        [EventHandler("updateBounceGameSettings")]
-        void updateBounceGameSettings(int newRadius, bool newRunnerSeesCircleBlip)
+        private async void RemoveAreaBlip(int oldBounceAreaBlip, int oldBounceCenterBlip)
         {
-            
+            RemoveBlip(ref oldBounceCenterBlip);
+            if (shouldDecay)
+            {
+                int alpha = defaultAlpha;
+                while (alpha > 0)
+                {
+                    alpha--;
+                    SetBlipAlpha(oldBounceAreaBlip, alpha);
+                    await Delay(decayRate);
+                }
+            }
+            RemoveBlip(ref oldBounceAreaBlip);
+        }
+
+        [EventHandler("updateBounceGameSettings")]
+        void updateBounceGameSettings(int newRadius, bool newRunnerSeesCircleBlip, bool newShouldDecay, bool newShouldDing, int newDefaultColour, int newDefaultAlpha, int newDecayRate)
+        {
             defaultRadius = newRadius;
             runnerSeesCircleBlip = newRunnerSeesCircleBlip;
-            //Debug.WriteLine($"updateBounceGameSettings {defaultRadius}, {runnerSeesCircleBlip}");
-
+            shouldDecay = newShouldDecay;
+            shouldDing = newShouldDing;
+            defaultColour = newDefaultColour;
+            defaultAlpha = newDefaultAlpha;
+            decayRate = newDecayRate;
+            
         }
     }
 }

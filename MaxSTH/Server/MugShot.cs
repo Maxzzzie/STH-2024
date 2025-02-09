@@ -4,10 +4,10 @@ using CitizenFX.Core;
 
 namespace STHMaxzzzie.Server
 {
-    public class MugShot : BaseScript
+    public class MugShots : BaseScript
     {
         [Command("mugshot", Restricted = false)]
-        async void mugShot(int source, List<object> args, string raw)
+        void MugShot(int source, List<object> args, string raw)
         {
             if (args.Count == 1)
             {
@@ -15,32 +15,32 @@ namespace STHMaxzzzie.Server
                 bool isArgs0Int = Int32.TryParse(args[0].ToString(), out target);
                 if (isArgs0Int)
                 {
-                  mugShot(source, target);
+                  MugShotEvent(source, target);
                 }
             }
         }
 
             [EventHandler("mugShot")]
-            async void mugShot(int source, int target)
+            void MugShotEvent(int source, int target)
             {
                 Debug.WriteLine("Mugshot received by server.");
             if (target != 0) 
             {
-                    sendClientModelNameForOutfit(source, target);
+                    SendClientModelNameForOutfit(source, target);
             }
             else
             {
                 //Debug.WriteLine($"test 3");
                 if (RoundHandling.targetThisGame != -1)
                 {
-                    sendClientModelNameForOutfit(source, RoundHandling.targetThisGame);
+                    SendClientModelNameForOutfit(source, RoundHandling.targetThisGame);
                 }
-                else sendClientModelNameForOutfit(source, source);
+                else SendClientModelNameForOutfit(source, source);
 
             }
         }
 
-        void sendClientModelNameForOutfit(int source, int clientIdToSendModelOf)
+        void SendClientModelNameForOutfit(int source, int clientIdToSendModelOf)
         {
             //Debug.WriteLine($"Running sendCLientModelNameForOutfit.");
             string name = "unknown";

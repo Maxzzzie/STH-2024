@@ -14,7 +14,7 @@ namespace STHMaxzzzie.Client
     public class Spawns : BaseScript
     {
         static Dictionary<string, Vector4> respawnLocationsDict = new Dictionary<string, Vector4>();
-        static Vector4 DefaultSpawnPosition = new Vector4(0,0,71.5f,0);
+        static Vector4 DefaultSpawnPosition = new Vector4(0, 0, 71.5f, 0);
         public bool didDefaultSpawnPositionGetSet = false;
         bool didIAlreadySpawnOnce = false;
         string lastRespawnPoint = "null";
@@ -23,14 +23,15 @@ namespace STHMaxzzzie.Client
         bool isRespawnRunning = false;
 
         public Spawns()
-        { }
+        {
+           // setInitialRespawnOff();
+        }
 
-        [EventHandler("setInitialRespawnOff")]
         void setInitialRespawnOff()
         {
-        didIAlreadySpawnOnce = false;
-        lastRespawnPoint = "null";
-        secondToLastRespawnPoint = "null";
+            if (!Game.PlayerPed.IsAlive && GetDistanceBetweenCoords(Game.PlayerPed.Position.X,Game.PlayerPed.Position.Y,Game.PlayerPed.Position.Z,0,0,0,false) <10) return;
+            didIAlreadySpawnOnce = true;
+            Debug.WriteLine($"setInitialRespawnOff, player is alive.");
         }
 
         [EventHandler("getRespawnLocationsDict")]
@@ -47,7 +48,7 @@ namespace STHMaxzzzie.Client
         [Tick]
         public async Task OnTick()
         {
-            if (Spawn.SpawnLock == false && !Game.PlayerPed.IsAlive && !isRespawnRunning) respawnPlayerHandler();
+            if (!Spawn.SpawnLock && !Game.PlayerPed.IsAlive && !isRespawnRunning) respawnPlayerHandler(); await Delay(0);
         }
 
 
@@ -61,7 +62,7 @@ namespace STHMaxzzzie.Client
             }
             canUseRespawnCommand = false;
             respawnPlayerHandler();
-            await Delay(15000);
+            await Delay(10000);
             canUseRespawnCommand = true;
         }
 
@@ -84,6 +85,7 @@ namespace STHMaxzzzie.Client
             //-------------------------------------------------- temp respawn code. Can use the bits for later on in the main code -------------------------------- below here including didIAlreadySpawnOnce bool up top of this funciton
             if (!didIAlreadySpawnOnce)
             {
+                    await Delay(50);
                 while (!didDefaultSpawnPositionGetSet)
                 {
                     Debug.WriteLine("default spawnposition isn't set yet.");
@@ -92,10 +94,18 @@ namespace STHMaxzzzie.Client
                 await Spawn.SpawnPlayer(DefaultSpawnPosition.X, DefaultSpawnPosition.Y, DefaultSpawnPosition.Z, DefaultSpawnPosition.W);
                 didIAlreadySpawnOnce = true;
                 isRespawnRunning = false;
+                Debug.WriteLine("default spawn function running");
                 await Delay(200);
                 Appearance.changeRandomModel();
                 await Delay(2000);
                 NotificationScript.ShowMOTD();
+                return;
+            }
+            if (GameRace.isGfredRunning)
+            {
+                await Spawn.SpawnPlayer(GameRace.respawnLocation.X, GameRace.respawnLocation.Y, GameRace.respawnLocation.Z, GameRace.respawnLocation.W);
+                isRespawnRunning = false;
+                VehicleHandler.SetPlayerIntoNewVehicle(VehicleHandler.GetRandomVehicleFromClass(GameRace.lastGfredClass));
                 return;
             }
             else if (respawnLocationsDict.Count() != 0)
@@ -145,9 +155,10 @@ namespace STHMaxzzzie.Client
             API.PlaySoundFrontend(-1, soundName, soundSet, false);
 
             int killer = API.GetPedSourceOfDeath(Game.PlayerPed.Handle);
-            if (killer != 0 && API.DoesEntityExist(killer))
+            if (killer != 0 && API.DoesEntityExist(killer) && GetEntityType(killer) == 1)
             {
                 Debug.WriteLine("Killer exists. Focusing camera on killer.");
+                //Debug.WriteLine("Killer. Focusing camera on killer.");
                 Vector3 killerPosition = API.GetEntityCoords(killer, true);
 
                 // Create a camera
@@ -160,7 +171,7 @@ namespace STHMaxzzzie.Client
                 API.RenderScriptCams(true, false, 0, true, false);
 
                 // Wait for a few seconds (e.g., 3 seconds)
-                await Delay(8000);
+                await Delay(10000);
 
                 // Restore gameplay camera
                 API.RenderScriptCams(false, false, 0, true, false);
@@ -170,13 +181,12 @@ namespace STHMaxzzzie.Client
             else
             {
                 Debug.WriteLine("No killer found. Skipping camera focus.");
-                await Delay(8000);
+                await Delay(10000);
             }
 
             AnimpostfxStop("DeathFailMPDark");
             await Spawn.SpawnPlayer(SpawnPos.X, SpawnPos.Y, SpawnPos.Z, SpawnPos.W);
 
-            TriggerServerEvent("updatePlayerBlips");
             isRespawnRunning = false;
 
         }

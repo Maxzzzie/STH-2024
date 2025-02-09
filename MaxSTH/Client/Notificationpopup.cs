@@ -10,6 +10,8 @@ public class NotificationScript : BaseScript
     
     
 [EventHandler("ShowNotification")]
+//usage server TriggerClientEvent(Players[source], "ShowNotification", $"text");
+//usage client NotificationScript.ShowNotification($"text");
     public static void ShowNotification(string text)
     {
         SetNotificationTextEntry("STRING");
@@ -26,6 +28,8 @@ public class NotificationScript : BaseScript
     }
 
     [EventHandler("ShowErrorNotification")]
+    //usage server TriggerClientEvent(Players[source], "ShowErrorNotification", $"text");
+//usage client NotificationScript.ShowErrorNotification($"text");
     public static void ShowErrorNotification(string text)
     {
         SetNotificationTextEntry("STRING");

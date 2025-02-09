@@ -60,7 +60,7 @@ namespace STHMaxzzzie.Client
             API.SetPlayerHealthRechargeLimit(Game.Player.Handle, 0.33f);
         }
 
-        // Function 3: Set health, armor, and stamina to specified values
+        //client usage is Health.SetPlayerStats(300, 100);
         [EventHandler("SetPlayerStats")]
         public static void SetPlayerStats(int setHealthTo, int setArmourTo)
         {

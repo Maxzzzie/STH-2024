@@ -36,5 +36,13 @@ namespace STHMaxzzzie.Client
             Game.PlayerPed.Position = new Vector3(tpX, tpY, tpZ);
             Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, true, false);
         }
+
+        //[EventHandler("tpPlayerHeading")] in use at race
+        // void tpPlayerHeading(int tpX, int tpY, int tpZ, int tpW)
+        // {
+        //     Game.PlayerPed.Position = new Vector3(tpX, tpY, tpZ);
+        //     Game.PlayerPed.Heading = tpW;
+        //     Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, true, false);
+        // }//???
     }
 }

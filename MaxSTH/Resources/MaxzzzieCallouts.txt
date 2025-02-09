@@ -1,5 +1,5 @@
 5 Ways, -629, -369, 33
-Pier enterance, -1456.449, -772.9354, 23.17758
+Pier entrance, -1456.449, -772.9354, 23.17758
 Top of backslash, -1744.908, -557.6848, 37.44308
 Middle of backslash, -1905.04, -454.3938, 22.03168
 Bottom of backslash, -2010.58, -387.5992, 10.80423
@@ -43,9 +43,9 @@ Canals monument exit, -914.8668, -1067.418, 3.029327
 Canals Dead mans alley, -978.5504, -980.2361, 1.569863
 Canals North-West  pedestrian bridge, -1149.793, -1081.266, 2.770371
 V-hotel bridge, -1222.564, -983.6544, 4.817577
-North bumpy roads, -1116.187, -936.9754, 1.984292
-Middle bumpy roads, -1033.169, -1073.235, 3.396679
-South bumpy roads, -966.4299, -1189.609, 3.556327
+North cliffy roads, -1116.187, -936.9754, 1.984292
+Middle cliffy roads, -1033.169, -1073.235, 3.396679
+South cliffy roads, -966.4299, -1189.609, 3.556327
 Binco Vespucci, -811.6337, -1096.52, 10.09275
 Noodles, -639.5592, -1232.113, 10.8317
 Marina carpark, -800.0236, -1307.056, 4.350928
@@ -58,7 +58,7 @@ LSIA Spaghetti junction, -585.6416, -1995.97, 9.540169
 LSIA Sightseeing bar, -915.7426, -2526.408, 23.32149
 LSIA Multistory carparks, -984.1516, -2640.834, 13.32785
 LSIA Main terminal, -1038.29, -2736.051, 13.10775
-LSIA flight school enterance, -1147.662, -2723.813, 13.30117
+LSIA flight school entrance, -1147.662, -2723.813, 13.30117
 LSIA Devin weston hangar, -949.8621, -3003.583, 13.29184
 LSIA Southeast Runway, -983.2768, -3249.436, 13.29143
 LSIA Main Runway, -1268.101, -3082.517, 13.292
@@ -67,17 +67,17 @@ LSIA Side Runway South-West, -1537.586, -2634.296, 13.29183
 LSIA Side Runway Middle, -1431.002, -2440.596, 14.14518
 LSIA Side Runway North-East, -1322.539, -2259.906, 14.1313
 LSIA Rescue practice plane, -1154.599, -2327.164, 13.32854
-LSIA Fire department enterance, -1014.021, -2411.647, 13.94454
+LSIA Fire department entrance, -1014.021, -2411.647, 13.94454
 LSIA Passenger gate, -1220.822, -2569.425, 13.2921
 LSIA Cargo plane gate, -1280.763, -2761.828, 13.29165
-LSIA Main enterance, -982.1938, -2832.026, 13.31245
+LSIA Main entrance, -982.1938, -2832.026, 13.31245
 LSIA Pegasus hangar, -1662.496, -3163.132, 13.99219
 LSIA Dinesoar warehouse, -1345.731, -3323.363, 13.94016
 LSIA South terminal, -1569.152, -3221.1, 13.29544
 LSIA closed pegasus hangar, -1395.448, -3268.787, 13.29514
 LSIA Unnamed hangar, -1279.189, -3383.732, 13.29147
 LSIA Hangar No1, -1153.024, -3412.096, 13.29625
-LSIA behind main enterance hangars, -766.5626, -2839.535, 13.29627
+LSIA behind main entrance hangars, -766.5626, -2839.535, 13.29627
 LSIA groundfloor parking, -788.3724, -2389.368, 13.91728
 LSIA subway parking, -911.1109, -2308.832, 6.058584
 LSIA autoparts, -423.0512, -2167.99, 11.33856
@@ -87,7 +87,7 @@ Arena, -284.3447, -1919.898, 29.29424
 Ron silos dock, -258.1694, -2232.856, 8.529574
 Arena dirt ramp, -305.7111, -2140.55, 13.59746
 Oil docks, -28.7509, -2188.397, 7.159571
-Train track ghetto enterance, 144.1377, -2045.141, 17.67436
+Train track ghetto entrance, 144.1377, -2045.141, 17.67436
 Train track at Grove street, 222.4568, -1924.636, 22.99789
 Train track and subway cross, 275.7934, -1860.296, 26.2132
 Impound, 400.938, -1607.416, 28.63565
@@ -121,7 +121,7 @@ Pisswasser factory alley South, 878.6073, -1994.358, 29.75521
 Vent road middle, 774.1989, -2066.25, 28.72281
 Vent road North, 805.1898, -1889.953, 29.73484
 Vent road South, 759.8179, -2238.369, 29.67799
-Docks enterance, 743.8413, -2475.994, 19.67062
+Docks entrance, 743.8413, -2475.994, 19.67062
 Jetsam terminal, 766.2062, -2981.738, 5.149413
 Simeon docks containerstacks, 1034.581, -3030.6, 5.251989
 Simeon docks garage, 1196.974, -3102.874, 5.376878
@@ -138,7 +138,7 @@ Steel mill, 1082.022, -1995.254, 30.9877
 Fridgit, 971.3017, -1643.463, 29.46101
 Gas company, 523.5319, -2186.42, 5.338773
 Green bridge, 354.383, -2316.387, 9.549892
-Elysian island enterance, 271.5515, -2539.348, 5.182368
+Elysian island entrance, 271.5515, -2539.348, 5.182368
 Bugstars, 192.1593, -3126.171, 5.141586
 Boobs, 270.2307, -2764.266, 5.371672
 Drydocks, -39.18206, -2698.303, 5.536139
@@ -156,7 +156,7 @@ North beach, -1825.091, -744.4629, 8.089711
 Psychiatrist, -1912.571, -587.4902, 11.39461
 Burger shot Vespucci, -1201.929, -884.7905, 12.84412
 PD Vespucci, -1093.655, -797.8485, 18.53023
-Movie studio enterance, -1211.415, -583.2281, 26.86994
+Movie studio entrance, -1211.415, -583.2281, 26.86994
 Multicoloured carpark, -1215.123, -651.9624, 25.50793
 Astro, -1363.012, -694.3612, 24.6721
 Maxzzzies alleyway, -1312.453, -772.5516, 19.47047
@@ -183,7 +183,7 @@ Courthouse plaza, 288.5257, -1601.194, 31.26585
 Art gallery, -555.7103, -632.5684, 33.83447
 Pink carpark, -694.0988, -748.4656, 28.88274
 LTD Little Seoul, -711.4817, -913.7537, 19.21559
-Movie studio rear enterance, -1051.521, -481.1925, 36.38023
+Movie studio rear entrance, -1051.521, -481.1925, 36.38023
 Skate park Vespucci, -924.8218, -768.8349, 17.14129
 Arcadius, -165.8233, -625.2057, 31.94554
 City hall, -1286.463, -565.9487, 31.7124
@@ -243,13 +243,13 @@ Korean market, -577.3926, -1011.369, 21.67276
 Golfcourse North, -1198.692, 219.9641, 67.33578
 The richman hotel, -1325.766, 295.044, 63.99763
 Golfcourse West, -1383.47, 57.04741, 53.35096
-Golfcourse enterance, -1328.058, -36.4796, 49.19369
+Golfcourse entrance, -1328.058, -36.4796, 49.19369
 Golfcourse South, -991.6324, -131.8864, 38.57607
 Golfcourse East, -1013.054, 62.68627, 51.44398
 Cottage park, -965.7539, 319.0818, 70.27113
 University, -1623.325, 211.3873, 59.91927
 University running track, -1748.774, 162.2671, 63.97785
-Kortz museum enterance, -2297.761, 379.4651, 174.1826
+Kortz museum entrance, -2297.761, 379.4651, 174.1826
 Kortz museum checkpoint, -1870.449, 81.54761, 81.17962
 Kortz Museum maze, -2288.887, 190.0249, 170.1964
 Kortz museum courtyard, -2250.34, 274.5217, 174.0916
@@ -304,7 +304,7 @@ Highway cross, 1069.844, -1186.568, 46.67443
 Moms Tacos, 1141.258, -960.8926, 47.50056
 Vinewood bowl sign, 1007.849, 510.9726, 98.65113
 Vinewood bowl, 719.5451, 617.1231, 128.259
-Vinewood bowl enterance, 886.5659, 536.2453, 123.7805
+Vinewood bowl entrance, 886.5659, 536.2453, 123.7805
 Globe oil Vinewood, 608.101, 277.7917, 102.4285
 Beaver bush ranger station, 384.1872, 791.6144, 187.0008
 Vinewood sign, 712.1997, 1198.288, 324.9243
@@ -519,7 +519,7 @@ North runway Francis International Airport*1, 7672.301, -2596.963, 5.776944
 North runway Francis International Airport*0, 7561.009, -2493.12, 5.726997
 North runway Francis International Airport*4, 7472.952, -2411.065, 5.73994
 Flight control tower Francis International Airport, 7808.603, -2848.221, 5.28599
-Cargo enterance Francis International Airport, 7425.338, -3066.249, 5.255043
+Cargo entrance Francis International Airport, 7425.338, -3066.249, 5.255043
 Multi story parking Francis International Airport, 7437.147, -2891.149, 6.948102
 Big willies mall, 7006.631, -2639.639, 28.26118
 Rons Meadows park, 6958.061, -2419.854, 15.78397

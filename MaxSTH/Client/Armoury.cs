@@ -42,6 +42,10 @@ namespace STHMaxzzzie.Client
                 {
                     giveNonLethalWeapon(false);
                 }
+                else if (input == "infectedhunt")
+                {
+                    giveInfectedHuntWeapon(false);
+                }
 
                 else
                 {
@@ -161,11 +165,11 @@ namespace STHMaxzzzie.Client
                 Game.PlayerPed.Weapons.Give(WeaponHash.RayPistol, 1, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.FlareGun, 25, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.Flare, 25, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.StickyBomb, 25, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.Nightstick, 1, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.Knife, 1, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.FireExtinguisher, 200, false, false);
-                Game.PlayerPed.Weapons.Give(WeaponHash.Molotov, 20, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.Snowball, 20, false, false);
                 Game.PlayerPed.Weapons.Give(WeaponHash.Ball, 20, false, false);
 
@@ -236,6 +240,50 @@ namespace STHMaxzzzie.Client
                     NotificationScript.ShowNotification($"You now have all weapons.");
                 }
             }
+            else
+            {
+                NotificationScript.ShowErrorNotification($"Weapon command is currently off.");
+            }
+        }
+
+          //Giving a runweapon
+        [EventHandler("infectedHuntWeapon")]
+        public static void giveInfectedHuntWeapon(bool model)
+
+        {
+            lastWeaponClass = "run";
+            //checks if weapons are enabled
+            if (isWeaponAllowed)
+            {
+                //actualy does the giving of weapons
+
+                Game.PlayerPed.Weapons.RemoveAll();
+                Game.PlayerPed.Weapons.Give(WeaponHash.Firework, 25, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.FlareGun, 25, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.RayPistol, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.PumpShotgun, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.CombatPistol, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.SawnOffShotgun, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.SMG, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Flare, 25, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.StunGun, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Nightstick, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Knife, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Musket, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.CarbineRifle, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Pistol, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.SniperRifle, 500, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Parachute, 1, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.FireExtinguisher, 200, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Snowball, 20, false, false);
+                Game.PlayerPed.Weapons.Give(WeaponHash.Ball, 20, false, false);
+
+                if (!model && RoundHandling.gameMode != "infected")
+                {
+                    NotificationScript.ShowNotification($"You now have run weapons.");
+                }
+            }
+            //if (isWeaponAllowed) checks for true/false. And continues with the body if it's true.
             else
             {
                 NotificationScript.ShowErrorNotification($"Weapon command is currently off.");

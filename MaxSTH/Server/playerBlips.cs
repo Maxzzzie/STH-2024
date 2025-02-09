@@ -11,141 +11,125 @@ namespace STHMaxzzzie.Server
 {
     public class PlayerBlips : BaseScript
     {
-        static public string lastBlipSetting = "all";
-        static public int allButPlayer = -1;
+        static public string playerBlipSetting = "on";
+        public static List<int> showThisBlip = new List<int>();
+
         public PlayerBlips()
         {
+            GetPlayersInfo();
         }
 
-        [EventHandler("updatePlayerBlips")]
-        public void updatePlayerBlips()
+        [EventHandler("Server:updatePlayerBlipSettings")]
+        static void UpdatePlayerBlipSettings()
         {
-            if (lastBlipSetting == "all") setPlayerBlipsForAll();
-            else if (lastBlipSetting == "none") clearPlayerBlipsForAll();
-            // else if (lastBlipSetting == "hunt") setPlayerBlipsForAllButRunner();
-            // else if (lastBlipSetting == "allBut") setPlayerBlipsForAllBut();
-
+            string showThisBlipString = string.Join(",", showThisBlip);
+            Debug.WriteLine($"updatePlayerBlipSettings {showThisBlipString} + {playerBlipSetting}");
+            TriggerClientEvent("updatePlayerBlipSettings", playerBlipSetting, showThisBlipString);
         }
 
-        [Command("pb", Restricted = true)] //normal restriction true 
+
+        //[EventHandler("updatePlayerBlips")]
+        [Command("togglepb", Restricted = true)] //normal restriction true 
         public void playerBlipHandling(int source, List<object> args, string raw)
-        {
-            if (args.Count == 1 && (args[0].ToString() == "all" || args[0].ToString() == "none"))
+        {   //turns on blips for teammates (default)
+            if ((args.Count == 1 && (args[0].ToString() == "true" || args[0].ToString() == "on")) || (args.Count == 0 && playerBlipSetting != "on"))
             {
-                lastBlipSetting = args[0].ToString();
-               
+                playerBlipSetting = "on";
+                TriggerClientEvent("ShowNotification", $"Player blips are now: \"{playerBlipSetting}\".");
             }
-            else if (args.Count == 0)
+            //turns off all blips (with no input. Defaults to on first)
+            else if ((args.Count == 1 && (args[0].ToString() == "false" || args[0].ToString() == "off")) || (args.Count == 0 && playerBlipSetting == "on"))
             {
-                if (lastBlipSetting == "all")
+                playerBlipSetting = "off";
+                TriggerClientEvent("ShowNotification", $"Player blips are now: \"{playerBlipSetting}\".");
+            }
+            //shows blips of people who are in showThisBlip list.
+            else if (args.Count == 1 && args[0].ToString() == "custom")
+            {
+                playerBlipSetting = "custom";
+                TriggerClientEvent("ShowNotification", $"Player blips are now: {playerBlipSetting}.");
+                TriggerClientEvent(Players[source], "ShowNotification", $"Showing blips for {string.Join(", ", showThisBlip)}.\nFor more info see console(f8).");
+                TriggerClientEvent("displayClientDebugLine", "---   ---   ---   togglepb settings   ---   ---   ---\n/togglepb on - turns on blips for teammates (default)\n/togglepb off - turns off blips for everyone.\n/togglepb custom - turns on a specific set with blips.\n\nWhen set to custom:\n/togglepb set {playerId} {showBool} - Adds or removes blip to showThisBlip list, bool is optional.\n/togglepb show {playerId} - Adds player to the list.\n/togglepb hide {playerId} - Removes player from the list.\n/togglepb clear - Clears the list.\n/togglepb all - Adds everyone online to the list.\n---   ---   ---   togglepb settings   ---   ---   ---");
+            }
+            
+            else if (args.Count == 3 && args[0].ToString() == "set" && int.TryParse(args[1].ToString(), out int playerId) && Players[playerId] != null && bool.TryParse(args[2].ToString(), out bool addOrRemove))
+            {
+                if (addOrRemove && !showThisBlip.Contains(playerId)) showThisBlip.Add(playerId);
+                else if (!addOrRemove && showThisBlip.Contains(playerId)) showThisBlip.Remove(playerId);
+
+                TriggerClientEvent(Players[source], "ShowNotification", $"Showing blips for {string.Join(", ", showThisBlip)}.\nIf pb is set to \"Custom\"");
+            }
+            //adds blip to showThisBlip list /togglepb show {playerId}.
+            else if (args.Count == 2 && args[0].ToString() == "show" && int.TryParse(args[1].ToString(), out playerId) && Players[playerId] != null)
+            {
+                if (!showThisBlip.Contains(playerId)) showThisBlip.Add(playerId);
+                TriggerClientEvent(Players[source], "ShowNotification", $"Showing blips for {string.Join(", ", showThisBlip)}.\nIf pb is set to \"Custom\"");
+            }
+            //removes blip from showThisBlip list /togglepb hide {playerId}.
+            else if (args.Count == 2 && args[0].ToString() == "hide" && int.TryParse(args[1].ToString(), out playerId) && Players[playerId] != null)
+            {
+                if (showThisBlip.Contains(playerId)) showThisBlip.Remove(playerId);
+                TriggerClientEvent(Players[source], "ShowNotification", $"Showing blips for {string.Join(", ", showThisBlip)}.\nIf pb is set to \"Custom\"");
+            }
+            //toggles player blip from showThisBlip list /togglepb set {playerId}.
+            else if (args.Count == 2 && args[0].ToString() == "set" && int.TryParse(args[1].ToString(), out playerId))
+            {
+                if (!showThisBlip.Contains(playerId)) showThisBlip.Add(playerId);
+                else showThisBlip.Remove(playerId);
+                TriggerClientEvent(Players[source], "ShowNotification", $"Showing blips for {string.Join(", ", showThisBlip)}.\nIf pb is set to \"Custom\"");
+            }
+            //clears all player blips from showThisBlip list /togglepb clear.
+            else if (args.Count == 1 && args[0].ToString() == "clear")
+            {
+                showThisBlip.Clear();
+                TriggerClientEvent(Players[source], "ShowNotification", $"Showing blips for {string.Join(", ", showThisBlip)}.\nIf pb is set to \"Custom\"");
+            }
+            //adds all player blips to showThisBlip list /togglepb all.
+            else if (args.Count == 1 && args[0].ToString() == "all")
+            {
+                showThisBlip.Clear();
+                foreach (Player player in Players) showThisBlip.Add(int.Parse(player.Handle));
+                
+                TriggerClientEvent(Players[source], "ShowNotification", $"Showing blips for {string.Join(", ", showThisBlip)}.\nIf pb is set to \"Custom\"");
+            }
+            UpdatePlayerBlipSettings();
+        }
+
+        private async void GetPlayersInfo()
+        {
+            while (true)
+            {
+                //Debug.WriteLine($"GPI running");
+                
+                List<string> playerBlipList = new List<string>();
+
+                foreach (Player player in Players)
                 {
-                    lastBlipSetting = "none";
+                    if (player == null)
+                    {
+                        Debug.WriteLine($"Player {player.Name} has not loaded yet.");
+                        continue;
+                    }
+                    if (player.Character == null)
+                    {
+                        Debug.WriteLine($"Player {player.Name} has no character loaded yet.");
+                        continue;
+                    }
+                    string playerId = player.Handle;
+                    string playerName = player.Name;
+                    string positionString = player.Character != null ? $"{player.Character.Position.X},{player.Character.Position.Y},{player.Character.Position.Z},{player.Character.Heading}" : "0,0,0,0";
+
+                    
+                    string playerInfo = $"{playerName},{playerId},{positionString}";
+                    playerBlipList.Add(playerInfo);
+                    //Debug.WriteLine($"pb add {playerInfo}");
                 }
-                else if (lastBlipSetting == "none")
-                {
-                    lastBlipSetting = "all";
-                }
-            }
 
 
-            if (lastBlipSetting == "all")
-            {
-                TriggerClientEvent("ShowNotification", "Player blips are on.");
+                TriggerClientEvent("setPlayerBlips", playerBlipList);
+                //Debug.WriteLine($"GPI done");
+                await Delay(200);
             }
-            else if (lastBlipSetting == "none")
-            {
-                TriggerClientEvent("ShowNotification", "Player blips are off.");
-            }
-             updatePlayerBlips();
         }
-
-        public void setPlayerBlipsForAll()
-        {
-            Debug.WriteLine("setPlayerBlipsForAll");
-            BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
-            foreach (Player player in Players)
-            {
-                int PlayerHandle = int.Parse(player.Handle.ToString());
-                Debug.WriteLine($"Playerblip handle {PlayerHandle}.");
-                BlipHandler.BlipData playerblip = new BlipHandler.BlipData($"{player.Name}-{player.Handle}")
-                {
-                    Sprite = 480,
-                    Type = "player",
-                    Colour = PlayerHandle + 5,
-                    Shrink = false,
-                    MapName = player.Name
-                };
-                request.BlipsToAdd.Add(playerblip);
-            }
-            BlipHandler.AddBlips(request);
-            lastBlipSetting = "all";
-        }
-
-
-        public void clearPlayerBlipsForAll()
-        {
-            BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
-            foreach (Player player in Players)
-            {
-                request.BlipsToRemove.Add($"{player.Name}-{player.Handle}");
-            }
-            BlipHandler.AddBlips(request);
-            lastBlipSetting = "none";
-        }
-
-        // public void setPlayerBlipsForAllButRunner()
-        // {
-        //     BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
-        //     foreach (Player player in Players)
-        //     {
-        //         BlipHandler.BlipData playerblip = new BlipHandler.BlipData($"{player.Name}-{player.Handle}")
-        //         {
-        //             Type = "player",
-        //             Colour = 7,
-        //             Shrink = false,
-        //             MapName = player.Name,
-        //         };
-        //         request.BlipsToAdd.Add(playerblip);
-        //     }
-        //     BlipHandler.AddBlips(request);
-
-        // }
-
-        // public void setPlayerBlipsForAllBut()
-        // {
-        //     BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
-        //     foreach (Player player in Players)
-        //     {
-        //         BlipHandler.BlipData playerblip = new BlipHandler.BlipData($"{player.Name}-{player.Handle}")
-        //         {
-        //             Type = "player",
-        //             Colour = 7,
-        //             Shrink = false,
-        //             MapName = player.Name,
-        //         };
-        //         request.BlipsToAdd.Add(playerblip);
-        //     }
-        //     BlipHandler.AddBlips(request);
-
-        // }
-
-
-        // public void setPlayerBlipsForAllButIsDifferent()
-        // {
-        //     BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
-        //     foreach (Player player in Players)
-        //     {
-        //         BlipHandler.BlipData playerblip = new BlipHandler.BlipData($"{player.Name}-{player.Handle}")
-        //         {
-        //             Type = "player",
-        //             Colour = 7,
-        //             Shrink = false,
-        //             MapName = player.Name,
-        //         };
-        //         request.BlipsToAdd.Add(playerblip);
-        //     }
-        //     BlipHandler.AddBlips(request);
-
-        // }
     }
 }

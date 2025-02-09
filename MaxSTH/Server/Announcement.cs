@@ -39,6 +39,8 @@ namespace STHMaxzzzie.Server
                 TriggerClientEvent(Players[source], "ShowNotification", "~r~Invalid usage. Type /announce help for more info.");
             }
         }
+
+        //usage TriggerServerEvent("notifyEveryone", $"text");
         [EventHandler("notifyEveryone")]
         void notifyEveryone(string text)
         {

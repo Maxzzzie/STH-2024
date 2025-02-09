@@ -40,10 +40,22 @@ namespace STHMaxzzzie.Server
                 }
             }
 
-            int vehicle = API.CreateVehicle(vehicleHash, position.X, position.Y, position.Z, heading, true, true); // Vehicle Hash gotten from VehicleHash on client, for some reason not available on server?
-            //await Delay(10);
-            //int networkId = API.NetworkGetNetworkIdFromEntity(vehicle);
+            int vehicle = API.CreateVehicle(vehicleHash, position.X, position.Y, position.Z, heading, true, true);
+            int attempts = 0;
 
+            while (!API.DoesEntityExist(vehicle) && attempts < 500)
+            {
+                attempts++;
+                await Delay(10);
+            }
+
+            if (!API.DoesEntityExist(vehicle))
+            {
+                Debug.WriteLine("Error: Vehicle entity still does not exist after attempts!");
+                return; // Prevent further execution
+            }
+            int networkId = API.NetworkGetNetworkIdFromEntity(vehicle);
+            //API.SetEntityDistanceCullingRadius(vehicle, 5000f);
             string[] trimmedClosestCalloutName = closestCalloutToPri.Split('*');
             //TriggerClientEvent("chat:addMessage", new { color = new[] { 204, 0, 204 }, multiline = true, args = new[] { "Server", $"{player.Name} is spawning a Prius near {trimmedClosestCalloutName[0]}!" } });
             TriggerClientEvent("chat:addMessage", new { color = new[] { 204, 0, 204 }, args = new[] { player.Name, $"I'm spawning a Prius near {trimmedClosestCalloutName[0]}!" } });
@@ -56,11 +68,12 @@ namespace STHMaxzzzie.Server
             BlipHandler.BlipData pri = new BlipHandler.BlipData($"pri{player.Name}")
             {
                 Coords = new Vector3(position.X, position.Y, position.Z),
-                //Type = "entity",
-                //EntityId = networkId,
+                Type = "coord",
+                EntityId = networkId,
                 Sprite = 119,
                 Colour = 48,
                 MapName = $"Pri of {player.Name}"
+
             };
             request.BlipsToAdd.Add(pri);
             BlipHandler.AddBlips(request);
@@ -93,7 +106,7 @@ namespace STHMaxzzzie.Server
                         //     multiline = false,
                         //     args = new[] { "Server", "Your pri got destroyed!" }
                         // });
-                        TriggerClientEvent(playerPri.Key, "ShowSpecialNotification", "Your ~q~~h~pri~h~~s~ got destroyed!" , "Goal" , "DLC_HEIST_HACKING_SNAKE_SOUNDS" );
+                        TriggerClientEvent(playerPri.Key, "ShowSpecialNotification", "Your ~q~~h~pri~h~~s~ got destroyed!", "Goal", "DLC_HEIST_HACKING_SNAKE_SOUNDS");
                         BlipHandler.UpdateBlipsRequest request = new BlipHandler.UpdateBlipsRequest();
                         request.BlipsToRemove.Add($"pri{playerPri.Key.Name}");
                         BlipHandler.AddBlips(request);

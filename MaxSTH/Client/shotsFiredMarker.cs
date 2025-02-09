@@ -18,6 +18,7 @@ public class ShotDetection : BaseScript
                 int Y = (int)Game.PlayerPed.Position.Y;
                 //Debug.WriteLine($"Ped is SHOOTING at {X},{Y}!");
                 TriggerServerEvent("OnShotsFired", X, Y);
+                await Delay(0);
             }
         }
 

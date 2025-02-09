@@ -14,41 +14,7 @@ namespace STHMaxzzzie.Client
     {
         bool isShootingFromVehicleAllowed = false;
 
-        [EventHandler("clear_vehicles")]
-        void RemoveAllVehicles(bool shouldRemoveProps)
-        {
-            Vehicle[] allVeh = World.GetAllVehicles();
-            foreach (Vehicle veh in allVeh)
-            {
-                veh.Delete();
-            }
-            NotificationScript.ShowNotification($"All vehicles are removed.");
-            if (shouldRemoveProps)
-            {
-                Prop[] allProp = World.GetAllProps();
-                foreach (Prop prop in allProp)
-                {
-                    prop.Delete();
-                }
-                NotificationScript.ShowNotification($"All entities are removed too.");
-            }
-            TriggerServerEvent("didClearJustHappen");
-        }
-
-        [EventHandler("clearNearVehicles")]
-        void RemoveNearVehicles(int range)
-        {
-            Vehicle[] allVeh = World.GetAllVehicles();
-            Vector3 pos = Game.PlayerPed.Position;
-            foreach (Vehicle veh in allVeh)
-            {
-                Vector3 vehpos = veh.Position;
-                if (IsVehicleSeatFree(veh.Handle, -1) && GetDistanceBetweenCoords(pos.X, pos.Y, pos.Z, vehpos.X, vehpos.Y, vehpos.Z ,true) < range) veh.Delete();
-                
-            }
-            NotificationScript.ShowNotification($"All empty vehicles are removed within {range}m.");
-            TriggerServerEvent("didClearJustHappen");
-        }
+     
 
         //[EventHandler("disableCanPlayerShootFromVehicles")]
         void DisableCanPlayerShootFromVehicles(bool sfv)
@@ -89,7 +55,9 @@ namespace STHMaxzzzie.Client
         [EventHandler("PrintCoords")]
         void PrintCoords()
         {
-            NotificationScript.ShowNotification($"Current player position = {Game.PlayerPed.Position}");
+            Vector4 pos = new Vector4(Game.PlayerPed.Position, Game.PlayerPed.Heading);
+            NotificationScript.ShowNotification($"Current player position = {pos.X}, {pos.Y}, {pos.Z}, {pos.W}");
+            NotificationScript.displayClientDebugLine($"{(int)pos.X}, {(int)pos.Y}, {(int)pos.Z}, {(int)pos.W}");
         }
 
         [EventHandler("SendCoordsToServerForMapbounds")]
@@ -99,6 +67,65 @@ namespace STHMaxzzzie.Client
             TriggerServerEvent("SetMapboundsWithPlayerCoords", Game.PlayerPed.Position, CircleRadius, source);
         }
     }
+    public class DisableGangAggro : BaseScript
+    {
+        public DisableGangAggro()
+        {
+            Tick += OnTick;
+        }
+
+        private async Task OnTick()
+        {
+           int playerGroup = GetPedRelationshipGroupHash(PlayerPedId());
+
+// Gang hashes
+int[] gangHashes = new int[]
+{
+    GetHashKey("GANG_BALLAS"),
+    GetHashKey("GANG_FAMILY"),
+    GetHashKey("GANG_VAGOS"),
+    GetHashKey("AMBIENT_GANG_MEXICAN"),
+    GetHashKey("AMBIENT_GANG_BIKER"),
+    GetHashKey("AMBIENT_GANG_ARMENIAN"),
+    GetHashKey("AMBIENT_GANG_AZTECA"),
+    GetHashKey("AMBIENT_GANG_CHINESE")
+};
+
+// Set all gangs to be neutral to the player
+foreach (var gang in gangHashes)
+{
+    SetRelationshipBetweenGroups(1, (uint)playerGroup, (uint)gang);
+    SetRelationshipBetweenGroups(1, (uint)gang, (uint)playerGroup);
+}
+
+            await Delay(5000); // Adjust delay as needed
+        }
+    }
+
+    // public class NoWeaponsNPCs : BaseScript
+    // {
+    //     public NoWeaponsNPCs()
+    //     {
+    //         Tick += OnTick;
+    //     }
+
+    //     private async Task OnTick()
+    //     {
+    //         foreach (var ped in World.GetAllPeds())
+    //         {
+    //             if (!ped.IsPlayer && GetDistanceBetweenCoords(ped.Position.X, ped.Position.Y, ped.Position.Z, Game.PlayerPed.Position.X, Game.PlayerPed.Position.Y, Game.PlayerPed.Position.Z, false) < 50)
+    //             {
+    //                 // Remove weapons from NPCs
+    //                ped.Weapons.RemoveAll();
+    //                 // Prevent NPCs from dropping weapons when dead
+    //                 //SetPedDropsWeaponsWhenDead(ped.Handle, false);
+    //             }
+    //         }
+    //         await Delay(5000); // Run every second
+    //     }
+    // }
+
+
 }
 
 

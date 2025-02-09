@@ -19,8 +19,8 @@ namespace STHMaxzzzie.Client
         bool isReverseCamOn = false;
         public static bool isStarmodeOn = false; //to not automatically update player colours
         static bool isElectricalGlitchRunning = false;
-        DateTime fameStartTime;
-        DateTime carFameStartTime;
+        //DateTime fameStartTime;
+        //DateTime carFameStartTime;
         static bool isShakeCamOn = false;
         static bool isAntiGravity = false;
         Random rand = new Random();
@@ -1370,8 +1370,8 @@ namespace STHMaxzzzie.Client
             }
         }
 
-        bool isMaxSpeedReduced = false;
-        Vehicle oldVehicle;
+        //bool isMaxSpeedReduced = false;
+        //Vehicle oldVehicle;
         void ApplySpeedLimiter()
         {
             // Vehicle veh = Game.PlayerPed.CurrentVehicle;

@@ -11,11 +11,11 @@ namespace STHMaxzzzie.Server
 {
     public class GameInfected : BaseScript
     {
-        [EventHandler("sendClientTeamAssignment")]
-        public static void sendClientTeamAssignment()
+        [EventHandler("sendClientTeamAssignmentForInfected")]
+        public static void sendClientTeamAssignmentForInfected()
         {
 
-            Debug.WriteLine($"updateClientTeamAssignment");
+            Debug.WriteLine($"updateClientTeamAssignmentForInfected");
             List<Vector2> teamAssignmentForClient = new List<Vector2>();
             foreach (var kvp in RoundHandling.teamAssignment)
             {

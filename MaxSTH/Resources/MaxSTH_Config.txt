@@ -3,19 +3,19 @@
 
 // Formatting: Default spawn location = x, y, z, heading
 // Liberty City spawn
-//Default spawn location = 7002.115, -2909.120, 22.510, 203.537
+//Default spawn location = 6252, -3430, 30, 0
 // Los Santos spawn
 Default spawn location = -1610.000, -1055.000, 13.000, 318.000
 
 // Formatting: Mugshot area position = x, y, z, heading
 // Liberty City mugshot area
-// Mugshot area position = 5633.444, -3219.189, 71.71848, 257.1849
+//Mugshot area position = 5633.444, -3219.189, 71.21848, 257.1849
 // Los Santos mugshot area
- Mugshot area position = 402.848, -996.826, -99.900, 178.805
+Mugshot area position = 402.848, -996.826, -99.900, 178.805
 
 // A message that will be displayed to all users when they join the server
 // Formatting: Message of the Day = text, can include formatting https://docs.fivem.net/docs/game-references/text-formatting/
-Message of the Day = ~o~Welcome to MaxSTH Server! Enjoy your stay!
+Message of the Day = Don't shoot gangsters/police guards if you don't want to crash. I'm working on it.
 
 // Restrict commands to hosts
 // Set to true to restrict certain commands to hosts only, false to allow all users

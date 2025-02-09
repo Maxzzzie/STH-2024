@@ -14,7 +14,6 @@ namespace STHMaxzzzie.Server
     {
         static Dictionary<string, BlipData> blips = new Dictionary<string, BlipData>();
 
-
         public static void AddBlips(UpdateBlipsRequest request)
         {
             foreach (BlipData blip in request.BlipsToAdd)
@@ -45,6 +44,7 @@ namespace STHMaxzzzie.Server
             List<BlipData> updatedBlips = blips.Values.ToList();
             UnpackBlipDataForClient(updatedBlips);
         }
+        
 
         public static void UnpackBlipDataForClient(List<BlipData> unpack)
         {
@@ -52,6 +52,7 @@ namespace STHMaxzzzie.Server
             foreach (var blip in unpack)
             {
                 string blipDetails = $"{blip.Name}," +
+                
                                      $"{blip.Type}," +
                                      $"{blip.Coords.X},{blip.Coords.Y},{blip.Coords.Z}," +
                                      $"{blip.EntityId}," +

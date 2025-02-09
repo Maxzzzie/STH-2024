@@ -8,7 +8,7 @@ namespace STHMaxzzzie.Server
 {
     public class StreamLootsEffect : BaseScript
     {
-        public static bool isSLOn = true;
+        public static bool isSLOn = false;
         public static int SLItterateTime = 10;
         private List<string> effectNames = new List<string>{
               "cleartires", //removes all tires from near the client

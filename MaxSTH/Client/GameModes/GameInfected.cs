@@ -46,7 +46,7 @@ namespace STHMaxzzzie.Client
         public static void infectedWeapons()
         {
             if (RoundHandling.thisClientIsTeam == 1) Armoury.giveNonLethalWeapon(false);
-            else if (RoundHandling.thisClientIsTeam == 2 && hunterCount <= 2) Armoury.giveRunWeapon(true);
+            else if (RoundHandling.thisClientIsTeam == 2 && hunterCount <= 2) Armoury.giveInfectedHuntWeapon(true); //gives initial stronger weapons.
             else if (RoundHandling.thisClientIsTeam == 2 && hunterCount  >= 3) Armoury.giveHuntWeapon(true);
         }
     }

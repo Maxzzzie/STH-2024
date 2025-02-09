@@ -24,12 +24,12 @@ namespace STHMaxzzzie.Server
             // Debug.WriteLine($"server startGameMode");
             if (gameMode != "none")
             {
-                TriggerClientEvent("ShowErrorNotification", $"There is a game of {gameMode} running.");
+                TriggerClientEvent(Players[source],"ShowErrorNotification", $"There is a game of {gameMode} running.");
                 return;
             }
-            if (!int.TryParse(args[1].ToString(), out int targetId))
+            if (args.Count == 1 || !int.TryParse(args[1].ToString(), out int targetId))
             {
-                TriggerClientEvent("ShowErrorNotification", "Cannot start game.\ntargetId isn't specified.");
+                TriggerClientEvent(Players[source],"ShowErrorNotification", "Cannot start game.\ntargetId isn't specified.");
                 return;
             }
             gameMode = args[0].ToString();
@@ -37,33 +37,41 @@ namespace STHMaxzzzie.Server
             targetThisGame = int.Parse(args[1].ToString());
 
             bool runnerIsOnline = false;
+            List<int> onlinePlayers = new List<int>();
             foreach (Player player in Players)
             {
-                if (int.Parse(player.Handle) == targetThisGame)
-                {
-                    runnerIsOnline = true;
-                }
+                int playerId = int.Parse(player.Handle);
+
+                onlinePlayers.Add(playerId);
+
+                if (playerId == targetThisGame) runnerIsOnline = true;
             }
-            if (!runnerIsOnline)
+            
+            if (targetThisGame == 0)
             {
-                TriggerClientEvent("ShowErrorNotification", "Cannot start game.\nNo player with that ID is online.");
+                Random rand = new Random();
+                targetThisGame = onlinePlayers[rand.Next(0, onlinePlayers.Count)];
+            }
+            else if (!runnerIsOnline)
+            {
+                TriggerClientEvent(Players[source],"ShowErrorNotification", "Cannot start game.\nNo player with that ID is online.");
                 targetThisGame = -1;
                 gameMode = "none";
                 return;
             }
 
-            if (gameMode == "delay")
+            if (args.Count > 1 && gameMode == "delay")
             {
                 Player sourceHost = Players[source];
                 Player runner = Players[targetThisGame];
                 DelayMode.runPlayer = runner;
                 DelayMode.delayMode(sourceHost, runner, args);
             }
-            else if (gameMode == "hunt")
+            else if (args.Count > 1 && gameMode == "hunt")
             {
                 startGame();
             }
-            else if (gameMode == "bounce")
+            else if (args.Count > 1 && gameMode == "bounce")
             {
                 if (args.Count >= 3 && int.TryParse(args[2].ToString(), out int newRadius))
                 {
@@ -75,15 +83,26 @@ namespace STHMaxzzzie.Server
                 }
                 if (GameBounce.radius < 70)
                 {
-                    TriggerClientEvent("ShowErrorNotification", "Radius for bounce mode was too low, minimum is 70, default is 450. Radius is set to 70.");
+                    TriggerClientEvent(Players[source],"ShowErrorNotification", "Radius for bounce mode was too low, minimum is 70, default is 450. Radius is set to 70.");
                     GameBounce.radius = 70;
                 }
                 GameBounce.updateClientBounceSettings();
                 startGame();
             }
-            else if (gameMode == "infected")
+            else if (args.Count == 2 && gameMode == "infected")
             {
                 startGame();
+            }
+            else if ((args.Count == 2 || args.Count == 3) && gameMode == "copyclass")
+            {
+                if (args.Count == 3 && bool.TryParse(args[2].ToString(), out GameCopyClass.forceChosenVehicleOnly)) {}
+                startGame();
+            }
+            else 
+            {
+                targetThisGame = -1;
+                gameMode = "none";
+                TriggerClientEvent(Players[source],"ShowErrorNotification", "No game was started. Incorrect mode set.");
             }
         }
 
@@ -150,10 +169,11 @@ namespace STHMaxzzzie.Server
             // Debug.WriteLine($"end server startGame");
 
             // Trigger client events to start the game.
+            Armoury.turnOnPvpForGames();
             API.StopResource("playernames");
             TriggerClientEvent("startGame", teamAssignmentForClient, gameMode);
             TriggerClientEvent("gameStartNotification", runnerList);
-            TriggerEvent("updatePlayerBlips");
+            
             DelayMode.setOrRemoveDistanceBlipsForDelayMode(); //updates the blips on the map to indicate the distance between blip and player for delay mode. Removes it when there is not delay mode active.
         }
 
@@ -161,7 +181,7 @@ namespace STHMaxzzzie.Server
         public void thisClientDiedForGameStateCheck(int source)
         {
             // Debug.WriteLine($"server thisClientDiedForGameStateCheck");
-            if ((gameMode == "delay" || gameMode == "hunt" || gameMode == "bounce") && teamAssignment.ContainsValue(1))
+            if ((gameMode == "delay" || gameMode == "hunt" || gameMode == "bounce" || gameMode == "copyclass") && teamAssignment.ContainsValue(1))
             {
                 int teamNumber = teamAssignment[source];
                 //CitizenFX.Core.Debug.WriteLine($"thisClientDiedForGameStateCheck {source},{teamNumber}");
@@ -184,7 +204,7 @@ namespace STHMaxzzzie.Server
                         return;
                     }
                     TriggerClientEvent(Players[source], "ShowSpecialNotification", "~r~~h~You died as a runner.\n~s~~w~You are now a hunter.", "SwitchRedWarning", ",SPECIAL_ABILITY_SOUNDSET");
-                    GameInfected.sendClientTeamAssignment();
+                    GameInfected.sendClientTeamAssignmentForInfected();
                 }
             }
         }
@@ -230,10 +250,14 @@ namespace STHMaxzzzie.Server
             {
                 TriggerClientEvent("setGameBounceBlip", new Vector4(0,0,0,0), true);
             }
+            else if (gameMode == "copyclass")
+            {
+                
+            }
             gameMode = "none";
             targetThisGame = -1;
             API.StartResource("playernames");
-            TriggerEvent("updatePlayerBlips");
+            
         }
 
         [EventHandler("playerJoinedWhileGameIsActive")]
@@ -263,7 +287,27 @@ namespace STHMaxzzzie.Server
 
             TriggerClientEvent(joinedPlayer, "startGame", teamAssignmentForClient, gameMode);
             TriggerClientEvent(joinedPlayer, "gameJoinNotification", runnerList);
-            if (gameMode == "infected") GameInfected.sendClientTeamAssignment();
+            if (gameMode == "infected") GameInfected.sendClientTeamAssignmentForInfected();
+        }
+
+        [EventHandler("sendClientTeamAssignment")]
+        public void sendClientTeamAssignment()
+        {
+
+            Debug.WriteLine($"updateClientTeamAssignment");
+            List<Vector2> teamAssignmentForClient = new List<Vector2>();
+            foreach (Player player in Players)
+            {
+                int playerId = int.Parse(player.Handle);
+                if (!RoundHandling.teamAssignment.ContainsKey(playerId)) RoundHandling.teamAssignment[playerId] = 0;
+            }
+            
+            foreach (var kvp in RoundHandling.teamAssignment)
+            {
+                teamAssignmentForClient.Add(new Vector2(kvp.Key, kvp.Value));
+            }
+
+            TriggerClientEvent("updateClientTeamAssignment", teamAssignmentForClient);
         }
 
         public void endGameMessages(string winningTeam)

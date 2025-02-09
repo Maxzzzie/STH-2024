@@ -16,7 +16,7 @@ namespace STHMaxzzzie.Client
         public List<int> allowedClassIdForStuckVeh = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 17, 18, 19, 20 };
         public StuckScript()
         {
-            API.RegisterKeyMapping("+Stuck", "Vehicle stuck nudge", "keyboard", "u"); // Change "n" to your desired key.
+            API.RegisterKeyMapping("+Stuck", "Vehicle stuck nudge", "keyboard", "u"); // Change "u" to your desired key.
         }
 
         [EventHandler("StuckCommand")]
@@ -142,7 +142,7 @@ namespace STHMaxzzzie.Client
             //TriggerEvent("chat:addMessage", new { color = new[] { 0, 255, 0 }, args = new[] { $"/stuck used {usageCount} time(s)." } });
             isRunning = false;
             // Reset after 60 seconds of inactivity
-            await Delay(60000);
+            await Delay(30000);
             if ((DateTime.Now - lastUsed).TotalSeconds > 60)
             {
                 usageCount = 0;

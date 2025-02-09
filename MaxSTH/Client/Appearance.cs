@@ -76,7 +76,6 @@ namespace STHMaxzzzie.Client
             TriggerServerEvent("updateServerModel", playerHandle, model);
             Health.SetPlayerStats(HealthBeforeChange, ArmourBeforeChange);
             await Delay(200);
-            TriggerServerEvent("updatePlayerBlips");
             isModelChanging = false;
 
         }

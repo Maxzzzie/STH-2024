@@ -16,6 +16,11 @@ namespace STHMaxzzzie.Client
         public static string gameMode = "none";
         public static int serverId = Game.Player.ServerId;
 
+        public RoundHandling()
+        {
+            TriggerServerEvent("sendClientTeamAssignment");
+        }
+
         [EventHandler("startGame")]
         public void startGame(List<object> playerIdAndTeamAssignment, string newGameMode)
         {
@@ -40,19 +45,26 @@ namespace STHMaxzzzie.Client
             }
             if (gameMode == "hunt")
             {
-                startHuntMode();
+                ArmWithNormalHuntWeapons();
             }
             else if (gameMode == "delay")
             {
-                startDelayMode();
+                ArmWithNormalHuntWeapons();
             }
             else if (gameMode == "bounce" && thisClientIsTeam == 1)
             {
                 GameBounce.gameBounceBlipCalculation();
+                ArmWithNormalHuntWeapons();
             }
             else if (gameMode == "infected")
             {
                 GameInfected.infectedWeapons();
+            }
+            else if (gameMode == "copyclass")
+            {
+                GameCopyClass.startCopyClass();
+                TriggerServerEvent("sendClientCopyClassSettings");
+                ArmWithNormalHuntWeapons();
             }
 
             if (thisClientIsTeam == 1)
@@ -91,19 +103,7 @@ namespace STHMaxzzzie.Client
             }
         }
 
-        public void startHuntMode()
-        {
-            if (thisClientIsTeam == 1) { TriggerEvent("runWeapon", false); }
-            else if (thisClientIsTeam == 2) { TriggerEvent("huntWeapon", false); }
-
-        }
-        public void startDelayMode()
-        {
-            if (thisClientIsTeam == 1) { TriggerEvent("runWeapon", false); }
-            else if (thisClientIsTeam == 2) { TriggerEvent("huntWeapon", false); }
-        }
-
-        public void startBounceMode()
+        public void ArmWithNormalHuntWeapons()
         {
             if (thisClientIsTeam == 1) { TriggerEvent("runWeapon", false); }
             else if (thisClientIsTeam == 2) { TriggerEvent("huntWeapon", false); }
@@ -141,6 +141,24 @@ namespace STHMaxzzzie.Client
             //Debug.WriteLine($"client updateTeamAssignment");
             if (gameMode != "none") teamAssignment[joinedPlayerId] = 2;
             if (gameMode == "infected") GameInfected.infectedWeapons();
+        }
+
+        [EventHandler("updateClientTeamAssignment")]
+        static void updateClientTeamAssignment(List<object> playerIdAndTeamAssignment)
+        {   
+            RoundHandling.teamAssignment.Clear();
+
+            foreach (var obj in playerIdAndTeamAssignment)
+            {
+                if (obj is Vector2 vector)
+                {
+                    RoundHandling.teamAssignment.Add((int)vector.X, (int)vector.Y);
+                    if (vector.X == RoundHandling.serverId && Radio.setsAutomatically)
+                    {
+                       TriggerEvent("AddPlayerToRadio", vector.Y);
+                    }
+                }
+            }
         }
 
         [EventHandler("gameWonNotification")]
@@ -199,7 +217,7 @@ namespace STHMaxzzzie.Client
             }
         }
 
-        public async Task startNotification(string runnerNames)
+        public void startNotification(string runnerNames)
         {
             // Debug.WriteLine($"client startNotification");
             string notificationText = "null";
@@ -208,10 +226,10 @@ namespace STHMaxzzzie.Client
 
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"startNotification" } });
 
-            await DisplayCenteredNotification(notificationText, 0, 255, 0, 255);
+            TriggerEvent("DisplayCenteredNotification",notificationText, 0, 255, 0, 255);
         }
 
-        public async Task wonNotification(List<object> winners, List<object> losers)
+        public void wonNotification(List<object> winners, List<object> losers)
         {
             //Debug.WriteLine($"client wonNotification");
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"wonNotification" } });
@@ -245,10 +263,10 @@ namespace STHMaxzzzie.Client
                 notificationText = $"Unknown win in {gameMode}";
             }
 
-            await DisplayCenteredNotification(notificationText, 0, 255, 0, 255); // Green for win
+            TriggerEvent("DisplayCenteredNotification",notificationText, 0, 255, 0, 255); // Green for win
         }
 
-        public async Task lostNotification(List<object> winners, List<object> losers)
+        public void lostNotification(List<object> winners, List<object> losers)
         {
             //Debug.WriteLine($"client lostNotification");
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"lostNotification" } });
@@ -283,19 +301,19 @@ namespace STHMaxzzzie.Client
                 notificationText = $"Game over. \nYou lost this round.";
             }
 
-            await DisplayCenteredNotification(notificationText, 255, 0, 0, 255); // Red for loss
+            TriggerEvent("DisplayCenteredNotification",notificationText, 255, 0, 0, 255); // Red for loss
         }
 
-        public async Task drawNotification()
+        public void drawNotification()
         {
             //Debug.WriteLine($"client drawNotification");
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"gameDrawNotification" } });
             string notificationText = "The game ended in a draw.";
 
-            await DisplayCenteredNotification(notificationText, 255, 255, 255, 255);
+            TriggerEvent("DisplayCenteredNotification",notificationText, 255, 255, 255, 255);
         }
 
-        public async Task neutralNotification(string winningTeam)
+        public void neutralNotification(string winningTeam)
         {
             string notificationText;
             //Debug.WriteLine($"client neutralNotification");
@@ -309,19 +327,20 @@ namespace STHMaxzzzie.Client
                 notificationText = $"This round of \"{gameMode}\" has ended. The {winningTeam} team has won!";
             }
 
-            await DisplayCenteredNotification(notificationText, 255, 255, 255, 255);
+            TriggerEvent("DisplayCenteredNotification",notificationText, 255, 255, 255, 255);
         }
 
-        public async Task joinNotification(string runnerNames)
+        public void joinNotification(string runnerNames)
         {
             //Debug.WriteLine($"client joinNotification");
             string notificationText = "null";
             notificationText = $"You joined a round of \"{gameMode}\".\n{runnerNames} is the runner.";
             //TriggerEvent("chat:addMessage", new { color = new[] { 255, 153, 153 }, args = new[] { $"startNotification" } });
-            await DisplayCenteredNotification(notificationText, 0, 255, 0, 255);
+            TriggerEvent("DisplayCenteredNotification", notificationText, 0, 255, 0, 255);
         }
 
         static bool isDisplayed = false; //prevent double notifications
+        [EventHandler("DisplayCenteredNotification")] 
         private async Task DisplayCenteredNotification(string text, int r, int g, int b, int a)
         {
             isDisplayed = false;
@@ -377,9 +396,9 @@ namespace STHMaxzzzie.Client
             Function.Call(Hash.SET_TEXT_SCALE, scale, scale);
             Function.Call(Hash.SET_TEXT_COLOUR, r, g, b, a);
             Function.Call(Hash.SET_TEXT_CENTRE, true);
-            Function.Call(Hash._SET_TEXT_ENTRY, "STRING");
+            Function.Call(Hash.BEGIN_TEXT_COMMAND_DISPLAY_TEXT, "STRING");
             Function.Call(Hash.ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME, text);
-            Function.Call(Hash._DRAW_TEXT, x, y);
+            Function.Call(Hash.END_TEXT_COMMAND_DISPLAY_TEXT, x, y);
         }
 
         private float MeasureTextWidth(string text, float scale)
